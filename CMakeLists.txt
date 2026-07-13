@@ -33,11 +33,19 @@ add_executable(ptah
     src/context.cpp
     src/window.cpp
     src/renderer.cpp
+    src/mesh.cpp
+    src/shader.cpp
+    src/utils/file_loading.cpp
 )
+
 target_include_directories(ptah PRIVATE include)
 target_link_libraries(ptah PRIVATE
     deps::glad
     OpenGL::GL
     glfw
 )
-target_compile_definitions(ptah PRIVATE GLFW_INCLUDE_NONE)
+target_compile_definitions(ptah
+PRIVATE
+GLFW_INCLUDE_NONE
+PTAH_SHADERS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/shaders"
+)
