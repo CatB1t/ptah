@@ -25,8 +25,8 @@ int main() {
   ptah::Mesh mesh{vertices};
   ptah::Renderer renderer{1280, 720};
 
-  renderer.Submit(mesh.GetDrawCommand());
   while (!window.ShouldClose()) {
+    renderer.Submit(mesh.GetDrawCommand());
     renderer.Flush();
     window.Update();
   }
