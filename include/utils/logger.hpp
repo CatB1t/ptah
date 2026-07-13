@@ -15,7 +15,8 @@ class Logger {
 };
 }  // namespace ptah::utils
 
-#define PTAH_RENDER_DEBUG(...) ptah::utils::Logger::Renderer().debug(__VA_ARGS__)
+#define PTAH_RENDER_DEBUG(...) \
+  ptah::utils::Logger::Renderer().debug(__VA_ARGS__)
 #define PTAH_RENDER_INFO(...) ptah::utils::Logger::Renderer().info(__VA_ARGS__)
 #define PTAH_RENDER_WARN(...) ptah::utils::Logger::Renderer().warn(__VA_ARGS__)
 #define PTAH_RENDER_ERROR(...) \
