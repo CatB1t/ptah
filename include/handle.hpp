@@ -17,5 +17,6 @@ class Handle {
     m_id = id;
     m_valid = true;
   }
+  unsigned int Id() const { return m_id; }
 };
 }  // namespace ptah
