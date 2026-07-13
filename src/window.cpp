@@ -3,16 +3,17 @@
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
 
-#include <iostream>
+#include "utils/logger.hpp"
 
 namespace ptah {
 
 Window::Window(const char* title, unsigned int width, unsigned int height)
     : m_title{title}, m_width(width), m_height(height) {
+  utils::Logger::Init();
   m_window = glfwCreateWindow(m_width, m_height, m_title, nullptr, nullptr);
   if (!m_window) {
     // TODO: use a better logging system.
-    std::cerr << "Window::" << m_title << ": Failed to initialize\n";
+    PTAH_RENDER_ERROR("Failed to initialize window {}", m_title);
     return;
   }
   glfwMakeContextCurrent(m_window);

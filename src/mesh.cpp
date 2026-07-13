@@ -2,8 +2,6 @@
 
 #include <glad/gl.h>
 
-#include <iostream>
-
 namespace ptah {
 
 Mesh::Mesh(const std::vector<Vertex>& vertices)

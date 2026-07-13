@@ -2,8 +2,6 @@
 
 #include <glad/gl.h>
 
-#include <iostream>
-
 #include "utils/file_loading.hpp"
 
 namespace ptah {

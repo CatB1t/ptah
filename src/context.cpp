@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
 
-#include <iostream>
+#include "utils/logger.hpp"
 
 namespace ptah {
 
@@ -13,7 +13,8 @@ Context::Context() {
   if (Context::m_initialized) return;
 
   if (!glfwInit()) {
-    std::cerr << "Context:: Failed to initialize GLFW\n";
+    PTAH_RENDER_ERROR("Failed to initialize GLFW");
+    return;
   }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

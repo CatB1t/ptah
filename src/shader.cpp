@@ -2,8 +2,9 @@
 
 #include <glad/gl.h>
 
-#include <cstring>
-#include <iostream>
+#include <string>
+
+#include "utils/logger.hpp"
 
 namespace ptah {
 
@@ -36,10 +37,9 @@ void Shader::m_CheckCompileStatus(unsigned int id, const char* type) {
   glGetShaderiv(id, GL_COMPILE_STATUS, &status);
   if (status != GL_TRUE) {
     char error_msg[512];
-    int error_msg_size = 0;
-    std::cerr << "Failed to compile shader of type " << type << ":\n";
-    glGetShaderInfoLog(id, 512, &error_msg_size, error_msg);
-    std::cerr << error_msg_size << error_msg[0] << "\n";
+    PTAH_RENDER_ERROR("Failed to compile shader of type {}", type);
+    glGetShaderInfoLog(id, 512, nullptr, error_msg);
+    PTAH_RENDER_ERROR(error_msg);
   }
 }
 
@@ -49,7 +49,8 @@ void Shader::m_CheckLinkStatus(const Handle& program) {
   if (status != GL_TRUE) {
     char buf[512];
     glGetProgramInfoLog(program.Id(), 512, nullptr, buf);
-    std::cerr << "Failed to link shader program: " << buf << "\n";
+    PTAH_RENDER_ERROR("Failed to link shader program {}", program.Id());
+    PTAH_RENDER_ERROR(buf);
   }
 }
 
