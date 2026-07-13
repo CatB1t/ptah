@@ -1,7 +1,11 @@
 #pragma once
 
+#include "handle.hpp"
+
 namespace ptah {
 struct DrawCommand {
-  // TODO
+  Handle handle;
+  unsigned int count;
+  bool indexed;
 };
 }  // namespace ptah
