@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "draw_command.hpp"
+#include "shader.hpp"
 
 namespace ptah {
 class Renderer {
@@ -10,6 +11,7 @@ class Renderer {
   unsigned int m_width;
   unsigned int m_height;
   std::vector<DrawCommand> m_commands;
+  Shader m_default_shader;
 
  public:
   Renderer(unsigned int width, unsigned int height);
