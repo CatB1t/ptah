@@ -16,6 +16,7 @@ Window::Window(const char* title, unsigned int width, unsigned int height)
     return;
   }
   glfwMakeContextCurrent(m_window);
+  gladLoadGL(glfwGetProcAddress);
 }
 
 Window::~Window() { glfwDestroyWindow(m_window); }
