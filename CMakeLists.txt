@@ -32,6 +32,7 @@ add_executable(ptah
     src/main.cpp
     src/context.cpp
     src/window.cpp
+    src/renderer.cpp
 )
 target_include_directories(ptah PRIVATE include)
 target_link_libraries(ptah PRIVATE
