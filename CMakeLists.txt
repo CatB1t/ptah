@@ -30,7 +30,8 @@ add_library(deps::glad ALIAS glad)
 
 add_executable(ptah
     src/main.cpp
-    src/demo.cpp
+    src/context.cpp
+    src/window.cpp
 )
 target_include_directories(ptah PRIVATE include)
 target_link_libraries(ptah PRIVATE
