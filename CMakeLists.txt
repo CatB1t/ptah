@@ -21,6 +21,13 @@ FetchContent_Declare(glfw
 )
 FetchContent_MakeAvailable(glfw)
 
+FetchContent_Declare(spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.17.0
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(spdlog)
+
 find_package(OpenGL REQUIRED)
 
 add_library(glad STATIC external/glad/src/gl.c)
@@ -36,6 +43,7 @@ add_executable(ptah
     src/mesh.cpp
     src/shader.cpp
     src/utils/file_loading.cpp
+    src/utils/logger.cpp
 )
 
 target_include_directories(ptah PRIVATE include)
@@ -43,6 +51,7 @@ target_link_libraries(ptah PRIVATE
     deps::glad
     OpenGL::GL
     glfw
+    spdlog::spdlog
 )
 target_compile_definitions(ptah
 PRIVATE
