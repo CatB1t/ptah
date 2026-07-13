@@ -4,6 +4,9 @@
 #include <cstdlib>
 
 #include "context.hpp"
+#include "mesh.hpp"
+#include "renderer.hpp"
+#include "shader.hpp"
 #include "window.hpp"
 
 int main() {
@@ -13,7 +16,18 @@ int main() {
   }
 
   ptah::Window window{"Demo", 1280, 720};
+
+  std::vector<ptah::Vertex> vertices{
+      {-0.5, -0.5, 0.0},
+      {0.5, -0.5, 0.0},
+      {0.0, 0.5, 0.0},
+  };
+  ptah::Mesh mesh{vertices};
+  ptah::Renderer renderer{1280, 720};
+
+  renderer.Submit(mesh.GetDrawCommand());
   while (!window.ShouldClose()) {
+    renderer.Flush();
     window.Update();
   }
 
