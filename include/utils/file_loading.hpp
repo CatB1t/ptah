@@ -1,7 +1,5 @@
 #include <string>
 
-namespace ptah {
-namespace utils {
+namespace ptah::utils {
 std::string load_file(const char* path);
-}
-}  // namespace ptah
+}  // namespace ptah::utils
