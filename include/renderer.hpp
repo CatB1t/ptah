@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "draw_command.h"
+#include "draw_command.hpp"
 
 namespace ptah {
 class Renderer {
