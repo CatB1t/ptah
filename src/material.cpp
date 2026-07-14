@@ -2,6 +2,7 @@
 
 #include <glad/gl.h>
 
+#include <array>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
@@ -91,6 +92,70 @@ void Material::Set(const char* name, float value) {
 void Material::Set(const char* name, int value) {
   int loc = m_GetUniformLocation(name);
   glProgramUniform1i(m_program.Id(), loc, value);
+}
+
+void Material::ResolveLayout() {
+  int materialBlockIdx = glGetUniformBlockIndex(m_program.Id(), "uMaterial");
+  if (materialBlockIdx == GL_INVALID_INDEX) {
+    PTAH_RENDER_DEBUG("No material block to resolve.");
+    return;
+  }
+
+  int length;
+  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
+                            GL_UNIFORM_BLOCK_NAME_LENGTH, &length);
+
+  char* temp = new char[length];
+  glGetActiveUniformBlockName(m_program.Id(), materialBlockIdx, length, nullptr,
+                              temp);
+
+  int blockSize = 0;
+  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
+                            GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+
+  int active_uniforms;
+  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
+                            GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &active_uniforms);
+
+  int* uniform_indices = new int[active_uniforms];
+  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
+                            GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES,
+                            uniform_indices);
+  std::stringstream ss;
+
+  for (size_t i = 0; i < active_uniforms; ++i) {
+    ss << uniform_indices[i];
+    if (i < active_uniforms - 1) {
+      ss << ", ";  // Optional delimiter
+    }
+  }
+
+  PTAH_RENDER_DEBUG(
+      "Block {}: Name: {}, Max Length: {}, Members: {}, Indices: {}, Size: {}",
+      materialBlockIdx, temp, length, active_uniforms, ss.str(), blockSize);
+
+  for (int j = 0; j < active_uniforms; j++) {
+    int name_length;
+    unsigned int idx = uniform_indices[j];
+    glGetActiveUniformsiv(m_program.Id(), 1, &idx, GL_UNIFORM_NAME_LENGTH,
+                          &name_length);
+
+    Layout layout;
+    layout.name.resize(name_length);
+    char* name = layout.name.data();
+    glGetActiveUniform(m_program.Id(), uniform_indices[j], 512, nullptr,
+                       &layout.length, &layout.type, name);
+    glGetActiveUniformsiv(m_program.Id(), 1, &idx, GL_UNIFORM_OFFSET,
+                          &layout.offset);
+
+    PTAH_RENDER_DEBUG(
+        "Block {} > Uniform {}: Name: {}, Offset: {}, Type: "
+        "{:#04x}",
+        materialBlockIdx, j, layout.name, layout.offset, layout.type);
+  }
+
+  delete temp;
+  delete uniform_indices;
 }
 
 void Material::Dispose() {

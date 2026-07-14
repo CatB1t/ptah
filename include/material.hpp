@@ -6,6 +6,14 @@
 #include "handle.hpp"
 
 namespace ptah {
+
+struct Layout {
+  std::string name;
+  unsigned int type;  // GL Types
+  int length;         // Number of elements
+  int offset;         // Offset
+};
+
 class Material {
  private:
   MaterialHandle m_program;
@@ -24,6 +32,7 @@ class Material {
   void Set(const char* name, float value);
   void Set(const char* name, int value);
   void Use();
+  void ResolveLayout();
   void Dispose();
 };
 }  // namespace ptah
