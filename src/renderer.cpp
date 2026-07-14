@@ -20,7 +20,7 @@ void Renderer::Begin(const Camera& camera) {
 
 void Renderer::Submit(const DrawCommand& cmd) { m_commands.push_back(cmd); }
 
-Shader* Renderer::m_ResolveShader(Shader* other) const {
+Shader* Renderer::m_ResolveShader(Shader* other) {
   return (m_settings.override_shaders) ? &m_settings.default_shader : other;
 }
 
@@ -40,6 +40,7 @@ void Renderer::Flush() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   Shader* effective_shader = m_ResolveShader(nullptr);
   for (auto cmd : m_commands) {
+    effective_shader->Use();
     effective_shader->Set("uModel", cmd.transform);
     m_Draw(cmd);
   }

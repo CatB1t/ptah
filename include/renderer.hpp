@@ -26,7 +26,7 @@ class Renderer {
   std::vector<DrawCommand> m_commands;
 
   void m_Draw(const DrawCommand& cmd);
-  Shader* m_ResolveShader(Shader* other) const;
+  Shader* m_ResolveShader(Shader* other);
 
  public:
   Renderer(unsigned int width, unsigned int height);

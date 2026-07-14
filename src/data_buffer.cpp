@@ -15,7 +15,7 @@ unsigned int DataBuffer::m_ResolveType(BufferType type) {
     case BufferType::UNIFORM:
       return GL_UNIFORM_BUFFER;
   }
-  PTAH_RENDER_ERROR("Invalid buffer type: {}", type);
+  PTAH_RENDER_ERROR("Invalid buffer type");
   return -1;
 }
 
