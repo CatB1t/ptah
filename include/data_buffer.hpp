@@ -4,10 +4,7 @@
 
 namespace ptah {
 
-enum class BufferType {
-  ARRAY,
-  ELEMENT,
-};
+enum class BufferType { ARRAY, ELEMENT, UNIFORM };
 
 class DataBuffer {
  private:

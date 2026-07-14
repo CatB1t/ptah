@@ -2,19 +2,21 @@
 
 #include <glad/gl.h>
 
+#include "utils/logger.hpp"
+
 namespace ptah {
 
 unsigned int DataBuffer::m_ResolveType(BufferType type) {
-  GLenum gl_type;
   switch (type) {
     case BufferType::ARRAY:
-      gl_type = GL_ARRAY_BUFFER;
-      break;
+      return GL_ARRAY_BUFFER;
     case BufferType::ELEMENT:
-      gl_type = GL_ELEMENT_ARRAY_BUFFER;
-      break;
+      return GL_ELEMENT_ARRAY_BUFFER;
+    case BufferType::UNIFORM:
+      return GL_UNIFORM_BUFFER;
   }
-  return gl_type;
+  PTAH_RENDER_ERROR("Invalid buffer type: {}", type);
+  return -1;
 }
 
 DataBuffer::DataBuffer(BufferType type, unsigned int size) : m_type(type) {
