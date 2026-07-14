@@ -23,5 +23,6 @@ struct Handle {
 
 using MeshHandle = Handle<struct _Mesh>;
 using ProgramHandle = Handle<struct _ShaderProgram>;
+using BufferHandle = Handle<struct _BufferArray>;
 
 }  // namespace ptah
