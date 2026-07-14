@@ -40,7 +40,8 @@ int main() {
 
   while (!window.ShouldClose()) {
     renderer.Begin(camera);
-    renderer.Submit(mesh.GetDrawCommand());
+    glm::mat4 transform = glm::rotate(glm::mat4{1.0f}, glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
+    renderer.Submit(mesh.GetDrawCommand(transform));
     renderer.Flush();
     window.Update();
   }
