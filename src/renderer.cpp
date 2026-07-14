@@ -2,20 +2,27 @@
 
 #include <glad/gl.h>
 
+#include "data_buffer.hpp"
+#include "utils/logger.hpp"
+
 namespace ptah {
 
 Renderer::Renderer(unsigned int width, unsigned int height)
-    : m_width(width), m_height(height), m_settings{} {
+    : m_width(width),
+      m_height(height),
+      m_settings{},
+      m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
   glViewport(0, 0, m_width, m_height);
 }
 
 Renderer::~Renderer() {}
 
-void Renderer::Begin(const Camera& camera) {
-  // TODO: use uniform buffer
-  m_settings.default_shader.Set("uProjection", camera.projection);
-  m_settings.default_shader.Set("uView", camera.view);
-  m_settings.default_shader.Set("uProjView", camera.projection * camera.view);
+void Renderer::Begin(const Camera& camera, float time) {
+  PerFrameData data{camera.projection, camera.view,
+                    camera.projection * camera.view, time};
+
+  m_frame_data.SetData(&data, sizeof(data));
+  m_frame_data.BindUniform(0);
 }
 
 void Renderer::Submit(const DrawCommand& cmd) { m_commands.push_back(cmd); }

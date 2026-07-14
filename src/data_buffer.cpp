@@ -45,4 +45,8 @@ void DataBuffer::SetData(const void* data, unsigned int size,
   glBufferSubData(resolved_type, offset, size, data);
 }
 
+void DataBuffer::BindUniform(unsigned int index) {
+  glBindBufferBase(GL_UNIFORM_BUFFER, index, m_handle.Id());
+}
+
 }  // namespace ptah
