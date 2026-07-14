@@ -2,16 +2,10 @@
 
 #include <glad/gl.h>
 
-#include "utils/file_loading.hpp"
-
 namespace ptah {
 
 Renderer::Renderer(unsigned int width, unsigned int height)
-    : m_width(width),
-      m_height(height),
-      m_default_shader(
-          ptah::utils::load_file(PTAH_SHADERS_DIR "/default.vert"),
-          ptah::utils::load_file(PTAH_SHADERS_DIR "/default.frag")) {
+    : m_width(width), m_height(height), m_settings{} {
   glViewport(0, 0, m_width, m_height);
 }
 
@@ -29,9 +23,13 @@ void Renderer::m_Draw(const DrawCommand& cmd) {
 }
 
 void Renderer::Flush() {
-  glClearColor(0.1, 0.1, 0.1, 1.0);
+  glClearColor(m_settings.background.r, m_settings.background.g,
+               m_settings.background.b, m_settings.background.a);
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  m_default_shader.Use();
+  if (m_settings.override_shaders) {
+    m_settings.default_shader.Use();
+  }
   for (auto cmd : m_commands) {
     m_Draw(cmd);
   }
