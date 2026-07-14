@@ -43,7 +43,7 @@ void Shader::m_CheckCompileStatus(unsigned int id, const char* type) {
   }
 }
 
-void Shader::m_CheckLinkStatus(const Handle& program) {
+void Shader::m_CheckLinkStatus(const ProgramHandle& program) {
   int status;
   glGetProgramiv(program.Id(), GL_LINK_STATUS, &status);
   if (status != GL_TRUE) {

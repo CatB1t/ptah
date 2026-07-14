@@ -4,7 +4,7 @@
 
 namespace ptah {
 struct DrawCommand {
-  Handle handle;
+  MeshHandle handle;
   unsigned int count;
   bool indexed;
 };

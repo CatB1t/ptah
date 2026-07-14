@@ -7,11 +7,11 @@
 namespace ptah {
 class Shader {
  private:
-  Handle m_program;
+  ProgramHandle m_program;
 
   unsigned int m_LoadShaderSource(const std::string& source, unsigned int type);
   void m_CheckCompileStatus(unsigned int id, const char* type);
-  void m_CheckLinkStatus(const Handle& program);
+  void m_CheckLinkStatus(const ProgramHandle& program);
 
  public:
   Shader(const std::string& vertex_source, const std::string& fragment_source);

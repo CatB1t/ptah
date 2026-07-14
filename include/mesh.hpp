@@ -9,7 +9,7 @@
 namespace ptah {
 class Mesh {
  private:
-  Handle m_vao;
+  MeshHandle m_vao;
   unsigned int m_count;
   bool m_indexed;
 
