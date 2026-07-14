@@ -21,6 +21,6 @@ class Mesh {
   Mesh(const std::vector<Vertex>& vertices,
        const std::vector<unsigned int> indices);
   void Dispose();
-  DrawCommand GetDrawCommand() const;
+  DrawCommand GetDrawCommand(const glm::mat4& transform) const;
 };
 }  // namespace ptah

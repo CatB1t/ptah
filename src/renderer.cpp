@@ -37,7 +37,9 @@ void Renderer::Flush() {
   if (m_settings.override_shaders) {
     m_settings.default_shader.Use();
   }
+  Shader* effective_shader = &m_settings.default_shader;
   for (auto cmd : m_commands) {
+    effective_shader->Set("uModel", cmd.transform);
     m_Draw(cmd);
   }
   m_commands.clear();
