@@ -28,6 +28,13 @@ FetchContent_Declare(spdlog
 )
 FetchContent_MakeAvailable(spdlog)
 
+FetchContent_Declare(glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG 1.0.3
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(glm)
+
 find_package(OpenGL REQUIRED)
 
 add_library(glad STATIC external/glad/src/gl.c)
@@ -53,6 +60,7 @@ target_link_libraries(ptah PRIVATE
     OpenGL::GL
     glfw
     spdlog::spdlog
+    glm::glm
 )
 target_compile_definitions(ptah
 PRIVATE
