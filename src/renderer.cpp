@@ -27,8 +27,8 @@ void Renderer::Begin(const Camera& camera, float time) {
 
 void Renderer::Submit(const DrawCommand& cmd) { m_commands.push_back(cmd); }
 
-Shader* Renderer::m_ResolveShader(Shader* other) {
-  return (m_settings.override_shaders) ? &m_settings.default_shader : other;
+Material* Renderer::m_ResolveMaterial(Material* other) {
+  return (m_settings.override_materials) ? &m_settings.default_material : other;
 }
 
 void Renderer::m_Draw(const DrawCommand& cmd) {
@@ -45,10 +45,10 @@ void Renderer::Flush() {
                m_settings.background.b, m_settings.background.a);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  Shader* effective_shader = m_ResolveShader(nullptr);
+  Material* effective_material = m_ResolveMaterial(nullptr);
   for (auto cmd : m_commands) {
-    effective_shader->Use();
-    effective_shader->Set("uModel", cmd.transform);
+    effective_material->Use();
+    effective_material->Set("uModel", cmd.transform);
     m_Draw(cmd);
   }
   m_commands.clear();

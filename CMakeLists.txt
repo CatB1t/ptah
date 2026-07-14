@@ -48,7 +48,7 @@ add_executable(ptah
     src/window.cpp
     src/renderer.cpp
     src/mesh.cpp
-    src/shader.cpp
+    src/material.cpp
     src/data_buffer.cpp
     src/utils/file_loading.cpp
     src/utils/logger.cpp

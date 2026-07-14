@@ -6,17 +6,17 @@
 #include "camera.hpp"
 #include "data_buffer.hpp"
 #include "draw_command.hpp"
-#include "shader.hpp"
+#include "material.hpp"
 #include "utils/file_loading.hpp"
 
 namespace ptah {
 
 struct RendererSettings {
   glm::vec4 background{0.1, 0.1, 0.1, 1.0};
-  Shader default_shader{
+  Material default_material{
       ptah::utils::load_file(PTAH_SHADERS_DIR "/default.vert"),
       ptah::utils::load_file(PTAH_SHADERS_DIR "/default.frag")};
-  bool override_shaders = true;
+  bool override_materials = true;
 };
 
 class Renderer {
@@ -35,7 +35,7 @@ class Renderer {
   DataBuffer m_frame_data;
 
   void m_Draw(const DrawCommand& cmd);
-  Shader* m_ResolveShader(Shader* other);
+  Material* m_ResolveMaterial(Material* other);
 
  public:
   Renderer(unsigned int width, unsigned int height);

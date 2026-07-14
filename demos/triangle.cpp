@@ -9,7 +9,6 @@
 #include "context.hpp"
 #include "mesh.hpp"
 #include "renderer.hpp"
-#include "shader.hpp"
 #include "window.hpp"
 
 int main() {

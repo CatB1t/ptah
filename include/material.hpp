@@ -6,17 +6,18 @@
 #include "handle.hpp"
 
 namespace ptah {
-class Shader {
+class Material {
  private:
-  ProgramHandle m_program;
+  MaterialHandle m_program;
 
   unsigned int m_LoadShaderSource(const std::string& source, unsigned int type);
   void m_CheckCompileStatus(unsigned int id, const char* type);
-  void m_CheckLinkStatus(const ProgramHandle& program);
+  void m_CheckLinkStatus(const MaterialHandle& program);
   int m_GetUniformLocation(const char* name);
 
  public:
-  Shader(const std::string& vertex_source, const std::string& fragment_source);
+  Material(const std::string& vertex_source,
+           const std::string& fragment_source);
   void Set(const char* name, const glm::mat4& matrix);
   void Set(const char* name, const glm::vec4& vec);
   void Set(const char* name, const glm::vec3& vec);

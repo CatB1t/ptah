@@ -1,4 +1,4 @@
-#include "shader.hpp"
+#include "material.hpp"
 
 #include <glad/gl.h>
 
@@ -10,8 +10,8 @@
 
 namespace ptah {
 
-Shader::Shader(const std::string& vertex_source,
-               const std::string& fragment_source)
+Material::Material(const std::string& vertex_source,
+                   const std::string& fragment_source)
     : m_program(glCreateProgram()) {
   unsigned int vertex_id = m_LoadShaderSource(vertex_source, GL_VERTEX_SHADER);
   unsigned int fragment_id =
@@ -22,8 +22,8 @@ Shader::Shader(const std::string& vertex_source,
   m_CheckLinkStatus(m_program);
 }
 
-unsigned int Shader::m_LoadShaderSource(const std::string& source,
-                                        unsigned int type) {
+unsigned int Material::m_LoadShaderSource(const std::string& source,
+                                          unsigned int type) {
   unsigned int id = glCreateShader(type);
   const char* type_str = type == GL_VERTEX_ARRAY ? "vertex" : "fragment";
   const int source_len = source.size();
@@ -34,7 +34,7 @@ unsigned int Shader::m_LoadShaderSource(const std::string& source,
   return id;
 }
 
-void Shader::m_CheckCompileStatus(unsigned int id, const char* type) {
+void Material::m_CheckCompileStatus(unsigned int id, const char* type) {
   int status;
   glGetShaderiv(id, GL_COMPILE_STATUS, &status);
   if (status != GL_TRUE) {
@@ -45,7 +45,7 @@ void Shader::m_CheckCompileStatus(unsigned int id, const char* type) {
   }
 }
 
-void Shader::m_CheckLinkStatus(const ProgramHandle& program) {
+void Material::m_CheckLinkStatus(const MaterialHandle& program) {
   int status;
   glGetProgramiv(program.Id(), GL_LINK_STATUS, &status);
   if (status != GL_TRUE) {
@@ -56,44 +56,44 @@ void Shader::m_CheckLinkStatus(const ProgramHandle& program) {
   }
 }
 
-void Shader::Use() { glUseProgram(m_program.Id()); }
+void Material::Use() { glUseProgram(m_program.Id()); }
 
-int Shader::m_GetUniformLocation(const char* name) {
+int Material::m_GetUniformLocation(const char* name) {
   int loc = glGetUniformLocation(m_program.Id(), name);
   if (loc < 0) {
-    PTAH_RENDER_WARN("Shader({}): uniform {} not found, value is ignored.",
+    PTAH_RENDER_WARN("Material({}): uniform {} not found, value is ignored.",
                      m_program.Id(), name);
   }
   return loc;
 }
 
-void Shader::Set(const char* name, const glm::mat4& matrix) {
+void Material::Set(const char* name, const glm::mat4& matrix) {
   int loc = m_GetUniformLocation(name);
   glProgramUniformMatrix4fv(m_program.Id(), loc, 1, GL_FALSE,
                             glm::value_ptr(matrix));
 }
 
-void Shader::Set(const char* name, const glm::vec4& vec) {
+void Material::Set(const char* name, const glm::vec4& vec) {
   int loc = m_GetUniformLocation(name);
   glProgramUniform4fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
 }
 
-void Shader::Set(const char* name, const glm::vec3& vec) {
+void Material::Set(const char* name, const glm::vec3& vec) {
   int loc = m_GetUniformLocation(name);
   glProgramUniform3fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
 }
 
-void Shader::Set(const char* name, float value) {
+void Material::Set(const char* name, float value) {
   int loc = m_GetUniformLocation(name);
   glProgramUniform1f(m_program.Id(), loc, value);
 }
 
-void Shader::Set(const char* name, int value) {
+void Material::Set(const char* name, int value) {
   int loc = m_GetUniformLocation(name);
   glProgramUniform1i(m_program.Id(), loc, value);
 }
 
-void Shader::Dispose() {
+void Material::Dispose() {
   glDeleteProgram(m_program.Id());
   m_program.Reset();
 }
