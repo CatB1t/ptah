@@ -43,7 +43,7 @@ target_link_libraries(glad PUBLIC OpenGL::GL)
 add_library(deps::glad ALIAS glad)
 
 add_executable(ptah
-    demo/triangle.cpp
+    demos/triangle.cpp
     src/context.cpp
     src/window.cpp
     src/renderer.cpp
