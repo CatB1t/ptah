@@ -2,6 +2,8 @@
 
 #include <glad/gl.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 
 #include "utils/logger.hpp"
@@ -55,6 +57,41 @@ void Shader::m_CheckLinkStatus(const ProgramHandle& program) {
 }
 
 void Shader::Use() { glUseProgram(m_program.Id()); }
+
+int Shader::m_GetUniformLocation(const char* name) {
+  int loc = glGetUniformLocation(m_program.Id(), name);
+  if (loc < 0) {
+    PTAH_RENDER_WARN("Shader({}): uniform {} not found, value is ignored.",
+                     m_program.Id(), name);
+  }
+  return loc;
+}
+
+void Shader::Set(const char* name, const glm::mat4& matrix) {
+  int loc = m_GetUniformLocation(name);
+  glProgramUniformMatrix4fv(m_program.Id(), loc, 1, GL_FALSE,
+                            glm::value_ptr(matrix));
+}
+
+void Shader::Set(const char* name, const glm::vec4& vec) {
+  int loc = m_GetUniformLocation(name);
+  glProgramUniform4fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
+}
+
+void Shader::Set(const char* name, const glm::vec3& vec) {
+  int loc = m_GetUniformLocation(name);
+  glProgramUniform3fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
+}
+
+void Shader::Set(const char* name, float value) {
+  int loc = m_GetUniformLocation(name);
+  glProgramUniform1f(m_program.Id(), loc, value);
+}
+
+void Shader::Set(const char* name, int value) {
+  int loc = m_GetUniformLocation(name);
+  glProgramUniform1i(m_program.Id(), loc, value);
+}
 
 void Shader::Dispose() {
   glDeleteProgram(m_program.Id());
