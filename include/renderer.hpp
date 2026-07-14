@@ -3,6 +3,7 @@
 #include <glm/vec4.hpp>
 #include <vector>
 
+#include "camera.hpp"
 #include "draw_command.hpp"
 #include "shader.hpp"
 #include "utils/file_loading.hpp"
@@ -29,6 +30,7 @@ class Renderer {
  public:
   Renderer(unsigned int width, unsigned int height);
   ~Renderer();
+  void Begin(const Camera& camera);
   void Submit(const DrawCommand& cmd);
   void Flush();
 };

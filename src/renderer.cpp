@@ -11,6 +11,13 @@ Renderer::Renderer(unsigned int width, unsigned int height)
 
 Renderer::~Renderer() {}
 
+void Renderer::Begin(const Camera& camera) {
+  // TODO: use uniform buffer
+  m_settings.default_shader.Set("uProjection", camera.projection);
+  m_settings.default_shader.Set("uView", camera.view);
+  m_settings.default_shader.Set("uProjView", camera.projection * camera.view);
+}
+
 void Renderer::Submit(const DrawCommand& cmd) { m_commands.push_back(cmd); }
 
 void Renderer::m_Draw(const DrawCommand& cmd) {
