@@ -1,9 +1,9 @@
 #include "data_buffer.hpp"
 
 #include <glad/gl.h>
-#include "utils/logger.hpp"
 
 namespace ptah {
+
 unsigned int DataBuffer::m_ResolveType(BufferType type) {
   GLenum gl_type;
   switch (type) {
@@ -42,4 +42,5 @@ void DataBuffer::SetData(const void* data, unsigned int size,
   glBindBuffer(resolved_type, m_handle.Id());
   glBufferSubData(resolved_type, offset, size, data);
 }
+
 }  // namespace ptah
