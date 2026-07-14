@@ -2,7 +2,15 @@
 
 #include <glad/gl.h>
 
+#include "data_buffer.hpp"
+
 namespace ptah {
+
+void Mesh::m_SetAttribute(int type, unsigned int index, unsigned int count,
+                          unsigned int stride, unsigned int offset) {
+  glEnableVertexAttribArray(index);
+  glVertexAttribPointer(index, count, type, GL_FALSE, stride, (void*)offset);
+}
 
 Mesh::Mesh(const std::vector<Vertex>& vertices)
     : m_count(vertices.size()), m_indexed(false) {
@@ -11,13 +19,10 @@ Mesh::Mesh(const std::vector<Vertex>& vertices)
   m_vao.Set(vao);
   glBindVertexArray(m_vao.Id());
 
-  unsigned int vbo;
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0],
-               GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-  glEnableVertexAttribArray(0);
+  DataBuffer vertex_buffer{
+      BufferType::ARRAY, vertices.data(),
+      static_cast<unsigned int>(vertices.size() * sizeof(Vertex))};
+  m_SetAttribute(GL_FLOAT, 0, 3, sizeof(Vertex), 0);
   glBindVertexArray(0);
 }
 
@@ -29,19 +34,14 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
   m_vao.Set(vao);
   glBindVertexArray(m_vao.Id());
 
-  unsigned int buffers[2];
-  glGenBuffers(2, buffers);
-  glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
-               vertices.data(), GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[1]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
-               indices.data(), GL_STATIC_DRAW);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+  DataBuffer vertex_buffer{
+      BufferType::ARRAY, vertices.data(),
+      static_cast<unsigned int>(vertices.size() * sizeof(Vertex))};
+  DataBuffer indices_buffer{
+      BufferType::ELEMENT, indices.data(),
+      static_cast<unsigned int>(indices.size() * sizeof(unsigned int))};
+  m_SetAttribute(GL_FLOAT, 0, 3, sizeof(Vertex), 0);
   glBindVertexArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void Mesh::Dispose() {
