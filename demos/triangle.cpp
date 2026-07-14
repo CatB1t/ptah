@@ -20,9 +20,16 @@ int main() {
   std::vector<ptah::Vertex> vertices{
       {-0.5, -0.5, 0.0},
       {0.5, -0.5, 0.0},
-      {0.0, 0.5, 0.0},
+      {0.5, 0.5, 0.0},
+      {-0.5, 0.5, 0.0},
   };
-  ptah::Mesh mesh{vertices};
+
+  std::vector<unsigned int> indices{
+    0, 1, 2,
+    2, 3, 0
+  };
+
+  ptah::Mesh mesh{vertices, indices};
   ptah::Renderer renderer{1280, 720};
 
   while (!window.ShouldClose()) {

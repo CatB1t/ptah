@@ -13,6 +13,8 @@ class Renderer {
   std::vector<DrawCommand> m_commands;
   Shader m_default_shader;
 
+  void m_Draw(const DrawCommand& cmd);
+
  public:
   Renderer(unsigned int width, unsigned int height);
   ~Renderer();
