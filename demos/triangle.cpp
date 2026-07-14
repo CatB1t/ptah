@@ -1,5 +1,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
+#include <glm/glm.hpp>
+#include <glm/common.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <cstdlib>
 
@@ -31,8 +34,12 @@ int main() {
 
   ptah::Mesh mesh{vertices, indices};
   ptah::Renderer renderer{1280, 720};
+  ptah::Camera camera;
+  camera.view = glm::translate(camera.view, glm::vec3(0, 0, -5.0));
+  camera.projection = glm::perspective(glm::radians(45.0), 16.0/9.0, 0.01, 100.0);
 
   while (!window.ShouldClose()) {
+    renderer.Begin(camera);
     renderer.Submit(mesh.GetDrawCommand());
     renderer.Flush();
     window.Update();
