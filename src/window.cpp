@@ -23,6 +23,11 @@ Window::Window(const char* title, unsigned int width, unsigned int height)
 Window::~Window() { glfwDestroyWindow(m_window); }
 bool Window::ShouldClose() { return glfwWindowShouldClose(m_window); }
 void Window::Update() {
+  // TODO: for quick debugging
+  if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(m_window, true);
+  }
+
   glfwSwapBuffers(m_window);
   glfwPollEvents();
 }
