@@ -12,7 +12,6 @@ Window::Window(const char* title, unsigned int width, unsigned int height)
   utils::Logger::Init();
   m_window = glfwCreateWindow(m_width, m_height, m_title, nullptr, nullptr);
   if (!m_window) {
-    // TODO: use a better logging system.
     PTAH_RENDER_ERROR("Failed to initialize window {}", m_title);
     return;
   }
