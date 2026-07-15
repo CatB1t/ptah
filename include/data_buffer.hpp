@@ -13,8 +13,10 @@ class DataBuffer {
   unsigned int m_ResolveType(BufferType type);
 
  public:
+  DataBuffer(BufferType type);
   DataBuffer(BufferType type, unsigned int size);
   DataBuffer(BufferType type, const void* data, unsigned int size);
+  void Resize(unsigned int size);
   void SetData(const void* data, unsigned int size, unsigned int offset = 0);
   void BindUniform(
       unsigned int index);  // TODO: may not the best place to put it here?

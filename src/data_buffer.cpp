@@ -19,6 +19,14 @@ unsigned int DataBuffer::m_ResolveType(BufferType type) {
   return -1;
 }
 
+DataBuffer::DataBuffer(BufferType type) : m_type(type) {
+  unsigned int temp_id;
+  glGenBuffers(1, &temp_id);
+  m_handle = BufferHandle{temp_id};
+  GLenum resolved_type = m_ResolveType(type);
+  glBindBuffer(resolved_type, m_handle.Id());
+}
+
 DataBuffer::DataBuffer(BufferType type, unsigned int size) : m_type(type) {
   unsigned int temp_id;
   glGenBuffers(1, &temp_id);
@@ -36,6 +44,12 @@ DataBuffer::DataBuffer(BufferType type, const void* data, unsigned int size)
   GLenum resolved_type = m_ResolveType(type);
   glBindBuffer(resolved_type, m_handle.Id());
   glBufferData(resolved_type, size, data, GL_STATIC_DRAW);
+}
+
+void DataBuffer::Resize(unsigned int size) {
+  GLenum resolved_type = m_ResolveType(m_type);
+  glBindBuffer(resolved_type, m_handle.Id());
+  glBufferData(resolved_type, size, nullptr, GL_STATIC_DRAW);
 }
 
 void DataBuffer::SetData(const void* data, unsigned int size,
