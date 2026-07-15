@@ -9,7 +9,13 @@
 
 namespace ptah {
 
+struct MaterialBlock {
+  int index;
+  int size;
+};
+
 struct Layout {
+  std::string name;
   unsigned int type;  // GL Types
   int length;         // Number of elements
   int offset;         // Offset
@@ -27,6 +33,10 @@ class Material {
   void m_CheckCompileStatus(unsigned int id, const char* type);
   void m_CheckLinkStatus(const MaterialHandle& program);
   int m_GetUniformLocation(const char* name);
+
+  std::vector<int> m_GetBlockUniformIndices(unsigned int block_index);
+  MaterialBlock m_FetchBlockMetadata();
+  Layout m_GetUniformLayout(unsigned int uniform_index);
   void m_ResolveLayout();
 
  public:

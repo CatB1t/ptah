@@ -97,50 +97,76 @@ void Material::Set(const char* name, int value) {
   glProgramUniform1i(m_program.Id(), loc, value);
 }
 
-void Material::m_ResolveLayout() {
-  int material_block_idx = glGetUniformBlockIndex(m_program.Id(), "uMaterial");
-  if (material_block_idx == GL_INVALID_INDEX) {
+MaterialBlock Material::m_FetchBlockMetadata() {
+  const int program_id = m_program.Id();
+  const char* block_name = "uMaterial";
+
+  int block_idx = glGetUniformBlockIndex(program_id, block_name);
+  if (block_idx == GL_INVALID_INDEX) {
     PTAH_RENDER_DEBUG("No material block to resolve, should define uMaterial.");
-    return;
+    return {-1, 0};
   }
 
+  int block_size = 0;
+  glGetActiveUniformBlockiv(m_program.Id(), block_idx,
+                            GL_UNIFORM_BLOCK_DATA_SIZE, &block_size);
+  return {block_idx, block_size};
+}
+
+std::vector<int> Material::m_GetBlockUniformIndices(unsigned int block_index) {
   const int program_id = m_program.Id();
-
-  glGetActiveUniformBlockiv(m_program.Id(), material_block_idx,
-                            GL_UNIFORM_BLOCK_DATA_SIZE, &m_block_size);
-
   int n_active_uniforms;
-  glGetActiveUniformBlockiv(program_id, material_block_idx,
+  glGetActiveUniformBlockiv(program_id, block_index,
                             GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS,
                             &n_active_uniforms);
 
   std::vector<int> uniform_indices(n_active_uniforms);
-  glGetActiveUniformBlockiv(program_id, material_block_idx,
+  glGetActiveUniformBlockiv(program_id, block_index,
                             GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES,
                             uniform_indices.data());
 
-  PTAH_RENDER_DEBUG("uMaterial Block @ {}: Members: {}, Size: {}",
-                    material_block_idx, n_active_uniforms, m_block_size);
+  return uniform_indices;
+}
 
-  for (unsigned int idx : uniform_indices) {
-    int name_length;
-    glGetActiveUniformsiv(program_id, 1, &idx, GL_UNIFORM_NAME_LENGTH,
-                          &name_length);
+Layout Material::m_GetUniformLayout(unsigned int uniform_index) {
+  const int program_id = m_program.Id();
+  int name_length;
+  glGetActiveUniformsiv(program_id, 1, &uniform_index, GL_UNIFORM_NAME_LENGTH,
+                        &name_length);
 
-    Layout layout;
-    std::string name_str(name_length - 1, 'x');
-    char* name = name_str.data();
-    glGetActiveUniform(program_id, idx, name_length, nullptr, &layout.length,
-                       &layout.type, name);
-    glGetActiveUniformsiv(program_id, 1, &idx, GL_UNIFORM_OFFSET,
-                          &layout.offset);
+  Layout layout;
+  layout.name.resize(name_length - 1);
+  char* name = layout.name.data();
+  glGetActiveUniform(program_id, uniform_index, name_length, nullptr,
+                     &layout.length, &layout.type, name);
+  glGetActiveUniformsiv(program_id, 1, &uniform_index, GL_UNIFORM_OFFSET,
+                        &layout.offset);
+
+  return layout;
+}
+
+void Material::m_ResolveLayout() {
+  const int program_id = m_program.Id();
+
+  auto material_block = m_FetchBlockMetadata();
+  if (material_block.index < 0) {
+    return;
+  }
+
+  auto uniform_indices = m_GetBlockUniformIndices(material_block.index);
+  m_block_size = material_block.size;
+  PTAH_RENDER_DEBUG("uMaterial Block [{} bytes] members: {}",
+                    material_block.size, uniform_indices.size());
+
+  for (unsigned int uniform_index : uniform_indices) {
+    auto layout = m_GetUniformLayout(uniform_index);
 
     PTAH_RENDER_DEBUG(
-        "uMaterial Block @ {}: [uniform {}]: offset: {}, type: "
+        "uMaterial Block [uniform {}]: offset: {}, type: "
         "{:#04x}",
-        material_block_idx, name_str, layout.offset, layout.type);
+        layout.name, layout.offset, layout.type);
 
-    m_block_uniforms.insert({name_str, layout});
+    m_block_uniforms.insert({layout.name, layout});
   }
 
   m_default_block.resize(m_block_size);
