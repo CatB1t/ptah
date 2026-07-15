@@ -13,7 +13,7 @@ namespace ptah {
 
 Material::Material(const std::string& vertex_source,
                    const std::string& fragment_source)
-    : m_program(glCreateProgram()) {
+    : m_program(glCreateProgram()), m_block_buffer{BufferType::UNIFORM} {
   unsigned int vertex_id = m_LoadShaderSource(vertex_source, GL_VERTEX_SHADER);
   unsigned int fragment_id =
       m_LoadShaderSource(fragment_source, GL_FRAGMENT_SHADER);
@@ -21,6 +21,7 @@ Material::Material(const std::string& vertex_source,
   glAttachShader(m_program.Id(), fragment_id);
   glLinkProgram(m_program.Id());
   m_CheckLinkStatus(m_program);
+  m_ResolveLayout();
 }
 
 unsigned int Material::m_LoadShaderSource(const std::string& source,
@@ -94,10 +95,10 @@ void Material::Set(const char* name, int value) {
   glProgramUniform1i(m_program.Id(), loc, value);
 }
 
-void Material::ResolveLayout() {
+void Material::m_ResolveLayout() {
   int materialBlockIdx = glGetUniformBlockIndex(m_program.Id(), "uMaterial");
   if (materialBlockIdx == GL_INVALID_INDEX) {
-    PTAH_RENDER_DEBUG("No material block to resolve.");
+    PTAH_RENDER_DEBUG("No material block to resolve, should define uMaterial.");
     return;
   }
 
@@ -141,21 +142,28 @@ void Material::ResolveLayout() {
                           &name_length);
 
     Layout layout;
-    layout.name.resize(name_length);
-    char* name = layout.name.data();
-    glGetActiveUniform(m_program.Id(), uniform_indices[j], 512, nullptr,
-                       &layout.length, &layout.type, name);
+    std::string name_str;
+    name_str.resize(name_length);
+    char* name = name_str.data();
+    int written;
+    glGetActiveUniform(m_program.Id(), uniform_indices[j], name_length,
+                       &written, &layout.length, &layout.type, name);
     glGetActiveUniformsiv(m_program.Id(), 1, &idx, GL_UNIFORM_OFFSET,
                           &layout.offset);
+    name_str.resize(written);
 
     PTAH_RENDER_DEBUG(
         "Block {} > Uniform {}: Name: {}, Offset: {}, Type: "
         "{:#04x}",
-        materialBlockIdx, j, layout.name, layout.offset, layout.type);
+        materialBlockIdx, j, name_str, layout.offset, layout.type);
+
+    m_block_uniforms.insert({name_str, layout});
   }
 
-  delete temp;
-  delete uniform_indices;
+  m_block.resize(blockSize);
+  m_block_buffer.Resize(blockSize);
+  delete[] temp;
+  delete[] uniform_indices;
 }
 
 void Material::Dispose() {
