@@ -14,8 +14,8 @@ Renderer::Renderer(unsigned int width, unsigned int height)
       m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
   glViewport(0, 0, m_width, m_height);
 
-  m_settings.default_material.SetBlockUniform("color",
-                                              glm::vec4(1.0, 0.0, 0.0, 1.0));
+  m_settings.default_instance = m_settings.default_material.createInstance();
+  m_settings.default_instance->SetBlockUniform("color", glm::vec4(1.0, 1.0, 1.0, 1.0));
 }
 
 Renderer::~Renderer() {}
@@ -30,8 +30,8 @@ void Renderer::Begin(const Camera& camera, float time) {
 
 void Renderer::Submit(const DrawCommand& cmd) { m_commands.push_back(cmd); }
 
-Material* Renderer::m_ResolveMaterial(Material* other) {
-  return (m_settings.override_materials) ? &m_settings.default_material : other;
+MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
+  return (m_settings.override_materials) ? m_settings.default_instance : other;
 }
 
 void Renderer::m_Draw(const DrawCommand& cmd) {
@@ -48,10 +48,11 @@ void Renderer::Flush() {
                m_settings.background.b, m_settings.background.a);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  Material* effective_material = m_ResolveMaterial(nullptr);
+  MaterialInstance* effective_material = m_ResolveMaterial(nullptr);
   for (auto cmd : m_commands) {
-    effective_material->Use();
-    effective_material->Set("uModel", cmd.transform);
+    effective_material->Base().Use();
+    effective_material->Base().Set("uModel", cmd.transform);
+    effective_material->Bind();
     m_Draw(cmd);
   }
   m_commands.clear();

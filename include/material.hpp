@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <glm/glm.hpp>
 #include <string>
 #include <unordered_map>
@@ -16,12 +17,46 @@ struct Layout {
   int offset;         // Offset
 };
 
+struct _SyncBuffer {
+  unsigned int size = 0;
+  std::vector<uint8_t> buffer;
+  DataBuffer gpu_buffer;
+  bool is_dirty = true;
+
+  _SyncBuffer() : gpu_buffer{BufferType::UNIFORM} {};
+  _SyncBuffer(unsigned int size)
+      : size(size), gpu_buffer{BufferType::UNIFORM, size}, buffer(size) {
+    std::fill(buffer.begin(), buffer.end(), 1);
+  };
+
+  void Allocate(unsigned int size) {
+    this->size = size;
+    buffer.resize(size);
+    gpu_buffer.Resize(size);
+    std::fill(buffer.begin(), buffer.end(), 1);
+  };
+
+  void SetData(const void* data, unsigned int size, unsigned int offset) {
+    assert(offset + size <= buffer.size());
+    memcpy(buffer.data() + offset, data, size);
+    is_dirty = true;
+  }
+
+  void Sync() {
+    if (is_dirty) {
+      PTAH_RENDER_DEBUG("Syncing Mateiral Instance to GPU");
+      gpu_buffer.SetData(buffer.data(), buffer.size());
+      is_dirty = false;
+    }
+  }
+};
+
 class Material {
  private:
+  friend class MaterialInstance;
   MaterialHandle m_program;
-  std::vector<uint8_t> m_block;
   std::unordered_map<std::string, Layout> m_block_uniforms;
-  DataBuffer m_block_buffer;
+  unsigned int m_block_size = 0;
 
   unsigned int m_LoadShaderSource(const std::string& source, unsigned int type);
   void m_CheckCompileStatus(unsigned int id, const char* type);
@@ -39,24 +74,8 @@ class Material {
   void Set(const char* name, int value);
   void Use();
   void Dispose();
-
-  template <typename T>
-  void SetBlockUniform(const char* name, const T& data) {
-    if (!m_block_uniforms.contains(name)) {
-      PTAH_RENDER_WARN(
-          "Material block does not contain {}, value is ignored. {}", name,
-          m_block_uniforms.size());
-      return;
-    }
-
-    Layout& layout = m_block_uniforms.at(name);
-    assert(layout.offset + sizeof(data) <= m_block.size());
-    memcpy(m_block.data() + layout.offset, &data, sizeof(data));
-    PTAH_RENDER_DEBUG("{} at {} updated ", name, layout.offset);
-    m_block_buffer.SetData(m_block.data(), m_block.size(), 0);
-    m_block_buffer.BindUniform(1);
-  };
-
+  unsigned int Size();
+  MaterialInstance* createInstance();
 };
 
 }  // namespace ptah

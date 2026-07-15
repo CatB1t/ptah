@@ -7,13 +7,14 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
+#include "material_instance.hpp"
 #include "utils/logger.hpp"
 
 namespace ptah {
 
 Material::Material(const std::string& vertex_source,
                    const std::string& fragment_source)
-    : m_program(glCreateProgram()), m_block_buffer{BufferType::UNIFORM} {
+    : m_program(glCreateProgram()) {
   unsigned int vertex_id = m_LoadShaderSource(vertex_source, GL_VERTEX_SHADER);
   unsigned int fragment_id =
       m_LoadShaderSource(fragment_source, GL_FRAGMENT_SHADER);
@@ -160,8 +161,8 @@ void Material::m_ResolveLayout() {
     m_block_uniforms.insert({name_str, layout});
   }
 
-  m_block.resize(blockSize);
-  m_block_buffer.Resize(blockSize);
+  m_block_size = blockSize;
+
   delete[] temp;
   delete[] uniform_indices;
 }
@@ -169,6 +170,12 @@ void Material::m_ResolveLayout() {
 void Material::Dispose() {
   glDeleteProgram(m_program.Id());
   m_program.Reset();
+}
+
+unsigned int Material::Size() { return m_block_size; }
+
+MaterialInstance* Material::createInstance() {
+  return new MaterialInstance(*this);
 }
 
 }  // namespace ptah
