@@ -9,6 +9,10 @@ layout(std140, binding = 0) uniform uFrameData {
   float time;
 };
 
+layout(std140, binding = 1) uniform uMaterial {
+  vec4 color;
+};
+
 void main() {
-  oColor = vec4(1.0, 1.0, 0.0, 1.0);
+  oColor = vec4(color);
 }

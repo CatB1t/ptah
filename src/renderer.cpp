@@ -13,6 +13,9 @@ Renderer::Renderer(unsigned int width, unsigned int height)
       m_settings{},
       m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
   glViewport(0, 0, m_width, m_height);
+
+  m_settings.default_material.SetBlockUniform("color",
+                                              glm::vec4(1.0, 0.0, 0.0, 1.0));
 }
 
 Renderer::~Renderer() {}
