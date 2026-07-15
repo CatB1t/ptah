@@ -2,11 +2,11 @@
 
 #include <glad/gl.h>
 
+#include <algorithm>
 #include <array>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
-#include <algorithm>
 
 #include "material_instance.hpp"
 #include "utils/logger.hpp"
@@ -98,76 +98,53 @@ void Material::Set(const char* name, int value) {
 }
 
 void Material::m_ResolveLayout() {
-  int materialBlockIdx = glGetUniformBlockIndex(m_program.Id(), "uMaterial");
-  if (materialBlockIdx == GL_INVALID_INDEX) {
+  int material_block_idx = glGetUniformBlockIndex(m_program.Id(), "uMaterial");
+  if (material_block_idx == GL_INVALID_INDEX) {
     PTAH_RENDER_DEBUG("No material block to resolve, should define uMaterial.");
     return;
   }
 
-  int length;
-  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
-                            GL_UNIFORM_BLOCK_NAME_LENGTH, &length);
+  const int program_id = m_program.Id();
 
-  char* temp = new char[length];
-  glGetActiveUniformBlockName(m_program.Id(), materialBlockIdx, length, nullptr,
-                              temp);
+  glGetActiveUniformBlockiv(m_program.Id(), material_block_idx,
+                            GL_UNIFORM_BLOCK_DATA_SIZE, &m_block_size);
 
-  int blockSize = 0;
-  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
-                            GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+  int n_active_uniforms;
+  glGetActiveUniformBlockiv(program_id, material_block_idx,
+                            GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS,
+                            &n_active_uniforms);
 
-  int active_uniforms;
-  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
-                            GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &active_uniforms);
-
-  int* uniform_indices = new int[active_uniforms];
-  glGetActiveUniformBlockiv(m_program.Id(), materialBlockIdx,
+  std::vector<int> uniform_indices(n_active_uniforms);
+  glGetActiveUniformBlockiv(program_id, material_block_idx,
                             GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES,
-                            uniform_indices);
-  std::stringstream ss;
+                            uniform_indices.data());
 
-  for (size_t i = 0; i < active_uniforms; ++i) {
-    ss << uniform_indices[i];
-    if (i < active_uniforms - 1) {
-      ss << ", ";  // Optional delimiter
-    }
-  }
+  PTAH_RENDER_DEBUG("uMaterial Block @ {}: Members: {}, Size: {}",
+                    material_block_idx, n_active_uniforms, m_block_size);
 
-  PTAH_RENDER_DEBUG(
-      "Block {}: Name: {}, Max Length: {}, Members: {}, Indices: {}, Size: {}",
-      materialBlockIdx, temp, length, active_uniforms, ss.str(), blockSize);
-
-  for (int j = 0; j < active_uniforms; j++) {
+  for (unsigned int idx : uniform_indices) {
     int name_length;
-    unsigned int idx = uniform_indices[j];
-    glGetActiveUniformsiv(m_program.Id(), 1, &idx, GL_UNIFORM_NAME_LENGTH,
+    glGetActiveUniformsiv(program_id, 1, &idx, GL_UNIFORM_NAME_LENGTH,
                           &name_length);
 
     Layout layout;
-    std::string name_str;
-    name_str.resize(name_length);
+    std::string name_str(name_length - 1, 'x');
     char* name = name_str.data();
-    int written;
-    glGetActiveUniform(m_program.Id(), uniform_indices[j], name_length,
-                       &written, &layout.length, &layout.type, name);
-    glGetActiveUniformsiv(m_program.Id(), 1, &idx, GL_UNIFORM_OFFSET,
+    glGetActiveUniform(program_id, idx, name_length, nullptr, &layout.length,
+                       &layout.type, name);
+    glGetActiveUniformsiv(program_id, 1, &idx, GL_UNIFORM_OFFSET,
                           &layout.offset);
-    name_str.resize(written);
 
     PTAH_RENDER_DEBUG(
-        "Block {} > Uniform {}: Name: {}, Offset: {}, Type: "
+        "uMaterial Block @ {}: [uniform {}]: offset: {}, type: "
         "{:#04x}",
-        materialBlockIdx, j, name_str, layout.offset, layout.type);
+        material_block_idx, name_str, layout.offset, layout.type);
 
     m_block_uniforms.insert({name_str, layout});
   }
 
-  m_block_size = blockSize;
   m_default_block.resize(m_block_size);
   std::fill(m_default_block.begin(), m_default_block.end(), 0);
-
-  delete[] temp;
-  delete[] uniform_indices;
 }
 
 void Material::Dispose() {
@@ -175,7 +152,7 @@ void Material::Dispose() {
   m_program.Reset();
 }
 
-unsigned int Material::Size() { return m_block_size; }
+int Material::Size() { return m_block_size; }
 
 MaterialInstance* Material::createInstance() {
   return new MaterialInstance(*this);

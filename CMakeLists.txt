@@ -51,6 +51,7 @@ add_executable(ptah
     src/material.cpp
     src/material_instance.cpp
     src/data_buffer.cpp
+    src/mirrored_buffer.cpp
     src/utils/file_loading.cpp
     src/utils/logger.cpp
 )

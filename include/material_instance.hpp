@@ -1,13 +1,14 @@
 #pragma once
 
-#include "data_buffer.hpp"
 #include "material.hpp"
+#include "mirrored_buffer.hpp"
 
 namespace ptah {
+
 class MaterialInstance {
  private:
   Material& m_base;
-  _SyncBuffer m_block;
+  MirroredBuffer m_block;
 
  public:
   MaterialInstance(Material& base);
@@ -28,4 +29,5 @@ class MaterialInstance {
                     layout.offset);
   };
 };
+
 };  // namespace ptah
