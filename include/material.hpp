@@ -57,6 +57,7 @@ class Material {
   MaterialHandle m_program;
   std::unordered_map<std::string, Layout> m_block_uniforms;
   unsigned int m_block_size = 0;
+  std::vector<uint8_t> m_default_block;
 
   unsigned int m_LoadShaderSource(const std::string& source, unsigned int type);
   void m_CheckCompileStatus(unsigned int id, const char* type);
@@ -76,6 +77,19 @@ class Material {
   void Dispose();
   unsigned int Size();
   MaterialInstance* createInstance();
+
+  template <typename T>
+  void SetBlockUniform(const char* name, const T& data) {
+    if (!m_block_uniforms.contains(name)) {
+      PTAH_RENDER_WARN("Material block does not contain {}, value is ignored.",
+                       name);
+      return;
+    }
+
+    Layout& layout = m_block_uniforms.at(name);
+    PTAH_RENDER_DEBUG("Material ({}): Default uniform {} updated ", m_program.Id(), name);
+    memcpy(m_default_block.data() + layout.offset, &data, sizeof(data));
+  };
 };
 
 }  // namespace ptah

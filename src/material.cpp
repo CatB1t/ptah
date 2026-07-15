@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <algorithm>
 
 #include "material_instance.hpp"
 #include "utils/logger.hpp"
@@ -162,6 +163,8 @@ void Material::m_ResolveLayout() {
   }
 
   m_block_size = blockSize;
+  m_default_block.resize(m_block_size);
+  std::fill(m_default_block.begin(), m_default_block.end(), 0);
 
   delete[] temp;
   delete[] uniform_indices;
