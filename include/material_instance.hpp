@@ -11,12 +11,10 @@ class MaterialInstance {
 
  public:
   MaterialInstance(Material& base);
-  void Bind();  // Called in loop, checks if data needs to be uploaded, and
-                // binds the uniform to binding slot
-
+  void Bind();
   Material& Base();
 
-  template <typename T>  // Called anywhere, set a uniform value
+  template <typename T>
   void SetBlockUniform(const char* name, const T& data) {
     if (!m_base.m_block_uniforms.contains(name)) {
       PTAH_RENDER_WARN("Material block does not contain {}, value is ignored.",
