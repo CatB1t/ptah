@@ -16,6 +16,7 @@ class Window {
   ~Window();
   bool ShouldClose();
   void Update();
+  double Time();
 };
 
 }  // namespace ptah

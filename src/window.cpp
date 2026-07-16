@@ -31,4 +31,6 @@ void Window::Update() {
   glfwPollEvents();
 }
 
+double Window::Time() { return glfwGetTime(); }
+
 }  // namespace ptah
