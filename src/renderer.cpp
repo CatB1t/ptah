@@ -3,6 +3,7 @@
 #include <glad/gl.h>
 
 #include "data_buffer.hpp"
+#include "material_props.hpp"
 #include "utils/logger.hpp"
 
 namespace ptah {
@@ -35,12 +36,31 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
   return (m_settings.override_materials) ? m_settings.default_instance : other;
 }
 
-void Renderer::m_Draw(const DrawCommand& cmd) {
+void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
+  if (props.cull) {
+    glEnable(GL_CULL_FACE);
+    glCullFace(props.CullFace());
+  } else {
+    glDisable(GL_CULL_FACE);
+  }
+
+  if (props.depth_test) {
+    glEnable(GL_DEPTH_TEST);
+  } else {
+    glDisable(GL_DEPTH_TEST);
+  }
+
+  if (props.draw_mode == DrawMode::Wireframe) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  } else {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  }
+
   glBindVertexArray(cmd.handle.Id());
   if (cmd.indexed) {
-    glDrawElements(GL_TRIANGLES, cmd.count, GL_UNSIGNED_INT, 0);
+    glDrawElements(props.DrawMode(), cmd.count, GL_UNSIGNED_INT, 0);
   } else {
-    glDrawArrays(GL_TRIANGLES, 0, cmd.count);
+    glDrawArrays(props.DrawMode(), 0, cmd.count);
   }
 }
 
@@ -49,12 +69,13 @@ void Renderer::Flush() {
                m_settings.background.b, m_settings.background.a);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  MaterialInstance* effective_material = m_ResolveMaterial(nullptr);
+  MaterialInstance* material_instance = m_ResolveMaterial(nullptr);
   for (auto cmd : m_commands) {
-    effective_material->Base().Use();
-    effective_material->Base().Set("uModel", cmd.transform);
-    effective_material->Bind();
-    m_Draw(cmd);
+    Material& material = material_instance->Base();
+    material.Use();
+    material.Set("uModel", cmd.transform);
+    material_instance->Bind();
+    m_Draw(cmd, material.Props());
   }
   m_commands.clear();
 }

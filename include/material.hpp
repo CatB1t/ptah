@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "handle.hpp"
+#include "material_props.hpp"
 #include "utils/logger.hpp"
 
 namespace ptah {
@@ -29,6 +30,8 @@ class Material {
   int m_block_size = 0;
   std::vector<uint8_t> m_default_block;
 
+  MaterialProps m_props;
+
   unsigned int m_LoadShaderSource(const std::string& source, unsigned int type);
   void m_CheckCompileStatus(unsigned int id, const char* type);
   void m_CheckLinkStatus(const MaterialHandle& program);
@@ -50,6 +53,7 @@ class Material {
   void Use();
   void Dispose();
   int Size();
+  MaterialProps& Props();
   MaterialInstance* createInstance();
 
   template <typename T>

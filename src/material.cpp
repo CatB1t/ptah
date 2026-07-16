@@ -184,4 +184,6 @@ MaterialInstance* Material::createInstance() {
   return new MaterialInstance(*this);
 }
 
+MaterialProps& Material::Props() { return m_props; }
+
 }  // namespace ptah

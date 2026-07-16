@@ -50,6 +50,7 @@ add_executable(ptah
     src/mesh.cpp
     src/material.cpp
     src/material_instance.cpp
+    src/material_props.cpp
     src/data_buffer.cpp
     src/mirrored_buffer.cpp
     src/utils/file_loading.cpp

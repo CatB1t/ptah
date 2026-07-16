@@ -8,6 +8,7 @@
 #include "draw_command.hpp"
 #include "material.hpp"
 #include "material_instance.hpp"
+#include "material_props.hpp"
 #include "utils/file_loading.hpp"
 
 namespace ptah {
@@ -36,7 +37,7 @@ class Renderer {
   std::vector<DrawCommand> m_commands;
   DataBuffer m_frame_data;
 
-  void m_Draw(const DrawCommand& cmd);
+  void m_Draw(const DrawCommand& cmd, MaterialProps& props);
   MaterialInstance* m_ResolveMaterial(MaterialInstance* other);
 
  public:
