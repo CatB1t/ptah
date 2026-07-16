@@ -22,13 +22,11 @@ int main() {
   std::vector<ptah::Vertex> vertices{
       {-0.5, -0.5, 0.0},
       {0.5, -0.5, 0.0},
-      {0.5, 0.5, 0.0},
-      {-0.5, 0.5, 0.0},
+      {0.0, 0.5, 0.0},
   };
 
   std::vector<unsigned int> indices{
     0, 1, 2,
-    2, 3, 0
   };
 
   ptah::Mesh mesh{vertices, indices};
@@ -37,10 +35,15 @@ int main() {
   camera.view = glm::translate(camera.view, glm::vec3(0, 0, -5.0));
   camera.projection = glm::perspective(glm::radians(45.0), 16.0/9.0, 0.01, 100.0);
 
+  auto* material = renderer.defaultMaterial().createInstance();
+  material->SetBlockUniform("color", glm::vec4(0.0, 0.5, 0.0, 1.0));
+
   while (!window.ShouldClose()) {
-    renderer.Begin(camera);
-    glm::mat4 transform = glm::rotate(glm::mat4{1.0f}, glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
-    renderer.Submit(mesh.GetDrawCommand(transform));
+    double time = window.Time();
+    renderer.Begin(camera, time);
+    glm::mat4 transform {1.0f};
+    transform = glm::scale(transform, glm::vec3(sin(time) * 0.5f + 1.0f));
+    renderer.Submit(mesh.GetDrawCommand(transform, *material));
     renderer.Flush();
     window.Update();
   }
