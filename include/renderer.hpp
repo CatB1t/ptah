@@ -45,7 +45,8 @@ class Renderer {
   Renderer(unsigned int width, unsigned int height);
   ~Renderer();
   void Begin(const Camera& camera, float time = 0.0f);
-  void Submit(const DrawCommand& cmd);
+  void Submit(const DrawCommand& command);
+  void Submit(const std::vector<DrawCommand>& commands);
   void Flush();
   Material& defaultMaterial();
 };

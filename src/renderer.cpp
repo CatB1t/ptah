@@ -32,7 +32,13 @@ void Renderer::Begin(const Camera& camera, float time) {
   m_frame_data.BindUniform(0);
 }
 
-void Renderer::Submit(const DrawCommand& cmd) { m_commands.push_back(cmd); }
+void Renderer::Submit(const DrawCommand& command) {
+  m_commands.push_back(command);
+}
+
+void Renderer::Submit(const std::vector<DrawCommand>& commands) {
+  m_commands.insert(m_commands.end(), commands.begin(), commands.end());
+}
 
 MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
   return (m_settings.override_materials) ? m_settings.default_instance : other;
@@ -99,8 +105,6 @@ void Renderer::Flush() {
   m_commands.clear();
 }
 
-Material& Renderer::defaultMaterial() {
-  return m_settings.default_material;
-};
+Material& Renderer::defaultMaterial() { return m_settings.default_material; };
 
 }  // namespace ptah
