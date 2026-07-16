@@ -47,6 +47,6 @@ class Renderer {
   void Begin(const Camera& camera, float time = 0.0f);
   void Submit(const DrawCommand& cmd);
   void Flush();
-  MaterialInstance& defaultMaterial();
+  Material& defaultMaterial();
 };
 }  // namespace ptah

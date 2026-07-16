@@ -99,8 +99,8 @@ void Renderer::Flush() {
   m_commands.clear();
 }
 
-MaterialInstance& Renderer::defaultMaterial() {
-  return *m_settings.default_instance;
+Material& Renderer::defaultMaterial() {
+  return m_settings.default_material;
 };
 
 }  // namespace ptah
