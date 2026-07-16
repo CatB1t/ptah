@@ -19,6 +19,8 @@ class MirroredBuffer {
  public:
   MirroredBuffer();
   MirroredBuffer(unsigned int size);
+  MirroredBuffer(const MirroredBuffer& buffer) = delete;
+  MirroredBuffer& operator=(const MirroredBuffer& other) = delete;
 
   DataBuffer& GPUBuffer();
   void Allocate(unsigned int size);
