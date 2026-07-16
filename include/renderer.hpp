@@ -19,7 +19,7 @@ struct RendererSettings {
       ptah::utils::load_file(PTAH_SHADERS_DIR "/default.vert"),
       ptah::utils::load_file(PTAH_SHADERS_DIR "/default.frag")};
   MaterialInstance* default_instance;
-  bool override_materials = true;
+  bool override_materials = false;
 };
 
 class Renderer {
