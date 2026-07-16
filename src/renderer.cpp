@@ -2,6 +2,8 @@
 
 #include <glad/gl.h>
 
+#include <algorithm>
+
 #include "data_buffer.hpp"
 #include "material_props.hpp"
 #include "utils/logger.hpp"
@@ -36,7 +38,7 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
   return (m_settings.override_materials) ? m_settings.default_instance : other;
 }
 
-void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
+void Renderer::m_SetState(MaterialProps& props) {
   if (props.cull) {
     glEnable(GL_CULL_FACE);
     glCullFace(props.CullFace());
@@ -55,7 +57,9 @@ void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
   } else {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
+}
 
+void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
   glBindVertexArray(cmd.handle.Id());
   if (cmd.indexed) {
     glDrawElements(props.DrawMode(), cmd.count, GL_UNSIGNED_INT, 0);
@@ -69,15 +73,34 @@ void Renderer::Flush() {
                m_settings.background.b, m_settings.background.a);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  MaterialInstance* material_instance = m_ResolveMaterial(nullptr);
-  for (auto cmd : m_commands) {
+
+  std::vector<DrawCommand> sorted_commands{m_commands};
+  std::sort(sorted_commands.begin(), sorted_commands.end(),
+            [](DrawCommand& a, DrawCommand& b) {
+              return a.material->Base() < b.material->Base();
+            });
+
+  Material* last_material = nullptr;
+
+  for (auto cmd : sorted_commands) {
+    auto material_instance = m_ResolveMaterial(cmd.material);
     Material& material = material_instance->Base();
-    material.Use();
-    material.Set("uModel", cmd.transform);
+
+    if (last_material != &material) {
+      material.Use();
+      m_SetState(material.Props());
+      last_material = &material;
+    };
+
     material_instance->Bind();
+    material.Set("uModel", cmd.transform);
     m_Draw(cmd, material.Props());
   }
   m_commands.clear();
 }
+
+MaterialInstance& Renderer::defaultMaterial() {
+  return *m_settings.default_instance;
+};
 
 }  // namespace ptah

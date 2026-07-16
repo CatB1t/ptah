@@ -48,7 +48,8 @@ void Mesh::Dispose() {
   // TODO
 }
 
-DrawCommand Mesh::GetDrawCommand(const glm::mat4& transform) const {
-  return DrawCommand{transform, m_vao, m_count, m_indexed};
+DrawCommand Mesh::GetDrawCommand(const glm::mat4& transform,
+                                 MaterialInstance& material) const {
+  return DrawCommand{transform, m_vao, &material, m_count, m_indexed};
 }
 }  // namespace ptah

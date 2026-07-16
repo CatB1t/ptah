@@ -55,6 +55,7 @@ class Material {
   int Size();
   MaterialProps& Props();
   MaterialInstance* createInstance();
+  bool operator<(const Material& other) const;
 
   template <typename T>
   void SetBlockUniform(const char* name, const T& data) {

@@ -186,4 +186,7 @@ MaterialInstance* Material::createInstance() {
 
 MaterialProps& Material::Props() { return m_props; }
 
+bool Material::operator<(const Material& other) const {
+  return m_program.Id() < other.m_program.Id();
+}
 }  // namespace ptah

@@ -5,9 +5,12 @@
 
 namespace ptah {
 
+class MaterialInstance;
+
 struct DrawCommand {
   glm::mat4 transform;
   MeshHandle handle;
+  MaterialInstance* material;  // TODO maybe use a handle later
   unsigned int count;
   bool indexed;
 };

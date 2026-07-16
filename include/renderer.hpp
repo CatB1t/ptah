@@ -37,6 +37,7 @@ class Renderer {
   std::vector<DrawCommand> m_commands;
   DataBuffer m_frame_data;
 
+  void m_SetState(MaterialProps& props);
   void m_Draw(const DrawCommand& cmd, MaterialProps& props);
   MaterialInstance* m_ResolveMaterial(MaterialInstance* other);
 
@@ -46,5 +47,6 @@ class Renderer {
   void Begin(const Camera& camera, float time = 0.0f);
   void Submit(const DrawCommand& cmd);
   void Flush();
+  MaterialInstance& defaultMaterial();
 };
 }  // namespace ptah
