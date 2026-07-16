@@ -35,6 +35,15 @@ FetchContent_Declare(glm
 )
 FetchContent_MakeAvailable(glm)
 
+set(ASSIMP_INSTALL OFF)
+set(ASSIMP_BUILD_TESTS OFF)
+FetchContent_Declare(assimp
+    GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG v6.0.5
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(assimp)
+
 find_package(OpenGL REQUIRED)
 
 add_library(glad STATIC external/glad/src/gl.c)
@@ -64,7 +73,9 @@ target_link_libraries(ptah PRIVATE
     glfw
     spdlog::spdlog
     glm::glm
+    assimp::assimp
 )
+
 target_compile_definitions(ptah
 PRIVATE
 GLFW_INCLUDE_NONE
