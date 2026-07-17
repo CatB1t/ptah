@@ -59,16 +59,83 @@ std::string preprocess_shader_source(const std::string& source,
 
 Material::Material(const char* vertex_filepath, const char* fragment_filepath,
                    const std::vector<std::string>& defines)
-    : m_program(glCreateProgram()) {
-  unsigned int vertex_id =
-      m_LoadShaderSource(vertex_filepath, GL_VERTEX_SHADER, defines);
-  unsigned int fragment_id =
-      m_LoadShaderSource(fragment_filepath, GL_FRAGMENT_SHADER, defines);
-  glAttachShader(m_program.Id(), vertex_id);
-  glAttachShader(m_program.Id(), fragment_id);
+    : m_program(glCreateProgram()),
+      m_vertex{vertex_filepath},
+      m_fragment{fragment_filepath},
+      m_defines(defines) {
+  m_vertex.id =
+      m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER, defines);
+  m_fragment.id =
+      m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER, defines);
+  glAttachShader(m_program.Id(), m_vertex.id);
+  glAttachShader(m_program.Id(), m_fragment.id);
   glLinkProgram(m_program.Id());
   m_CheckLinkStatus(m_program);
   m_ResolveLayout();
+  m_last_modified = m_LatestWriteTime();
+}
+
+std::filesystem::file_time_type Material::m_LatestWriteTime() {
+  using namespace std::filesystem;
+  std::error_code ec;
+  auto vertex_time = last_write_time(m_vertex.filepath, ec);
+  auto fragment_time = last_write_time(m_fragment.filepath, ec);
+  return std::max(vertex_time, fragment_time);
+}
+
+void Material::Reload() {
+  auto latest = m_LatestWriteTime();
+  if (latest <= m_last_modified) {
+    return;
+  }
+  // Stored even if compilation fails below, so we don't retry every call.
+  m_last_modified = latest;
+
+  unsigned int new_vertex_id =
+      m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER, m_defines);
+  unsigned int new_fragment_id =
+      m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER, m_defines);
+
+  if (!m_IsCompiled(new_vertex_id) || !m_IsCompiled(new_fragment_id)) {
+    PTAH_RENDER_ERROR(
+        "Material ({}): reload failed to compile, keeping previous shaders.",
+        m_program.Id());
+    glDeleteShader(new_vertex_id);
+    glDeleteShader(new_fragment_id);
+    return;
+  }
+
+  glDetachShader(m_program.Id(), m_vertex.id);
+  glDetachShader(m_program.Id(), m_fragment.id);
+  glAttachShader(m_program.Id(), new_vertex_id);
+  glAttachShader(m_program.Id(), new_fragment_id);
+  glLinkProgram(m_program.Id());
+  m_CheckLinkStatus(m_program);
+
+  if (!m_IsLinked()) {
+    PTAH_RENDER_ERROR(
+        "Material ({}): reload failed to link, restoring previous shaders.",
+        m_program.Id());
+    glDetachShader(m_program.Id(), new_vertex_id);
+    glDetachShader(m_program.Id(), new_fragment_id);
+    glDeleteShader(new_vertex_id);
+    glDeleteShader(new_fragment_id);
+    glAttachShader(m_program.Id(), m_vertex.id);
+    glAttachShader(m_program.Id(), m_fragment.id);
+    glLinkProgram(m_program.Id());
+    m_CheckLinkStatus(m_program);
+    return;
+  }
+
+  glDeleteShader(m_vertex.id);
+  glDeleteShader(m_fragment.id);
+  m_vertex.id = new_vertex_id;
+  m_fragment.id = new_fragment_id;
+
+  m_block_uniforms.clear();
+  m_block_size = 0;
+  m_ResolveLayout();
+  PTAH_RENDER_DEBUG("Material ({}): shaders reloaded.", m_program.Id());
 }
 
 unsigned int Material::m_LoadShaderSource(
@@ -97,10 +164,14 @@ unsigned int Material::m_LoadShaderSource(
   return id;
 }
 
-void Material::m_CheckCompileStatus(unsigned int id, const char* type) {
+bool Material::m_IsCompiled(unsigned int id) {
   int status;
   glGetShaderiv(id, GL_COMPILE_STATUS, &status);
-  if (status != GL_TRUE) {
+  return status == GL_TRUE;
+}
+
+void Material::m_CheckCompileStatus(unsigned int id, const char* type) {
+  if (!m_IsCompiled(id)) {
     char error_msg[512];
     PTAH_RENDER_ERROR("Failed to compile shader of type {}", type);
     glGetShaderInfoLog(id, 512, nullptr, error_msg);
@@ -108,10 +179,14 @@ void Material::m_CheckCompileStatus(unsigned int id, const char* type) {
   }
 }
 
-void Material::m_CheckLinkStatus(const MaterialHandle& program) {
+bool Material::m_IsLinked() {
   int status;
-  glGetProgramiv(program.Id(), GL_LINK_STATUS, &status);
-  if (status != GL_TRUE) {
+  glGetProgramiv(m_program.Id(), GL_LINK_STATUS, &status);
+  return status == GL_TRUE;
+}
+
+void Material::m_CheckLinkStatus(const MaterialHandle& program) {
+  if (!m_IsLinked()) {
     char buf[512];
     glGetProgramInfoLog(program.Id(), 512, nullptr, buf);
     PTAH_RENDER_ERROR("Failed to link shader program {}", program.Id());
@@ -233,6 +308,8 @@ void Material::m_ResolveLayout() {
 }
 
 void Material::Dispose() {
+  glDeleteShader(m_vertex.id);
+  glDeleteShader(m_fragment.id);
   glDeleteProgram(m_program.Id());
   m_program.Reset();
 }

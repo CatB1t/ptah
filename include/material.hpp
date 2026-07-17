@@ -23,6 +23,11 @@ struct Layout {
   int offset;         // Offset
 };
 
+struct ShaderStage {
+  std::filesystem::path filepath;
+  unsigned int id = 0;
+};
+
 class Material {
  private:
   friend class MaterialInstance;
@@ -31,12 +36,20 @@ class Material {
   int m_block_size = 0;
   std::vector<uint8_t> m_default_block;
 
+  ShaderStage m_vertex;
+  ShaderStage m_fragment;
+  std::filesystem::file_time_type m_last_modified;
+  std::vector<std::string> m_defines;
+
   MaterialProps m_props;
 
   unsigned int m_LoadShaderSource(std::filesystem::path filepath,
                                   unsigned int type,
                                   const std::vector<std::string>& prepend);
   void m_CheckCompileStatus(unsigned int id, const char* type);
+  bool m_IsCompiled(unsigned int id);
+  bool m_IsLinked();
+  std::filesystem::file_time_type m_LatestWriteTime();
   void m_CheckLinkStatus(const MaterialHandle& program);
   int m_GetUniformLocation(const char* name);
 
@@ -54,6 +67,7 @@ class Material {
   void Set(const char* name, float value);
   void Set(const char* name, int value);
   void Use();
+  void Reload();
   void Dispose();
   int Size();
   MaterialProps& Props();
