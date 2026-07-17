@@ -20,10 +20,10 @@ int main() {
   ptah::Window window{"Demo", 1280, 720};
 
   std::vector<ptah::Vertex> vertices{
-      {-0.5, -0.5, 0.0},
-      {0.5, -0.5, 0.0},
-      {0.5, 0.5, 0.0},
-      {-0.5, 0.5, 0.0},
+      {glm::vec3(-0.5, -0.5, 0.0)},
+      {glm::vec3(0.5, -0.5, 0.0)},
+      {glm::vec3(0.5, 0.5, 0.0)},
+      {glm::vec3(-0.5, 0.5, 0.0)},
   };
 
   std::vector<unsigned int> indices{

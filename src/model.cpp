@@ -75,19 +75,18 @@ void Model::m_LoadMesh(Renderer& renderer, const aiScene* scene, aiNode* node,
 
     for (int i = 0; i < mesh->mNumVertices; i++) {
       auto position = mesh->mVertices[i];
-      // Normals, UVs and tangents are not supported by Vertex yet.
-      // auto normal = mesh->mNormals[i];
-      // aiVector3D uv;
-      // if (mesh->mTextureCoords[0])
-      // {
-      //     uv = mesh->mTextureCoords[0][i];
-      // }
-      // auto tangent = mesh->mTangents[i];
+      auto normal = mesh->mNormals[i];
+      aiVector3D uv;
+      if (mesh->mTextureCoords[0]) {
+        uv = mesh->mTextureCoords[0][i];
+      }
+      auto tangent = mesh->mTangents[i];
 
-      // auto glmNormal = glm::vec3(normal.x, normal.y, normal.z);
-      // auto glmUV = glm::vec2(uv.x, uv.y);
-      // auto glmTangent = glm::vec3(tangent.x, tangent.y, tangent.z);
-      verts.push_back(Vertex{position.x, position.y, position.z});
+      auto aPosition = glm::vec3(position.x, position.y, position.z);
+      auto aNormal = glm::vec3(normal.x, normal.y, normal.z);
+      auto aUV = glm::vec2(uv.x, uv.y);
+      auto aTangent = glm::vec3(tangent.x, tangent.y, tangent.z);
+      verts.push_back(Vertex{aPosition, aNormal, aUV, aTangent});
     }
 
     for (int i = 0; i < mesh->mNumFaces; i++) {

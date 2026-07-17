@@ -23,6 +23,9 @@ Mesh::Mesh(const std::vector<Vertex>& vertices)
       BufferType::ARRAY, vertices.data(),
       static_cast<unsigned int>(vertices.size() * sizeof(Vertex))};
   m_SetAttribute(GL_FLOAT, 0, 3, sizeof(Vertex), 0);
+  m_SetAttribute(GL_FLOAT, 1, 3, sizeof(Vertex), offsetof(Vertex, normal));
+  m_SetAttribute(GL_FLOAT, 2, 2, sizeof(Vertex), offsetof(Vertex, uv));
+  m_SetAttribute(GL_FLOAT, 3, 3, sizeof(Vertex), offsetof(Vertex, tagnent));
   glBindVertexArray(0);
 }
 
