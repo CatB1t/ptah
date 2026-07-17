@@ -4,6 +4,7 @@
 #include <assimp/scene.h>
 
 #include <assimp/Importer.hpp>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 
@@ -11,10 +12,10 @@
 
 namespace ptah {
 namespace utils {
-std::string load_file(const char* path) {
+std::string load_file(std::filesystem::path path) {
   std::ifstream file(path, std::ios::in | std::ios::binary);
   if (!file.is_open()) {
-    PTAH_RENDER_ERROR("Failed to open file: {}", path);
+    PTAH_RENDER_ERROR("Failed to open file: {}", path.string());
     return std::string();
   }
   std::ostringstream contents;

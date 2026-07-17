@@ -15,9 +15,8 @@ namespace ptah {
 
 struct RendererSettings {
   glm::vec4 background{0.1, 0.1, 0.1, 1.0};
-  Material default_material{
-      ptah::utils::load_file(PTAH_SHADERS_DIR "/default.vert"),
-      ptah::utils::load_file(PTAH_SHADERS_DIR "/default.frag")};
+  Material default_material{PTAH_SHADERS_DIR "/default.vert",
+                            PTAH_SHADERS_DIR "/default.frag"};
   MaterialInstance* default_instance;
   bool override_materials = false;
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <glm/glm.hpp>
 #include <string>
 #include <unordered_map>
@@ -32,7 +33,9 @@ class Material {
 
   MaterialProps m_props;
 
-  unsigned int m_LoadShaderSource(const std::string& source, unsigned int type);
+  unsigned int m_LoadShaderSource(std::filesystem::path filepath,
+                                  unsigned int type,
+                                  const std::vector<std::string>& prepend);
   void m_CheckCompileStatus(unsigned int id, const char* type);
   void m_CheckLinkStatus(const MaterialHandle& program);
   int m_GetUniformLocation(const char* name);
@@ -43,8 +46,8 @@ class Material {
   void m_ResolveLayout();
 
  public:
-  Material(const std::string& vertex_source,
-           const std::string& fragment_source);
+  Material(const char* vertex_filepath, const char* fragment_filepath,
+           const std::vector<std::string>& defines = {});
   void Set(const char* name, const glm::mat4& matrix);
   void Set(const char* name, const glm::vec4& vec);
   void Set(const char* name, const glm::vec3& vec);

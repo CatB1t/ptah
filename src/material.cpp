@@ -4,21 +4,66 @@
 
 #include <algorithm>
 #include <array>
+#include <filesystem>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 #include "material_instance.hpp"
+#include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 
 namespace ptah {
 
-Material::Material(const std::string& vertex_source,
-                   const std::string& fragment_source)
+namespace _utils {
+
+std::filesystem::path get_filepath_from_include(
+    std::filesystem::path source_filepath, const std::string& include_line) {
+  using namespace std::filesystem;
+  int start = include_line.find_first_of('"') + 1;
+  int end = include_line.find_last_of('"');
+  assert(start != -1 && end != -1);
+  std::string file_to_include = include_line.substr(start, end - start);
+
+  auto source_file_dir = source_filepath.parent_path();
+  auto full_include_path = source_file_dir / path(file_to_include);
+  return full_include_path.make_preferred();
+}
+
+std::string preprocess_shader_source(const std::string& source,
+                                     std::filesystem::path filepath) {
+  std::istringstream source_in(source);
+  std::ostringstream source_out;
+  std::string temp_line;
+
+  while (std::getline(source_in, temp_line)) {
+    if (!temp_line.starts_with("#include")) {
+      source_out << temp_line << "\n";
+      continue;
+    }
+
+    auto include_path = get_filepath_from_include(filepath, temp_line);
+    std::string include_source = utils::load_file(include_path);
+    include_source = preprocess_shader_source(include_source, include_path);
+    source_out << "// #include " << include_path.filename().string() << "\n";
+    source_out << include_source << "\n";
+    source_out << "// #endinclude " << include_path.filename().string() << "\n";
+  }
+
+  return source_out.str();
+};
+
+}  // namespace _utils
+
+Material::Material(const char* vertex_filepath, const char* fragment_filepath,
+                   const std::vector<std::string>& defines)
     : m_program(glCreateProgram()) {
-  unsigned int vertex_id = m_LoadShaderSource(vertex_source, GL_VERTEX_SHADER);
+  unsigned int vertex_id =
+      m_LoadShaderSource(vertex_filepath, GL_VERTEX_SHADER, defines);
   unsigned int fragment_id =
-      m_LoadShaderSource(fragment_source, GL_FRAGMENT_SHADER);
+      m_LoadShaderSource(fragment_filepath, GL_FRAGMENT_SHADER, defines);
   glAttachShader(m_program.Id(), vertex_id);
   glAttachShader(m_program.Id(), fragment_id);
   glLinkProgram(m_program.Id());
@@ -26,15 +71,29 @@ Material::Material(const std::string& vertex_source,
   m_ResolveLayout();
 }
 
-unsigned int Material::m_LoadShaderSource(const std::string& source,
-                                          unsigned int type) {
+unsigned int Material::m_LoadShaderSource(
+    std::filesystem::path filepath, unsigned int type,
+    const std::vector<std::string>& prepend) {
   unsigned int id = glCreateShader(type);
   const char* type_str = type == GL_VERTEX_ARRAY ? "vertex" : "fragment";
+
+  std::string source = "#version 460 core\n\n";  // Must be first line
+  if (prepend.size()) {
+    for (const std::string& str : prepend) {
+      source += "#define " + str + "\n";
+    }
+    source += "\n// end prepends \n";
+  }
+
+  source +=
+      _utils::preprocess_shader_source(utils::load_file(filepath), filepath);
   const int source_len = source.size();
   const char* source_ptr = source.c_str();
   glShaderSource(id, 1, &source_ptr, &source_len);
   glCompileShader(id);
   m_CheckCompileStatus(id, type_str);
+  PTAH_RENDER_DEBUG("Loaded shader ({}) source {}:\n{}", type,
+                    filepath.string(), source);
   return id;
 }
 
