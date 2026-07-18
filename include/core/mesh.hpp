@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "draw_command.hpp"
-#include "handle.hpp"
-#include "vertex.hpp"
+#include "core/draw_command.hpp"
+#include "core/handle.hpp"
+#include "core/vertex.hpp"
 
 namespace ptah {
 class Mesh {

@@ -1,4 +1,4 @@
-#include "data_buffer.hpp"
+#include "core/data_buffer.hpp"
 
 #include <glad/gl.h>
 

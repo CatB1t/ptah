@@ -1,7 +1,7 @@
 #pragma once
 
-#include "material.hpp"
-#include "mirrored_buffer.hpp"
+#include "core/material.hpp"
+#include "core/mirrored_buffer.hpp"
 
 namespace ptah {
 

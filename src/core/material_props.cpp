@@ -1,4 +1,4 @@
-#include "material_props.hpp"
+#include "core/material_props.hpp"
 
 #include <glad/gl.h>
 

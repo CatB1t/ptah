@@ -5,8 +5,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "handle.hpp"
-#include "material_props.hpp"
+#include "core/handle.hpp"
+#include "core/material_props.hpp"
 #include "utils/logger.hpp"
 
 namespace ptah {

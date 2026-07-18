@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "draw_command.hpp"
-#include "mesh.hpp"
+#include "core/draw_command.hpp"
+#include "core/mesh.hpp"
 
 struct aiScene;
 struct aiNode;

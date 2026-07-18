@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "window.hpp"
+#include "core/window.hpp"
 
 namespace ptah {
 

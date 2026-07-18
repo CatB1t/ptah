@@ -3,12 +3,12 @@
 #include <glm/vec4.hpp>
 #include <vector>
 
-#include "camera.hpp"
-#include "data_buffer.hpp"
-#include "draw_command.hpp"
-#include "material.hpp"
-#include "material_instance.hpp"
-#include "material_props.hpp"
+#include "core/camera.hpp"
+#include "core/data_buffer.hpp"
+#include "core/draw_command.hpp"
+#include "core/material.hpp"
+#include "core/material_instance.hpp"
+#include "core/material_props.hpp"
 #include "utils/file_loading.hpp"
 
 namespace ptah {

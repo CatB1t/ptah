@@ -6,8 +6,8 @@
 #include <assimp/Importer.hpp>
 #include <glm/mat4x4.hpp>
 
-#include "material_instance.hpp"
-#include "renderer.hpp"
+#include "core/material_instance.hpp"
+#include "core/renderer.hpp"
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 

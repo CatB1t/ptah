@@ -1,7 +1,7 @@
 #pragma once
 
+#include "core/handle.hpp"
 #include "glm/mat4x4.hpp"
-#include "handle.hpp"
 
 namespace ptah {
 

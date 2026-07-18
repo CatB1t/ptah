@@ -1,4 +1,4 @@
-#include "material.hpp"
+#include "core/material.hpp"
 
 #include <glad/gl.h>
 
@@ -11,7 +11,7 @@
 #include <sstream>
 #include <string>
 
-#include "material_instance.hpp"
+#include "core/material_instance.hpp"
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 

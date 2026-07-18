@@ -1,8 +1,8 @@
-#include "mesh.hpp"
+#include "core/mesh.hpp"
 
 #include <glad/gl.h>
 
-#include "data_buffer.hpp"
+#include "core/data_buffer.hpp"
 
 namespace ptah {
 

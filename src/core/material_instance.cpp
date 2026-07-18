@@ -1,6 +1,6 @@
-#include "material_instance.hpp"
+#include "core/material_instance.hpp"
 
-#include "material.hpp"
+#include "core/material.hpp"
 
 namespace ptah {
 

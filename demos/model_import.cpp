@@ -6,10 +6,10 @@
 
 #include <cstdlib>
 
-#include "context.hpp"
-#include "mesh.hpp"
-#include "renderer.hpp"
-#include "window.hpp"
+#include "core/context.hpp"
+#include "core/mesh.hpp"
+#include "core/renderer.hpp"
+#include "core/window.hpp"
 #include "model.hpp"
 
 int main() {

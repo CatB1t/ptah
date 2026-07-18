@@ -53,16 +53,16 @@ add_library(deps::glad ALIAS glad)
 
 add_executable(ptah
     demos/triangle.cpp
-    src/context.cpp
-    src/window.cpp
-    src/renderer.cpp
-    src/mesh.cpp
-    src/material.cpp
-    src/material_instance.cpp
-    src/material_props.cpp
+    src/core/context.cpp
+    src/core/window.cpp
+    src/core/renderer.cpp
+    src/core/mesh.cpp
+    src/core/material.cpp
+    src/core/material_instance.cpp
+    src/core/material_props.cpp
     src/model.cpp
-    src/data_buffer.cpp
-    src/mirrored_buffer.cpp
+    src/core/data_buffer.cpp
+    src/core/mirrored_buffer.cpp
     src/input.cpp
     src/utils/file_loading.cpp
     src/utils/logger.cpp
