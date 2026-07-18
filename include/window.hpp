@@ -26,7 +26,7 @@ class Window {
   void Close();
   bool ShouldClose();
   void PollEvents();
-  void Update();
+  void SwapBuffers();
   double Time();
   void AddResizeCallback(WindowResizeFn callback);
   void AddKeyCallback(WindowKeyFn callback);

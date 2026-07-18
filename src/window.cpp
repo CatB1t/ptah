@@ -44,7 +44,7 @@ bool Window::ShouldClose() { return glfwWindowShouldClose(m_window); }
 
 void Window::PollEvents() { glfwPollEvents(); }
 
-void Window::Update() { glfwSwapBuffers(m_window); }
+void Window::SwapBuffers() { glfwSwapBuffers(m_window); }
 
 double Window::Time() { return glfwGetTime(); }
 

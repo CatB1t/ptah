@@ -49,6 +49,7 @@ int main() {
   ptah::MaterialInstance* _mats[2] = {first_mat, second_mat};
 
   while (!window.ShouldClose()) {
+    window.PollEvents();
     double time = window.Time();
     renderer.Begin(camera, time);
     const int nSquares = 16;
@@ -63,7 +64,7 @@ int main() {
       renderer.Submit(mesh.GetDrawCommand(transform, mat));
     }
     renderer.Flush();
-    window.Update();
+    window.SwapBuffers();
   }
 
   exit(EXIT_SUCCESS);

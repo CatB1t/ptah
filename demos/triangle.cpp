@@ -42,13 +42,14 @@ int main() {
   material->SetBlockUniform("color", glm::vec4(0.0, 0.5, 0.0, 1.0));
 
   while (!window.ShouldClose()) {
+    window.PollEvents();
     double time = window.Time();
     renderer.Begin(camera, time);
     glm::mat4 transform {1.0f};
     transform = glm::scale(transform, glm::vec3(sin(time) * 0.5f + 1.0f));
     renderer.Submit(mesh.GetDrawCommand(transform, *material));
     renderer.Flush();
-    window.Update();
+    window.SwapBuffers();
   }
 
   exit(EXIT_SUCCESS);

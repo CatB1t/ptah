@@ -30,6 +30,7 @@ int main() {
   camera.projection = glm::perspective(glm::radians(45.0), 16.0/9.0, 0.01, 100.0);
 
   while (!window.ShouldClose()) {
+    window.PollEvents();
     double time = window.Time();
     renderer.Begin(camera, time);
     glm::mat4 transform {1.0f};
@@ -37,7 +38,7 @@ int main() {
     transform = glm::scale(transform, glm::vec3(1.0));
     renderer.Submit(model.GetDrawCommands(transform));
     renderer.Flush();
-    window.Update();
+    window.SwapBuffers();
   }
 
   exit(EXIT_SUCCESS);
