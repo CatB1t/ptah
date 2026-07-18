@@ -47,6 +47,7 @@ class Renderer {
   void Submit(const DrawCommand& command);
   void Submit(const std::vector<DrawCommand>& commands);
   void Flush();
+  void Resize(unsigned int width, unsigned int height);
   Material& defaultMaterial();
 };
 }  // namespace ptah

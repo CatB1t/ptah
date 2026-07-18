@@ -17,6 +17,17 @@ Window::Window(const char* title, unsigned int width, unsigned int height)
   }
   glfwMakeContextCurrent(m_window);
   gladLoadGL(glfwGetProcAddress);
+
+  glfwSetWindowUserPointer(m_window, this);
+  glfwSetWindowSizeCallback(m_window, [](GLFWwindow* glfw_window, int width,
+                                         int height) {
+    auto* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
+    window->m_width = width;
+    window->m_height = height;
+    for (auto& fn : window->m_resize_fns) {
+      fn(width, height);
+    }
+  });
 }
 
 Window::~Window() { glfwDestroyWindow(m_window); }
@@ -32,5 +43,9 @@ void Window::Update() {
 }
 
 double Window::Time() { return glfwGetTime(); }
+
+void Window::AddResizeCallback(WindowResizeFn callback) {
+  m_resize_fns.push_back(callback);
+}
 
 }  // namespace ptah

@@ -106,6 +106,10 @@ void Renderer::Flush() {
   m_commands.clear();
 }
 
+void Renderer::Resize(unsigned int width, unsigned int height) {
+  glViewport(0, 0, width, height);
+}
+
 Material& Renderer::defaultMaterial() { return m_settings.default_material; };
 
 }  // namespace ptah

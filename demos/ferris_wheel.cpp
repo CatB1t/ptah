@@ -33,6 +33,10 @@ int main() {
 
   ptah::Mesh mesh{vertices, indices};
   ptah::Renderer renderer{1280, 720};
+  window.AddResizeCallback([&] (unsigned int width, unsigned int height) {
+    renderer.Resize(width, height);
+  });
+
   ptah::Camera camera;
   camera.view = glm::translate(camera.view, glm::vec3(0, 0, -5.0));
   camera.projection = glm::perspective(glm::radians(45.0), 16.0/9.0, 0.01, 100.0);
