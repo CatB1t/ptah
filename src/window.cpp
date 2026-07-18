@@ -28,24 +28,32 @@ Window::Window(const char* title, unsigned int width, unsigned int height)
       fn(width, height);
     }
   });
+
+  glfwSetKeyCallback(m_window, [](GLFWwindow* glfw_window, int key,
+                                  int scancode, int action, int mods) {
+    auto* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
+    for (auto& fn : window->m_key_fns) {
+      fn(key, action, mods);
+    }
+  });
 }
 
 Window::~Window() { glfwDestroyWindow(m_window); }
+void Window::Close() { glfwSetWindowShouldClose(m_window, true); }
 bool Window::ShouldClose() { return glfwWindowShouldClose(m_window); }
-void Window::Update() {
-  // TODO: for quick debugging
-  if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(m_window, true);
-  }
 
-  glfwSwapBuffers(m_window);
-  glfwPollEvents();
-}
+void Window::PollEvents() { glfwPollEvents(); }
+
+void Window::Update() { glfwSwapBuffers(m_window); }
 
 double Window::Time() { return glfwGetTime(); }
 
 void Window::AddResizeCallback(WindowResizeFn callback) {
   m_resize_fns.push_back(callback);
+}
+
+void Window::AddKeyCallback(WindowKeyFn callback) {
+  m_key_fns.push_back(callback);
 }
 
 }  // namespace ptah
