@@ -63,6 +63,7 @@ add_executable(ptah
     src/model.cpp
     src/data_buffer.cpp
     src/mirrored_buffer.cpp
+    src/input.cpp
     src/utils/file_loading.cpp
     src/utils/logger.cpp
 )
