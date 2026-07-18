@@ -36,6 +36,30 @@ Window::Window(const char* title, unsigned int width, unsigned int height)
       fn(key, action, mods);
     }
   });
+
+  glfwSetMouseButtonCallback(m_window, [](GLFWwindow* glfw_window, int key,
+                                          int action, int mods) {
+    auto* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
+    for (auto& fn : window->m_mouse_fns) {
+      fn(key, action, mods);
+    }
+  });
+
+  glfwSetCursorPosCallback(m_window, [](GLFWwindow* glfw_window, double x,
+                                        double y) {
+    auto* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
+    for (auto& fn : window->m_mouse_position_fns) {
+      fn(x, y);
+    }
+  });
+
+  glfwSetScrollCallback(m_window, [](GLFWwindow* glfw_window, double xdelta,
+                                     double ydelta) {
+    auto* window = static_cast<Window*>(glfwGetWindowUserPointer(glfw_window));
+    for (auto& fn : window->m_mouse_scroll_fns) {
+      fn(xdelta, ydelta);
+    }
+  });
 }
 
 Window::~Window() { glfwDestroyWindow(m_window); }
@@ -54,6 +78,18 @@ void Window::AddResizeCallback(WindowResizeFn callback) {
 
 void Window::AddKeyCallback(WindowKeyFn callback) {
   m_key_fns.push_back(callback);
+}
+
+void Window::AddMouseCallback(WindowMouseFn callback) {
+  m_mouse_fns.push_back(callback);
+}
+
+void Window::AddMousePositionCallback(WindowMousePositionFn callback) {
+  m_mouse_position_fns.push_back(callback);
+}
+
+void Window::AddMouseScrollCallback(WindowMouseScrollFn callback) {
+  m_mouse_scroll_fns.push_back(callback);
 }
 
 }  // namespace ptah
