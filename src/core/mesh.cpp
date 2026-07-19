@@ -12,6 +12,13 @@ void Mesh::m_SetAttribute(int type, unsigned int index, unsigned int count,
   glVertexAttribPointer(index, count, type, GL_FALSE, stride, (void*)offset);
 }
 
+void Mesh::m_ConfigureAttributes() {
+  m_SetAttribute(GL_FLOAT, 0, 3, sizeof(Vertex), 0);
+  m_SetAttribute(GL_FLOAT, 1, 3, sizeof(Vertex), offsetof(Vertex, normal));
+  m_SetAttribute(GL_FLOAT, 2, 2, sizeof(Vertex), offsetof(Vertex, uv));
+  m_SetAttribute(GL_FLOAT, 3, 3, sizeof(Vertex), offsetof(Vertex, tangent));
+}
+
 Mesh::Mesh(const std::vector<Vertex>& vertices)
     : m_count(vertices.size()), m_indexed(false) {
   unsigned int vao = 0;
@@ -22,10 +29,7 @@ Mesh::Mesh(const std::vector<Vertex>& vertices)
   DataBuffer vertex_buffer{
       BufferType::ARRAY, vertices.data(),
       static_cast<unsigned int>(vertices.size() * sizeof(Vertex))};
-  m_SetAttribute(GL_FLOAT, 0, 3, sizeof(Vertex), 0);
-  m_SetAttribute(GL_FLOAT, 1, 3, sizeof(Vertex), offsetof(Vertex, normal));
-  m_SetAttribute(GL_FLOAT, 2, 2, sizeof(Vertex), offsetof(Vertex, uv));
-  m_SetAttribute(GL_FLOAT, 3, 3, sizeof(Vertex), offsetof(Vertex, tangent));
+  m_ConfigureAttributes();
   glBindVertexArray(0);
 }
 
@@ -43,7 +47,7 @@ Mesh::Mesh(const std::vector<Vertex>& vertices,
   DataBuffer indices_buffer{
       BufferType::ELEMENT, indices.data(),
       static_cast<unsigned int>(indices.size() * sizeof(unsigned int))};
-  m_SetAttribute(GL_FLOAT, 0, 3, sizeof(Vertex), 0);
+  m_ConfigureAttributes();
   glBindVertexArray(0);
 }
 

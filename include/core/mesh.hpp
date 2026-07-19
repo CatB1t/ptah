@@ -16,6 +16,8 @@ class Mesh {
   void m_SetAttribute(int type, unsigned int index, unsigned int count,
                       unsigned int stride, unsigned int offset = 0);
 
+  void m_ConfigureAttributes();
+
  public:
   Mesh(const std::vector<Vertex>& vertices);
   Mesh(const std::vector<Vertex>& vertices,
