@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/camera.hpp"
+#include "core/window.hpp"
 #include "glm/gtc/constants.hpp"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
@@ -17,14 +18,16 @@ class OrbitCamera {
   float m_altitude = 0.1f;
   float m_azimuth = 0.0f;
   float m_distance = 50.0f;
+  double m_aspect_ratio = 1.0;
 
   const float m_horizontal_speed = 0.005;
   const float m_vertical_speed = 0.01;
 
+  void m_Resize(double width, double height);
   void m_Rotate(const glm::vec2& mouse_delta);
 
  public:
-  OrbitCamera();
+  OrbitCamera(Window& window);
   void Update(Input& input);
   Camera Data();
 };

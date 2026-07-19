@@ -10,7 +10,16 @@
 
 namespace ptah {
 
-OrbitCamera::OrbitCamera() {}
+OrbitCamera::OrbitCamera(Window& window) {
+  auto size = window.Size();
+  m_aspect_ratio = size.x / static_cast<double>(size.y);
+  window.AddResizeCallback(
+      [&](double width, double height) { m_Resize(width, height); });
+}
+
+void OrbitCamera::m_Resize(double width, double height) {
+  m_aspect_ratio = width / height;
+}
 
 void OrbitCamera::m_Rotate(const glm::vec2& mouse_delta) {
   if (glm::length(mouse_delta) <= 0.001) return;
@@ -39,7 +48,7 @@ Camera OrbitCamera::Data() {
       m_distance;
   glm::mat4 view = glm::lookAt(m_position, m_target, glm::vec3(0.0, 1.0, 0.0));
   glm::mat4 projection =
-      glm::perspective(glm::radians(60.0), 16.0 / 9.0, 0.01, 500.0);
+      glm::perspective(glm::radians(60.0), m_aspect_ratio, 0.01, 500.0);
   return Camera{view, projection};
 }
 
