@@ -11,6 +11,10 @@ Input::Input() {}
 Input::Input(Window& window) { Attach(window); }
 
 void Input::Attach(Window& window) {
+  auto size = window.Size();
+  m_width = size.x;
+  m_height = size.y;
+
   window.AddKeyCallback([&](int key, int action, int scancode) {
     m_keys[key] = (action != GLFW_RELEASE);
   });
@@ -24,6 +28,12 @@ void Input::Attach(Window& window) {
 
   window.AddMouseScrollCallback(
       [&](double x, double y) { m_mousescroll = {x, -y}; });
+
+  window.AddResizeCallback([&](unsigned int width, unsigned int height) {
+    if (height == 0) return;
+    m_width = width;
+    m_height = height;
+  });
 }
 
 void Input::Update() {
@@ -54,6 +64,11 @@ bool Input::IsMouseReleased(MouseButton key) const {
 }
 
 glm::vec2 Input::MouseDelta() const { return m_mousepos - m_mousepos_prev; }
+
+glm::vec2 Input::MouseDeltaNormalized() const {
+  auto delta = MouseDelta();
+  return {delta.x / (float)m_width, delta.y / (float)m_height};
+}
 
 glm::vec2 Input::MousePosition() const { return m_mousepos; }
 

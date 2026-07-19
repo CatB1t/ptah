@@ -22,6 +22,9 @@ class Input {
   glm::vec2 m_mousepos_prev{0.0};
   glm::vec2 m_mousescroll{0.0};
 
+  unsigned int m_width = 1;
+  unsigned int m_height = 1;
+
  public:
   Input();
   Input(Window& window);
@@ -37,6 +40,7 @@ class Input {
   bool IsMouseReleased(MouseButton key) const;
   glm::vec2 MousePosition() const;
   glm::vec2 MouseDelta() const;
+  glm::vec2 MouseDeltaNormalized() const;
   glm::vec2 MouseScroll() const;
 };
 }  // namespace ptah
