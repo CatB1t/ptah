@@ -11,6 +11,7 @@
 #include "core/material_instance.hpp"
 #include "core/material_props.hpp"
 #include "core/window.hpp"
+#include "light.hpp"
 #include "utils/file_loading.hpp"
 
 namespace ptah {
@@ -29,6 +30,8 @@ class Renderer {
     glm::mat4 projection;
     glm::mat4 view;
     glm::mat4 vp;
+    glm::vec4 dir_light_color;
+    glm::vec4 dir_light_pos;
     float time;
   };
 
@@ -37,6 +40,9 @@ class Renderer {
   RendererSettings m_settings;
   std::vector<DrawCommand> m_commands;
   DataBuffer m_frame_data;
+
+  // Lights
+  DirectionalLight default_light{};
 
   void m_SetState(MaterialProps& props);
   void m_Draw(const DrawCommand& cmd, MaterialProps& props);

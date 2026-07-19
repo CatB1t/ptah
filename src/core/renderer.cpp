@@ -31,8 +31,12 @@ Renderer::Renderer(Window& window)
 Renderer::~Renderer() {}
 
 void Renderer::Begin(const Camera& camera, float time) {
-  PerFrameData data{camera.projection, camera.view,
-                    camera.projection * camera.view, time};
+  PerFrameData data{camera.projection,
+                    camera.view,
+                    camera.projection * camera.view,
+                    glm::vec4(default_light.color, default_light.intensity),
+                    glm::vec4(glm::normalize(default_light.direction), 1.0f),
+                    time};
 
   m_frame_data.SetData(&data, sizeof(data));
   m_frame_data.BindUniform(0);
