@@ -8,7 +8,7 @@
 namespace ptah {
 
 Window::Window(const char* title, unsigned int width, unsigned int height)
-    : m_title{title}, m_width(width), m_height(height) {
+    : m_title{title}, m_width(width), m_height(height), m_prev_time(Time()) {
   utils::Logger::Init();
   m_window = glfwCreateWindow(m_width, m_height, m_title, nullptr, nullptr);
   if (!m_window) {
