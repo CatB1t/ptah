@@ -16,9 +16,9 @@ class Input {
 
   std::array<bool, MAX_MOUSE_BUTTONS_SUPPORT> m_mouse_keys{};
   std::array<bool, MAX_MOUSE_BUTTONS_SUPPORT> m_mouse_keys_prev{};
-  glm::vec2 m_mousepos;
-  glm::vec2 m_mousepos_prev;
-  glm::vec2 m_mousescroll;
+  glm::vec2 m_mousepos{0.0};
+  glm::vec2 m_mousepos_prev{0.0};
+  glm::vec2 m_mousescroll{0.0};
 
  public:
   Input();
