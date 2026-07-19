@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "core/camera.hpp"
+#include "core/constants.hpp"
 #include "core/data_buffer.hpp"
 #include "core/draw_command.hpp"
 #include "core/material.hpp"
@@ -15,7 +16,7 @@
 namespace ptah {
 
 struct RendererSettings {
-  glm::vec4 background{0.1, 0.1, 0.1, 1.0};
+  glm::vec4 background{constants::colors::BLACK};
   Material default_material{PTAH_SHADERS_DIR "/default.vert",
                             PTAH_SHADERS_DIR "/default.frag"};
   MaterialInstance* default_instance;
