@@ -31,8 +31,8 @@ Renderer::Renderer(Window& window)
 Renderer::~Renderer() {}
 
 void Renderer::Begin(const Camera& camera, float time) {
-  PerFrameData data{camera.projection,
-                    camera.view,
+  PerFrameData data{camera.view,
+                    camera.projection,
                     camera.projection * camera.view,
                     glm::vec4(default_light.color, default_light.intensity),
                     glm::vec4(glm::normalize(default_light.direction), 1.0f),

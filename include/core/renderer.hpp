@@ -27,11 +27,11 @@ struct RendererSettings {
 class Renderer {
  private:
   struct alignas(16) PerFrameData {
-    glm::mat4 projection;
     glm::mat4 view;
+    glm::mat4 projection;
     glm::mat4 vp;
     glm::vec4 dir_light_color;
-    glm::vec4 dir_light_pos;
+    glm::vec4 dir_light_dir;
     float time;
   };
 
