@@ -32,10 +32,7 @@ int main() {
   };
 
   ptah::Mesh mesh{vertices, indices};
-  ptah::Renderer renderer{1280, 720};
-  window.AddResizeCallback([&] (unsigned int width, unsigned int height) {
-    renderer.Resize(width, height);
-  });
+  ptah::Renderer renderer{window};
 
   ptah::Camera camera;
   camera.view = glm::translate(camera.view, glm::vec3(0, 0, -5.0));

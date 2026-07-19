@@ -21,11 +21,7 @@ int main() {
   }
 
   ptah::Window window{"Demo", 1280, 720};
-
-  ptah::Renderer renderer{1280, 720};
-  window.AddResizeCallback([&] (unsigned int width, unsigned int height) {
-    renderer.Resize(width, height);
-  });
+  ptah::Renderer renderer{window};
 
   ptah::Model model {renderer, PTAH_ASSETS_DIR "/cube.fbx"};
   glm::mat4 transform{1.0f};

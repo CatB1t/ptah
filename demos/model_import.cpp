@@ -19,11 +19,8 @@ int main() {
   }
 
   ptah::Window window{"Demo", 1280, 720};
+  ptah::Renderer renderer{window};
 
-  ptah::Renderer renderer{1280, 720};
-  window.AddResizeCallback([&] (unsigned int width, unsigned int height) {
-    renderer.Resize(width, height);
-  });
   ptah::Model model {renderer, PTAH_ASSETS_DIR "/cube.fbx"};
   ptah::Camera camera;
   camera.view = glm::translate(camera.view, glm::vec3(0, -2, -20.0));
