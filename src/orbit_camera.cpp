@@ -5,8 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "input.hpp"
-#include "utils/logger.hpp"
 #include "input_keys.hpp"
+#include "utils/logger.hpp"
 
 namespace ptah {
 
