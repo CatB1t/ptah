@@ -6,13 +6,14 @@
 
 #include "core/data_buffer.hpp"
 #include "core/material_props.hpp"
+#include "core/window.hpp"
 #include "utils/logger.hpp"
 
 namespace ptah {
 
-Renderer::Renderer(unsigned int width, unsigned int height)
-    : m_width(width),
-      m_height(height),
+Renderer::Renderer(Window& window)
+    : m_width(window.Size().x),
+      m_height(window.Size().y),
       m_settings{},
       m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
   glViewport(0, 0, m_width, m_height);
@@ -22,6 +23,9 @@ Renderer::Renderer(unsigned int width, unsigned int height)
   m_settings.default_instance = m_settings.default_material.createInstance();
   m_settings.default_instance->SetBlockUniform("color",
                                                glm::vec4(1.0, 0.0, 0.0, 1.0));
+
+  window.AddResizeCallback(
+      [&](unsigned int width, unsigned int height) { Resize(width, height); });
 }
 
 Renderer::~Renderer() {}

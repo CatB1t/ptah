@@ -9,6 +9,7 @@
 #include "core/material.hpp"
 #include "core/material_instance.hpp"
 #include "core/material_props.hpp"
+#include "core/window.hpp"
 #include "utils/file_loading.hpp"
 
 namespace ptah {
@@ -41,7 +42,7 @@ class Renderer {
   MaterialInstance* m_ResolveMaterial(MaterialInstance* other);
 
  public:
-  Renderer(unsigned int width, unsigned int height);
+  Renderer(Window& window);
   ~Renderer();
   void Begin(const Camera& camera, float time = 0.0f);
   void Submit(const DrawCommand& command);
