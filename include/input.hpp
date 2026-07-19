@@ -3,6 +3,8 @@
 #include <array>
 #include <glm/vec2.hpp>
 
+#include "input_keys.hpp"
+
 #define MAX_KEYS_SUPPORT 349
 #define MAX_MOUSE_BUTTONS_SUPPORT 8
 
@@ -30,9 +32,9 @@ class Input {
   bool IsPressed(int key) const;
   bool IsReleased(int key) const;
 
-  bool IsMouseDown(int key) const;
-  bool IsMousePressed(int key) const;
-  bool IsMouseReleased(int key) const;
+  bool IsMouseDown(MouseButton key) const;
+  bool IsMousePressed(MouseButton key) const;
+  bool IsMouseReleased(MouseButton key) const;
   glm::vec2 MousePosition() const;
   glm::vec2 MouseDelta() const;
   glm::vec2 MouseScroll() const;

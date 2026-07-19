@@ -41,12 +41,16 @@ bool Input::IsReleased(int key) const {
   return !m_keys[key] && m_keys_prev[key];
 }
 
-bool Input::IsMouseDown(int key) const { return m_mouse_keys[key]; }
-bool Input::IsMousePressed(int key) const {
-  return m_mouse_keys[key] && !m_mouse_keys_prev[key];
+bool Input::IsMouseDown(MouseButton key) const {
+  return m_mouse_keys[static_cast<int>(key)];
 }
-bool Input::IsMouseReleased(int key) const {
-  return !m_mouse_keys[key] && m_mouse_keys_prev[key];
+bool Input::IsMousePressed(MouseButton key) const {
+  return m_mouse_keys[static_cast<int>(key)] &&
+         !m_mouse_keys_prev[static_cast<int>(key)];
+}
+bool Input::IsMouseReleased(MouseButton key) const {
+  return !m_mouse_keys[static_cast<int>(key)] &&
+         m_mouse_keys_prev[static_cast<int>(key)];
 }
 
 glm::vec2 Input::MouseDelta() const { return m_mousepos - m_mousepos_prev; }
