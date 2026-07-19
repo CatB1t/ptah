@@ -61,6 +61,7 @@ add_executable(ptah
     src/core/material_instance.cpp
     src/core/material_props.cpp
     src/model.cpp
+    src/orbit_camera.cpp
     src/core/data_buffer.cpp
     src/core/mirrored_buffer.cpp
     src/input.cpp
