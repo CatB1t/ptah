@@ -13,18 +13,20 @@ namespace ptah {
 OrbitCamera::OrbitCamera(Window& window, double fov, double z_near,
                          double z_far)
     : m_fov(fov), m_near(z_near), m_far(z_far) {
-  auto size = window.Size();
-  if (size.y != 0) {
-    m_aspect_ratio = size.x / static_cast<double>(size.y);
-  }
   window.AddResizeCallback([&](unsigned int width, unsigned int height) {
     if (height == 0) return;
     m_Resize(width, height);
   });
+
+  auto size = window.Size();
+  m_Resize(size.x, size.y);
 }
 
 void OrbitCamera::m_Resize(double width, double height) {
+  if (height == 0) return;
   m_aspect_ratio = width / height;
+  m_projection =
+      glm::perspective(glm::radians(m_fov), m_aspect_ratio, m_near, m_far);
 }
 
 glm::vec3 OrbitCamera::m_CameraPos() {
@@ -71,9 +73,7 @@ void OrbitCamera::Update(Input& input) {
 Camera OrbitCamera::Data() {
   glm::mat4 view =
       glm::lookAt(m_CameraPos(), m_target, glm::vec3(0.0, 1.0, 0.0));
-  glm::mat4 projection =
-      glm::perspective(glm::radians(m_fov), m_aspect_ratio, m_near, m_far);
-  return Camera{view, projection};
+  return Camera{view, m_projection};
 }
 
 }  // namespace ptah

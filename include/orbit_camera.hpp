@@ -28,6 +28,8 @@ class OrbitCamera {
   double m_near;
   double m_far;
 
+  glm::mat4 m_projection;
+
   void m_Resize(double width, double height);
   glm::vec3 m_CameraPos();
 
