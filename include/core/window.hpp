@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <glm/vec2.hpp>
 #include <vector>
 
 struct GLFWwindow;
@@ -36,6 +37,7 @@ class Window {
   void SwapBuffers();
   double Time();
   double DeltaTime();
+  glm::ivec2 Size() const;
   void AddResizeCallback(WindowResizeFn callback);
   void AddKeyCallback(WindowKeyFn callback);
   void AddMouseCallback(WindowMouseFn callback);

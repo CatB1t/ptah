@@ -92,6 +92,8 @@ void Window::AddMouseScrollCallback(WindowMouseScrollFn callback) {
   m_mouse_scroll_fns.push_back(callback);
 }
 
+glm::ivec2 Window::Size() const { return {m_width, m_height}; }
+
 double Window::DeltaTime() {
   double current = Time();
   double delta = current - m_prev_time;
