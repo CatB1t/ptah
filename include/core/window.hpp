@@ -19,6 +19,7 @@ class Window {
   const char* m_title;
   unsigned int m_width;
   unsigned int m_height;
+  double m_prev_time = 0.0;
 
   std::vector<WindowResizeFn> m_resize_fns;
   std::vector<WindowKeyFn> m_key_fns;
@@ -34,6 +35,7 @@ class Window {
   void PollEvents();
   void SwapBuffers();
   double Time();
+  double DeltaTime();
   void AddResizeCallback(WindowResizeFn callback);
   void AddKeyCallback(WindowKeyFn callback);
   void AddMouseCallback(WindowMouseFn callback);

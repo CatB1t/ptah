@@ -92,4 +92,11 @@ void Window::AddMouseScrollCallback(WindowMouseScrollFn callback) {
   m_mouse_scroll_fns.push_back(callback);
 }
 
+double Window::DeltaTime() {
+  double current = Time();
+  double delta = current - m_prev_time;
+  m_prev_time = current;
+  return delta;
+}
+
 }  // namespace ptah
