@@ -62,8 +62,9 @@ void OrbitCamera::Update(Input& input) {
       glm::vec3 cameraRight =
           glm::normalize(glm::cross(cameraForward, constants::UP));
       glm::vec3 cameraUp = glm::cross(cameraForward, cameraRight);
-      m_target -= cameraRight * mouse_delta.x * m_pan_speed;
-      m_target += cameraUp * mouse_delta.y * m_pan_speed;
+      float pan_speed = m_distance * m_pan_ratio;
+      m_target -= cameraRight * mouse_delta.x * pan_speed;
+      m_target += cameraUp * mouse_delta.y * pan_speed;
       m_pos_dirty = true;
     }
   }

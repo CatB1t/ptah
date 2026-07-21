@@ -22,7 +22,7 @@ class OrbitCamera {
   const float m_horizontal_speed = 5.0f;
   const float m_vertical_speed = 2.0f;
   const float m_zoom_speed = 3.0f;
-  const float m_pan_speed = 20.0f;
+  const float m_pan_ratio = 0.25f;
 
   double m_aspect_ratio = 1.0;
   double m_fov;
