@@ -29,8 +29,8 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
   aiString path;
   if (aiGetMaterialTexture(material, texture_type, 0, &path) == AI_SUCCESS) {
     auto new_path = m_path.parent_path() / std::filesystem::path(path.C_Str());
-    PTAH_RENDER_INFO("Loading diffuse texture: {}",
-                     new_path.make_preferred().string().c_str());
+    PTAH_RENDER_DEBUG("Loading {} texture: {}",
+                     (unsigned int)texture_type, new_path.make_preferred().string().c_str());
     if(auto texture_img = utils::load_image(new_path)) {
       Texture2D* tex = new Texture2D{texture_img.value()};
       m_loaded_textures.push_back(tex);
@@ -50,7 +50,7 @@ MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
   aiMaterial* mat = scene->mMaterials[materialIndex];
 
   MaterialInstance* instance = renderer.defaultMaterial().createInstance();
-  PTAH_RENDER_INFO("Mat[{}] {} :", materialIndex, mat->GetName().C_Str());
+  PTAH_RENDER_DEBUG("Mat[{}] {} :", materialIndex, mat->GetName().C_Str());
 
   Texture2D* albedo_tex = m_LoadTexture(mat, aiTextureType_BASE_COLOR);
   if (albedo_tex == nullptr) {
@@ -63,7 +63,7 @@ MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
 
   aiColor4D color;
   if (mat->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
-    PTAH_RENDER_INFO("Diffuse color: {},{},{}", color.r, color.g, color.b);
+    PTAH_RENDER_DEBUG("Diffuse color: {},{},{}", color.r, color.g, color.b);
     instance->SetBlockUniform("color",
                               glm::vec4(color.r, color.g, color.b, color.a));
   }

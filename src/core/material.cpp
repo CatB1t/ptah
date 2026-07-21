@@ -161,8 +161,7 @@ unsigned int Material::m_LoadShaderSource(
   glShaderSource(id, 1, &source_ptr, &source_len);
   glCompileShader(id);
   m_CheckCompileStatus(id, type_str);
-  PTAH_RENDER_DEBUG("Loaded shader ({}) source {}:\n{}", type,
-                    filepath.string(), source);
+  PTAH_RENDER_DEBUG("Loaded shader ({}): {}", type, filepath.string());
   return id;
 }
 
