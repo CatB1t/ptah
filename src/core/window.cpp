@@ -101,4 +101,8 @@ double Window::DeltaTime() {
   return delta;
 }
 
+void Window::SetTitle(const char* title) {
+  glfwSetWindowTitle(m_window, title);
+}
+
 }  // namespace ptah

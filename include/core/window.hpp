@@ -31,6 +31,7 @@ class Window {
  public:
   Window(const char* title, unsigned int width, unsigned int height);
   ~Window();
+  void SetTitle(const char* title);
   void Close();
   bool ShouldClose();
   void PollEvents();
