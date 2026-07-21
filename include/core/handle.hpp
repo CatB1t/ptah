@@ -24,5 +24,6 @@ struct Handle {
 using MeshHandle = Handle<struct _Mesh>;
 using MaterialHandle = Handle<struct _Material>;
 using BufferHandle = Handle<struct _BufferArray>;
+using Texture2DHandle = Handle<struct _Texture2D>;
 
 }  // namespace ptah
