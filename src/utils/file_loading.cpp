@@ -2,11 +2,13 @@
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include <stb/stb_image.h>
 
 #include <assimp/Importer.hpp>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "utils/logger.hpp"
 
@@ -32,6 +34,26 @@ const aiScene* load_object(Assimp::Importer& importer, const char* path) {
     return nullptr;
   }
   return scene;
+}
+
+Image load_image(std::filesystem::path path) {
+  int width, height, channels;
+  unsigned char* data =
+      stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+
+  if (!data) {
+    auto failure_str = stbi_failure_reason();
+    PTAH_RENDER_ERROR("Failed to load image: {}\n{}", path.string().c_str(),
+                      failure_str);
+    PTAH_RENDER_ERROR("STB: {}", failure_str);
+    assert(true);
+  }
+
+  int size = width * height * channels;
+  std::vector<unsigned char> img_data(data, data + size);
+  stbi_image_free(data);
+  auto image_format = channels == 3 ? ImageFormat::RGB : ImageFormat::RGBA;
+  return Image{width, height, img_data, image_format};
 }
 
 }  // namespace utils
