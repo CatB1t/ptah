@@ -27,7 +27,7 @@ std::string load_file(std::filesystem::path path) {
 
 const aiScene* load_object(Assimp::Importer& importer, const char* path) {
   const aiScene* scene = importer.ReadFile(
-      path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+      path, aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);
   if (scene == nullptr) {
     PTAH_RENDER_ERROR("Assimp failed to load model {}", path);
     PTAH_RENDER_ERROR("{}", importer.GetErrorString());
@@ -38,6 +38,7 @@ const aiScene* load_object(Assimp::Importer& importer, const char* path) {
 
 Image load_image(std::filesystem::path path) {
   int width, height, channels;
+
   unsigned char* data =
       stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
