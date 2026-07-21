@@ -4,10 +4,13 @@
 #include <assimp/scene.h>
 
 #include <assimp/Importer.hpp>
+#include <filesystem>
 #include <glm/mat4x4.hpp>
 
 #include "core/material_instance.hpp"
 #include "core/renderer.hpp"
+#include "core/texture2d.hpp"
+#include "core/texture_slot.hpp"
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 
@@ -21,6 +24,21 @@ glm::mat4 assimp_to_glm(aiMatrix4x4& mat) {
   return ret;
 }
 
+Texture2D* Model::m_LoadTexture(const aiMaterial* material,
+                                aiTextureType texture_type) {
+  aiString path;
+  if (aiGetMaterialTexture(material, texture_type, 0, &path) == AI_SUCCESS) {
+    auto new_path = m_path.parent_path() / std::filesystem::path(path.C_Str());
+    PTAH_RENDER_INFO("Loading diffuse texture: {}",
+                     new_path.make_preferred().string().c_str());
+    Image texture_img = utils::load_image(new_path);
+    Texture2D* tex = new Texture2D{texture_img};
+    m_loaded_textures.push_back(tex);
+    return tex;
+  }
+  return nullptr;
+}
+
 MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
                                         const aiScene* scene,
                                         int materialIndex) {
@@ -30,10 +48,17 @@ MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
 
   aiMaterial* mat = scene->mMaterials[materialIndex];
 
-  // TODO: texture loading is not supported yet.
-
   MaterialInstance* instance = renderer.defaultMaterial().createInstance();
   PTAH_RENDER_INFO("Mat[{}] {} :", materialIndex, mat->GetName().C_Str());
+
+  Texture2D* albedo_tex = m_LoadTexture(mat, aiTextureType_BASE_COLOR);
+  if (albedo_tex == nullptr) {
+    albedo_tex = m_LoadTexture(mat, aiTextureType_DIFFUSE);
+  }
+  instance->SetTexture(albedo_tex, TextureSlot::Albedo);
+
+  Texture2D* normal_tex = m_LoadTexture(mat, aiTextureType_NORMALS);
+  instance->SetTexture(normal_tex, TextureSlot::Normal);
 
   aiColor4D color;
   if (mat->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
@@ -110,7 +135,7 @@ void Model::m_LoadMesh(Renderer& renderer, const aiScene* scene, aiNode* node,
   }
 }
 
-Model::Model(Renderer& renderer, const char* filepath) {
+Model::Model(Renderer& renderer, const char* filepath) : m_path(filepath) {
   Assimp::Importer importer;
   const aiScene* scene = utils::load_object(importer, filepath);
   if (scene == nullptr || scene->mRootNode == nullptr) {
