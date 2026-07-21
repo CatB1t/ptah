@@ -7,9 +7,13 @@ layout(std140, binding = 1) uniform uMaterial {
 in VS_OUT {
   vec3 position;
   vec3 normal;
+  vec2 uv;
 } fs_in;
 
 out vec4 oColor;
+
+layout(binding = 0) uniform sampler2D albedo_tex;
+layout(binding = 1) uniform sampler2D normal_tex;
 
 void main() {
   vec4 light_color = vec4(uDirLightColor.xyz, 1.0f);
@@ -20,5 +24,5 @@ void main() {
   float diffuse = max(dot(n_normal, n_light_dir), 0.0f);
 
   vec4 total_light = (ambient + diffuse) * light_color;
-  oColor = total_light * color;
+  oColor = total_light * color * texture(albedo_tex, fs_in.uv);
 }
