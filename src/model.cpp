@@ -67,23 +67,6 @@ MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
     instance->SetBlockUniform("color",
                               glm::vec4(color.r, color.g, color.b, color.a));
   }
-  // Ambient/specular/shininess are not supported by the default material yet.
-  // if (mat->Get(AI_MATKEY_COLOR_AMBIENT, color) == AI_SUCCESS)
-  // {
-  //     PTAH_RENDER_INFO("Ambient color: {},{},{}", color.r, color.g, color.b);
-  //     instance->setAmbientColor(glm::vec3(color.r, color.g, color.b));
-  // }
-  // if (mat->Get(AI_MATKEY_COLOR_SPECULAR, color) == AI_SUCCESS)
-  // {
-  //     PTAH_RENDER_INFO("Specular color: {},{},{}", color.r, color.g,
-  //     color.b); instance->setSpecularColor(glm::vec3(color.r, color.g,
-  //     color.b));
-  // }
-  // float shininess;
-  // if (mat->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS)
-  // {
-  //     instance->setShininess(shininess);
-  // }
 
   m_loaded_materials.insert(std::make_pair(materialIndex, instance));
   return instance;
