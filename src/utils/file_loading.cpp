@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <optional>
 
 #include "utils/logger.hpp"
 
@@ -36,7 +37,7 @@ const aiScene* load_object(Assimp::Importer& importer, const char* path) {
   return scene;
 }
 
-Image load_image(std::filesystem::path path) {
+std::optional<Image> load_image(std::filesystem::path path) {
   int width, height, channels;
 
   unsigned char* data =

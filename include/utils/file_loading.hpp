@@ -1,5 +1,6 @@
 #include <filesystem>
 #include <string>
+#include <optional>
 
 #include "image.hpp"
 
@@ -11,5 +12,5 @@ class Importer;
 namespace ptah::utils {
 std::string load_file(std::filesystem::path path);
 const aiScene* load_object(Assimp::Importer& importer, const char* path);
-Image load_image(std::filesystem::path path);
+std::optional<Image> load_image(std::filesystem::path path);
 }  // namespace ptah::utils

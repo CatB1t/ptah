@@ -31,10 +31,11 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
     auto new_path = m_path.parent_path() / std::filesystem::path(path.C_Str());
     PTAH_RENDER_INFO("Loading diffuse texture: {}",
                      new_path.make_preferred().string().c_str());
-    Image texture_img = utils::load_image(new_path);
-    Texture2D* tex = new Texture2D{texture_img};
-    m_loaded_textures.push_back(tex);
-    return tex;
+    if(auto texture_img = utils::load_image(new_path)) {
+      Texture2D* tex = new Texture2D{texture_img.value()};
+      m_loaded_textures.push_back(tex);
+      return tex;
+    }
   }
   return nullptr;
 }
