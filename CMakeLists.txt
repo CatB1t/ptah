@@ -51,6 +51,10 @@ target_include_directories(glad PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_
 target_link_libraries(glad PUBLIC OpenGL::GL)
 add_library(deps::glad ALIAS glad)
 
+add_library(stb STATIC external/stb/src/stb_image.c)
+target_include_directories(stb PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/stb/include>)
+add_library(deps::stb ALIAS stb)
+
 add_executable(ptah
     demos/triangle.cpp
     src/core/context.cpp
@@ -72,6 +76,7 @@ add_executable(ptah
 target_include_directories(ptah PRIVATE include)
 target_link_libraries(ptah PRIVATE
     deps::glad
+    deps::stb
     OpenGL::GL
     glfw
     spdlog::spdlog
