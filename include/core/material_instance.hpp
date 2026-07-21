@@ -1,7 +1,11 @@
 #pragma once
 
+#include <array>
+
 #include "core/material.hpp"
 #include "core/mirrored_buffer.hpp"
+#include "core/texture2d.hpp"
+#include "core/texture_slot.hpp"
 
 namespace ptah {
 
@@ -9,9 +13,11 @@ class MaterialInstance {
  private:
   Material& m_base;
   MirroredBuffer m_block;
+  std::array<Texture2D*, (unsigned int)TextureSlot::Count> m_textures{};
 
  public:
   MaterialInstance(Material& base);
+  void SetTexture(Texture2D* texture, TextureSlot slot);
   void Bind();
   Material& Base();
 

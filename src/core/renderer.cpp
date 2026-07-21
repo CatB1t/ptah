@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "core/data_buffer.hpp"
+#include "core/material.hpp"
 #include "core/material_props.hpp"
 #include "core/window.hpp"
 #include "utils/logger.hpp"
@@ -16,6 +17,7 @@ Renderer::Renderer(Window& window)
       m_height(window.Size().y),
       m_settings{},
       m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
+  Material::InitDefaults();
   glViewport(0, 0, m_width, m_height);
 
   m_settings.default_material.SetBlockUniform("color",
@@ -28,7 +30,7 @@ Renderer::Renderer(Window& window)
       [&](unsigned int width, unsigned int height) { Resize(width, height); });
 }
 
-Renderer::~Renderer() {}
+Renderer::~Renderer() { Material::DestroyDefaults(); }
 
 void Renderer::Begin(const Camera& camera, float time) {
   PerFrameData data{camera.view,

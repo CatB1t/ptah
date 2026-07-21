@@ -10,8 +10,10 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include "core/material_instance.hpp"
+#include "core/texture2d.hpp"
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 
@@ -315,6 +317,41 @@ void Material::Dispose() {
 }
 
 int Material::Size() { return m_block_size; }
+
+Texture2D* Material::m_texture_defaults[std::to_underlying(
+    TextureSlot::Count)] = {nullptr};
+
+void Material::InitDefaults() {
+  auto white_img = Image{1, 1, std::vector<unsigned char>({255, 255, 255, 255}),
+                         ImageFormat::RGBA};
+
+  auto white_texture = new Texture2D(white_img);
+
+  auto normal_img =
+      Image{1, 1, std::vector<unsigned char>({128, 128, 255, 255}),
+            ImageFormat::RGBA};
+  auto normal_texture = new Texture2D(normal_img);
+
+  m_texture_defaults[std::to_underlying(TextureSlot::Albedo)] = white_texture;
+  m_texture_defaults[std::to_underlying(TextureSlot::Normal)] = normal_texture;
+}
+
+void Material::DestroyDefaults() {
+  for (int i = 0; i < std::to_underlying(TextureSlot::Count); i++) {
+    delete m_texture_defaults[i];
+  }
+}
+
+void Material::SetTexture(TextureSlot slot, Texture2D* texture) {
+  m_textures[std::to_underlying(slot)] = texture;
+}
+
+Texture2D* Material::m_ResolveTexture(TextureSlot slot) {
+  auto slot_idx = std::to_underlying(slot);
+  if (m_textures[slot_idx]) return m_textures[slot_idx];
+
+  return m_texture_defaults[slot_idx];
+}
 
 MaterialInstance* Material::createInstance() {
   return new MaterialInstance(*this);

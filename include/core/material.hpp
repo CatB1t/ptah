@@ -1,12 +1,16 @@
 #pragma once
 
+#include <array>
 #include <filesystem>
 #include <glm/glm.hpp>
 #include <string>
 #include <unordered_map>
+#include <utility>
 
 #include "core/handle.hpp"
 #include "core/material_props.hpp"
+#include "texture2d.hpp"
+#include "texture_slot.hpp"
 #include "utils/logger.hpp"
 
 namespace ptah {
@@ -42,6 +46,7 @@ class Material {
   std::vector<std::string> m_defines;
 
   MaterialProps m_props;
+  std::array<Texture2D*, std::to_underlying(TextureSlot::Count)> m_textures{};
 
   unsigned int m_LoadShaderSource(std::filesystem::path filepath,
                                   unsigned int type,
@@ -58,7 +63,13 @@ class Material {
   Layout m_GetUniformLayout(unsigned int uniform_index);
   void m_ResolveLayout();
 
+  static Texture2D* m_texture_defaults[std::to_underlying(TextureSlot::Count)];
+  Texture2D* m_ResolveTexture(TextureSlot slot);
+
  public:
+  void static InitDefaults();
+  void static DestroyDefaults();
+
   Material(const char* vertex_filepath, const char* fragment_filepath,
            const std::vector<std::string>& defines = {});
   void Set(const char* name, const glm::mat4& matrix);
@@ -70,6 +81,7 @@ class Material {
   void Reload();
   void Dispose();
   int Size();
+  void SetTexture(TextureSlot slot, Texture2D* texture);
   MaterialProps& Props();
   MaterialInstance* createInstance();
   bool operator<(const Material& other) const;
