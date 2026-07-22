@@ -144,7 +144,7 @@ unsigned int Material::m_LoadShaderSource(
     std::filesystem::path filepath, unsigned int type,
     const std::vector<std::string>& prepend) {
   unsigned int id = glCreateShader(type);
-  const char* type_str = type == GL_VERTEX_ARRAY ? "vertex" : "fragment";
+  const char* type_str = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
 
   std::string source = "#version 460 core\n\n";  // Must be first line
   if (prepend.size()) {
@@ -161,7 +161,7 @@ unsigned int Material::m_LoadShaderSource(
   glShaderSource(id, 1, &source_ptr, &source_len);
   glCompileShader(id);
   m_CheckCompileStatus(id, type_str, source);
-  PTAH_RENDER_DEBUG("Loaded shader ({}): {}", type, filepath.string());
+  PTAH_RENDER_DEBUG("Loaded shader ({}): {}", type_str, filepath.string());
   return id;
 }
 
