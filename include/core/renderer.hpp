@@ -22,6 +22,7 @@ struct RendererSettings {
   Material default_material = MakeLambert();
   MaterialInstance* default_instance;
   bool override_materials = false;
+  bool override_instances = false;
 };
 
 class Renderer {

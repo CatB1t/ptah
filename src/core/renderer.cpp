@@ -111,7 +111,12 @@ void Renderer::Flush() {
       last_material = &material;
     };
 
-    material_instance->Bind();
+    if (m_settings.override_materials && m_settings.override_instances) {
+      material_instance->Bind();
+    } else {
+      cmd.material->Bind();
+    }
+
     material.Set("uModel", cmd.transform);
     material.Set("uModelInverse", glm::inverse(glm::mat3(cmd.transform)));
     m_Draw(cmd, material.Props());
