@@ -12,14 +12,14 @@
 #include "core/material_props.hpp"
 #include "core/window.hpp"
 #include "light.hpp"
+#include "materials/materials_factory.hpp"
 #include "utils/file_loading.hpp"
 
 namespace ptah {
 
 struct RendererSettings {
   glm::vec4 background{constants::colors::BLACK};
-  Material default_material{PTAH_SHADERS_DIR "/default.vert",
-                            PTAH_SHADERS_DIR "/default.frag"};
+  Material default_material = MakeLambert();
   MaterialInstance* default_instance;
   bool override_materials = false;
 };
