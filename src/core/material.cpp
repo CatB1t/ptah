@@ -212,6 +212,12 @@ void Material::Set(const char* name, const glm::mat4& matrix) {
                             glm::value_ptr(matrix));
 }
 
+void Material::Set(const char* name, const glm::mat3& matrix) {
+  int loc = m_GetUniformLocation(name);
+  glProgramUniformMatrix3fv(m_program.Id(), loc, 1, GL_FALSE,
+                            glm::value_ptr(matrix));
+}
+
 void Material::Set(const char* name, const glm::vec4& vec) {
   int loc = m_GetUniformLocation(name);
   glProgramUniform4fv(m_program.Id(), loc, 1, glm::value_ptr(vec));

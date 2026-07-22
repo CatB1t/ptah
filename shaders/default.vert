@@ -2,6 +2,7 @@
 #include "framedata.glsl"
 
 uniform mat4 uModel;
+uniform mat3 uModelInverse;
 
 out VS_OUT {
   vec3 position;
@@ -12,6 +13,6 @@ out VS_OUT {
 void main() {
   gl_Position =  uVP * uModel * vec4(aPosition, 1.0);
   vs_out.position = (uModel * vec4(aPosition, 1.0)).xyz;
-  vs_out.normal = transpose(inverse(mat3(uModel))) * aNormal;
+  vs_out.normal = uModelInverse * aNormal;
   vs_out.uv = aUV;
 }

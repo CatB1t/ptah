@@ -73,6 +73,7 @@ class Material {
   Material(const char* vertex_filepath, const char* fragment_filepath,
            const std::vector<std::string>& defines = {});
   void Set(const char* name, const glm::mat4& matrix);
+  void Set(const char* name, const glm::mat3& matrix);
   void Set(const char* name, const glm::vec4& vec);
   void Set(const char* name, const glm::vec3& vec);
   void Set(const char* name, float value);

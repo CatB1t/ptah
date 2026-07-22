@@ -113,6 +113,7 @@ void Renderer::Flush() {
 
     material_instance->Bind();
     material.Set("uModel", cmd.transform);
+    material.Set("uModelInverse", glm::inverse(glm::mat3(cmd.transform)));
     m_Draw(cmd, material.Props());
   }
   m_commands.clear();
