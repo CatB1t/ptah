@@ -1,5 +1,7 @@
 #pragma once
 
+#include <assimp/material.h>
+
 #include <filesystem>
 #include <glm/mat4x4.hpp>
 #include <unordered_map>
@@ -8,7 +10,6 @@
 #include "core/draw_command.hpp"
 #include "core/mesh.hpp"
 #include "core/texture2d.hpp"
-#include <assimp/material.h>
 
 struct aiScene;
 struct aiNode;

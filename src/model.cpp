@@ -29,9 +29,9 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
   aiString path;
   if (aiGetMaterialTexture(material, texture_type, 0, &path) == AI_SUCCESS) {
     auto new_path = m_path.parent_path() / std::filesystem::path(path.C_Str());
-    PTAH_RENDER_DEBUG("Loading {} texture: {}",
-                     (unsigned int)texture_type, new_path.make_preferred().string().c_str());
-    if(auto texture_img = utils::load_image(new_path)) {
+    PTAH_RENDER_DEBUG("Loading {} texture: {}", (unsigned int)texture_type,
+                      new_path.make_preferred().string().c_str());
+    if (auto texture_img = utils::load_image(new_path)) {
       Texture2D* tex = new Texture2D{texture_img.value()};
       m_loaded_textures.push_back(tex);
       return tex;
