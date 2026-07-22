@@ -160,7 +160,7 @@ unsigned int Material::m_LoadShaderSource(
   const char* source_ptr = source.c_str();
   glShaderSource(id, 1, &source_ptr, &source_len);
   glCompileShader(id);
-  m_CheckCompileStatus(id, type_str);
+  m_CheckCompileStatus(id, type_str, source);
   PTAH_RENDER_DEBUG("Loaded shader ({}): {}", type, filepath.string());
   return id;
 }
@@ -171,10 +171,21 @@ bool Material::m_IsCompiled(unsigned int id) {
   return status == GL_TRUE;
 }
 
-void Material::m_CheckCompileStatus(unsigned int id, const char* type) {
+void Material::m_CheckCompileStatus(unsigned int id, const char* type,
+                                    const std::string& source) {
   if (!m_IsCompiled(id)) {
+    std::istringstream source_stream{source};
+    std::string numbered_source;
+    int line_count = 1;
+    std::string temp_line;
+    while (std::getline(source_stream, temp_line)) {
+      numbered_source += std::to_string(line_count) + ": " + temp_line + "\n";
+      line_count++;
+    }
+
     char error_msg[512];
     PTAH_RENDER_ERROR("Failed to compile shader of type {}", type);
+    PTAH_RENDER_ERROR("Shader source:\n{}", numbered_source.c_str());
     glGetShaderInfoLog(id, 512, nullptr, error_msg);
     PTAH_RENDER_ERROR(error_msg);
   }

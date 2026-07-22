@@ -51,7 +51,8 @@ class Material {
   unsigned int m_LoadShaderSource(std::filesystem::path filepath,
                                   unsigned int type,
                                   const std::vector<std::string>& prepend);
-  void m_CheckCompileStatus(unsigned int id, const char* type);
+  void m_CheckCompileStatus(unsigned int id, const char* type,
+                            const std::string& source);
   bool m_IsCompiled(unsigned int id);
   bool m_IsLinked();
   std::filesystem::file_time_type m_LatestWriteTime();
