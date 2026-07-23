@@ -25,7 +25,9 @@ Renderer::Renderer(Window& window)
       m_gizmo_material(PTAH_SHADERS_DIR "/default.vert",
                        PTAH_SHADERS_DIR "/gizmo.frag"),
       m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
-      m_light_texture{m_light_gizmo.value()} {
+      m_light_texture{m_light_gizmo.value()},
+      m_grid_material(PTAH_SHADERS_DIR "/default.vert",
+                      PTAH_SHADERS_DIR "/grid.frag") {
   Material::InitDefaults();
   glViewport(0, 0, m_width, m_height);
 
@@ -37,6 +39,8 @@ Renderer::Renderer(Window& window)
 
   window.AddResizeCallback(
       [&](unsigned int width, unsigned int height) { Resize(width, height); });
+
+  m_grid_instance = m_grid_material.createInstance();
 }
 
 Renderer::~Renderer() { Material::DestroyDefaults(); }
@@ -91,6 +95,13 @@ void Renderer::Submit(const std::vector<PointLight>& point_lights) {
 
 MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
   return (m_settings.override_materials) ? m_settings.default_instance : other;
+}
+
+void Renderer::m_SetGrid() {
+  glm::mat4 model{1.0};
+  model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0, 0.0, 0.0));
+  model = glm::scale(model, glm::vec3(50.0));
+  m_commands.push_back(m_quadmesh.GetDrawCommand(model, *m_grid_instance));
 }
 
 void Renderer::m_SetPointLights() {
@@ -163,6 +174,7 @@ void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
 
 void Renderer::Flush() {
   m_SetPointLights();
+  m_SetGrid();
   m_UploadPerFrameData();
 
   glClearColor(m_settings.background.r, m_settings.background.g,

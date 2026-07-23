@@ -56,12 +56,15 @@ class Renderer {
   Material m_gizmo_material;
   std::optional<Image> m_light_gizmo;
   Texture2D m_light_texture;
+  Material m_grid_material;
+  MaterialInstance* m_grid_instance;
 
   // Lights
   DirectionalLight default_light{};
   std::vector<PointLight> m_pointlights;
   std::array<MaterialInstance*, PTAH_N_POINT_LIGHTS> m_plights_material_pool{};
 
+  void m_SetGrid();
   void m_SetPointLights();
   void m_UploadPerFrameData();
   void m_SetState(MaterialProps& props);
