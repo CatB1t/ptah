@@ -3,6 +3,9 @@
 #include <glad/gl.h>
 
 #include <algorithm>
+#include <glm/common.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "core/data_buffer.hpp"
 #include "core/material.hpp"
@@ -17,7 +20,11 @@ Renderer::Renderer(Window& window)
     : m_width(window.Size().x),
       m_height(window.Size().y),
       m_settings{},
-      m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
+      m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)),
+      m_quadmesh(m_MakeQuad()),
+      m_gizmo_material(MakeUnlit()),
+      m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
+      m_light_texture{m_light_gizmo.value()} {
   Material::InitDefaults();
   glViewport(0, 0, m_width, m_height);
 
@@ -32,6 +39,23 @@ Renderer::Renderer(Window& window)
 }
 
 Renderer::~Renderer() { Material::DestroyDefaults(); }
+
+// TODO: move out of Renderer
+Mesh Renderer::m_MakeQuad() {
+  const glm::vec3 normal{0.0f, 0.0f, 1.0f};
+  const glm::vec3 tangent{1.0f, 0.0f, 0.0f};
+
+  std::vector<Vertex> vertices{
+      {{-0.5f, -0.5f, 0.0f}, normal, {0.0f, 0.0f}, tangent},  // bottom-left
+      {{0.5f, -0.5f, 0.0f}, normal, {1.0f, 0.0f}, tangent},   // bottom-right
+      {{0.5f, 0.5f, 0.0f}, normal, {1.0f, 1.0f}, tangent},    // top-right
+      {{-0.5f, 0.5f, 0.0f}, normal, {0.0f, 1.0f}, tangent},   // top-left
+  };
+
+  std::vector<unsigned int> indices{0, 1, 2, 2, 3, 0};
+
+  return Mesh(vertices, indices);
+}
 
 void Renderer::Begin(const Camera& camera, float time) {
   m_per_frame_data.view = camera.view;
@@ -69,10 +93,29 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
 void Renderer::m_SetPointLights() {
   int n_lights =
       std::min(static_cast<int>(m_pointlights.size()), PTAH_N_POINT_LIGHTS);
+  auto& material = m_gizmo_material;
   for (int i = 0; i < n_lights; i++) {
     auto& pl = m_pointlights[i];
     m_per_frame_data.point_lights[i] = {glm::vec4(pl.position, 1.0),
                                         glm::vec4(pl.color, pl.intensity)};
+
+    // TODO: might not be the best way to this, but since point lights are
+    // flushed and we want full control of how to display them, we need to
+    // manage it and this require us to everytime to set the material instance
+    // color if this needs to be avoided then flushing must be removed.
+    auto* mat_instance = m_plights_material_pool[i];
+    if (mat_instance == nullptr) {
+      m_plights_material_pool[i] = material.createInstance();
+      mat_instance = m_plights_material_pool[i];
+    }
+    mat_instance->SetBlockUniform("color", glm::vec4(pl.color, 1.0));
+    mat_instance->SetTexture(&m_light_texture, ptah::TextureSlot::Albedo);
+
+    glm::mat4 model{1.0f};
+    model = glm::translate(model, pl.position);
+
+    auto draw_cmd = m_quadmesh.GetDrawCommand(model, *mat_instance);
+    m_commands.push_back(draw_cmd);
   }
   m_per_frame_data.n_active_point_lights = n_lights;
 }
