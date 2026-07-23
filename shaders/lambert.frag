@@ -31,6 +31,7 @@ void main() {
   float ambient = uDirLightColor.w;
   float diffuse = uDirLightColor.w * max(dot(n_normal, n_light_dir), 0.0f);
 
-  vec4 total_light = (ambient + diffuse) * light_color;
-  oColor = total_light * color * texture(albedo_tex, fs_in.uv);
+  vec4 total_dir_light = (ambient + diffuse) * light_color;
+  vec4 total_points_light = pointLightsDiffuse(n_normal);
+  oColor = (total_dir_light + total_points_light) * color * texture(albedo_tex, fs_in.uv);
 }
