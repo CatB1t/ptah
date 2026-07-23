@@ -22,7 +22,8 @@ Renderer::Renderer(Window& window)
       m_settings{},
       m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)),
       m_quadmesh(m_MakeQuad()),
-      m_gizmo_material(MakeUnlit()),
+      m_gizmo_material(PTAH_SHADERS_DIR "/default.vert",
+                       PTAH_SHADERS_DIR "/gizmo.frag"),
       m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
       m_light_texture{m_light_gizmo.value()} {
   Material::InitDefaults();
