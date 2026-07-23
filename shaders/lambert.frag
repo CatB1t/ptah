@@ -29,7 +29,7 @@ void main() {
   vec3 n_light_dir = uDirLightDirection.xyz;
 
   float ambient = uDirLightColor.w;
-  float diffuse = max(dot(n_normal, n_light_dir), 0.0f);
+  float diffuse = uDirLightColor.w * max(dot(n_normal, n_light_dir), 0.0f);
 
   vec4 total_light = (ambient + diffuse) * light_color;
   oColor = total_light * color * texture(albedo_tex, fs_in.uv);
