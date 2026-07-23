@@ -63,6 +63,8 @@ void Renderer::Begin(const Camera& camera, float time) {
   m_per_frame_data.projection = camera.projection;
   m_per_frame_data.vp = camera.projection * camera.view,
   m_per_frame_data.time = time;
+  glm::vec3 camera_position = glm::vec3(glm::inverse(m_per_frame_data.view)[3]);
+  m_per_frame_data.view_position = glm::vec4(camera_position, 1.0);
 
   m_per_frame_data.dir_light_color =
       glm::vec4(default_light.color, default_light.intensity);

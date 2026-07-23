@@ -38,6 +38,7 @@ class Renderer {
     glm::mat4 view;
     glm::mat4 projection;
     glm::mat4 vp;
+    glm::vec4 view_position;
     glm::vec4 dir_light_color;
     glm::vec4 dir_light_dir;
     _PointLight point_lights[PTAH_N_POINT_LIGHTS];
