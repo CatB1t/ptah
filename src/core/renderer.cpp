@@ -114,8 +114,11 @@ void Renderer::m_SetPointLights() {
     mat_instance->SetBlockUniform("color", glm::vec4(pl.color, 1.0));
     mat_instance->SetTexture(&m_light_texture, ptah::TextureSlot::Albedo);
 
+    glm::vec3 dis = glm::vec3(m_per_frame_data.view_position) - pl.position;
     glm::mat4 model{1.0f};
     model = glm::translate(model, pl.position);
+    model =
+        glm::rotate(model, glm::atan(dis.x, dis.z), glm::vec3(0.0, 1.0, 0.0));
 
     auto draw_cmd = m_quadmesh.GetDrawCommand(model, *mat_instance);
     m_commands.push_back(draw_cmd);
