@@ -23,7 +23,8 @@ int main() {
   ptah::Window window{"Demo", 1280, 720};
   ptah::Renderer renderer{window};
 
-  ptah::Model model {renderer, PTAH_ASSETS_DIR "/cube.fbx"};
+  ptah::Material mat = ptah::MakeLambert();
+  ptah::Model model {mat, PTAH_ASSETS_DIR "/cube.fbx"};
   glm::mat4 transform{1.0f};
 
   ptah::OrbitCamera camera{window};

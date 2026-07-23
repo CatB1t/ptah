@@ -21,7 +21,8 @@ int main() {
   ptah::Window window{"Demo", 1280, 720};
   ptah::Renderer renderer{window};
 
-  ptah::Model model {renderer, PTAH_ASSETS_DIR "/cube.fbx"};
+  ptah::Material mat = ptah::MakeLambert();
+  ptah::Model model {mat, PTAH_ASSETS_DIR "/cube.fbx"};
   ptah::Camera camera;
   camera.view = glm::translate(camera.view, glm::vec3(0, -2, -20.0));
   camera.projection = glm::perspective(glm::radians(45.0), 16.0/9.0, 0.01, 100.0);
