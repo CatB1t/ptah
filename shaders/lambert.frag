@@ -18,7 +18,9 @@ vec4 pointLightsDiffuse(vec3 normal) {
   for(int i = 0; i < uNActivePointLights; i++) {
       PointLight pl = uPointLights[i];
       vec3 pl_light_dir = normalize(pl.position.xyz - fs_in.position);
-      pl_diffuse += pl.color.w * pl.color.xyz * max(dot(normal, pl_light_dir), 0.0f);
+      float pl_distance = distance(pl.position.xyz, fs_in.position);
+      float attn = 1.0 / (pl_distance * pl_distance);
+      pl_diffuse += pl.color.w * attn * pl.color.xyz * max(dot(normal, pl_light_dir), 0.0f);
   }
   return vec4(pl_diffuse, 1.0);
 }
