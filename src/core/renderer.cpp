@@ -33,15 +33,15 @@ Renderer::Renderer(Window& window)
 Renderer::~Renderer() { Material::DestroyDefaults(); }
 
 void Renderer::Begin(const Camera& camera, float time) {
-  PerFrameData data{camera.view,
-                    camera.projection,
-                    camera.projection * camera.view,
-                    glm::vec4(default_light.color, default_light.intensity),
-                    glm::vec4(glm::normalize(default_light.direction), 1.0f),
-                    time};
+  m_per_frame_data.view = camera.view;
+  m_per_frame_data.projection = camera.projection;
+  m_per_frame_data.vp = camera.projection * camera.view,
+  m_per_frame_data.time = time;
 
-  m_frame_data.SetData(&data, sizeof(data));
-  m_frame_data.BindUniform(0);
+  m_per_frame_data.dir_light_color =
+      glm::vec4(default_light.color, default_light.intensity);
+  m_per_frame_data.dir_light_dir =
+      glm::vec4(glm::normalize(default_light.direction), 1.0f);
 }
 
 void Renderer::Submit(const DrawCommand& command) {
@@ -50,6 +50,15 @@ void Renderer::Submit(const DrawCommand& command) {
 
 void Renderer::Submit(const std::vector<DrawCommand>& commands) {
   m_commands.insert(m_commands.end(), commands.begin(), commands.end());
+}
+
+void Renderer::Submit(const PointLight& light) {
+  m_pointlights.push_back(light);
+}
+
+void Renderer::Submit(const std::vector<PointLight>& point_lights) {
+  m_pointlights.insert(m_pointlights.end(), point_lights.begin(),
+                       point_lights.end());
 }
 
 MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
@@ -87,6 +96,18 @@ void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
 }
 
 void Renderer::Flush() {
+  // TODO: refactor to own function
+  int n_lights = std::min(static_cast<int>(m_pointlights.size()), 4);
+  for (int i = 0; i < n_lights; i++) {
+    m_per_frame_data.point_lights[i] = {
+        glm::vec4(m_pointlights[i].position, 1.0),
+        glm::vec4(m_pointlights[i].color, 1.0)};
+  }
+  m_per_frame_data.n_active_point_lights = n_lights;
+
+  m_frame_data.SetData(&m_per_frame_data, sizeof(m_per_frame_data));
+  m_frame_data.BindUniform(0);
+
   glClearColor(m_settings.background.r, m_settings.background.g,
                m_settings.background.b, m_settings.background.a);
 
@@ -121,7 +142,9 @@ void Renderer::Flush() {
     material.Set("uModelInverse", glm::inverse(glm::mat3(cmd.transform)));
     m_Draw(cmd, material.Props());
   }
+
   m_commands.clear();
+  m_pointlights.clear();
 }
 
 void Renderer::Resize(unsigned int width, unsigned int height) {

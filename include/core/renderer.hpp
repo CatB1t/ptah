@@ -27,12 +27,19 @@ struct RendererSettings {
 
 class Renderer {
  private:
+  struct alignas(16) _PointLight {
+    glm::vec4 position{0.0f};
+    glm::vec4 color = constants::colors::WHITE;
+  };
+
   struct alignas(16) PerFrameData {
     glm::mat4 view;
     glm::mat4 projection;
     glm::mat4 vp;
     glm::vec4 dir_light_color;
     glm::vec4 dir_light_dir;
+    _PointLight point_lights[4];
+    int n_active_point_lights;
     float time;
   };
 
@@ -41,9 +48,11 @@ class Renderer {
   RendererSettings m_settings;
   std::vector<DrawCommand> m_commands;
   DataBuffer m_frame_data;
+  PerFrameData m_per_frame_data;
 
   // Lights
   DirectionalLight default_light{};
+  std::vector<PointLight> m_pointlights;
 
   void m_SetState(MaterialProps& props);
   void m_Draw(const DrawCommand& cmd, MaterialProps& props);
@@ -55,6 +64,8 @@ class Renderer {
   void Begin(const Camera& camera, float time = 0.0f);
   void Submit(const DrawCommand& command);
   void Submit(const std::vector<DrawCommand>& commands);
+  void Submit(const PointLight& light);
+  void Submit(const std::vector<PointLight>& point_lights);
   void Flush();
   void Resize(unsigned int width, unsigned int height);
   Material& defaultMaterial();
