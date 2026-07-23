@@ -56,7 +56,8 @@ std::optional<Image> load_image(std::filesystem::path path) {
   std::vector<unsigned char> img_data(data, data + size);
   stbi_image_free(data);
   auto image_format = channels == 3 ? ImageFormat::RGB : ImageFormat::RGBA;
-  PTAH_RENDER_DEBUG("Loaded image ({}x{}x{}): {}", width, height, channels, path.string().c_str());
+  PTAH_RENDER_DEBUG("Loaded image ({}x{}x{}): {}", width, height, channels,
+                    path.string().c_str());
   return Image{width, height, img_data, image_format};
 }
 
