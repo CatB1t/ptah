@@ -55,6 +55,8 @@ class Renderer {
   DirectionalLight default_light{};
   std::vector<PointLight> m_pointlights;
 
+  void m_SetPointLights();
+  void m_UploadPerFrameData();
   void m_SetState(MaterialProps& props);
   void m_Draw(const DrawCommand& cmd, MaterialProps& props);
   MaterialInstance* m_ResolveMaterial(MaterialInstance* other);

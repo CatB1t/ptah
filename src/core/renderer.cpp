@@ -66,6 +66,22 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
   return (m_settings.override_materials) ? m_settings.default_instance : other;
 }
 
+void Renderer::m_SetPointLights() {
+  int n_lights =
+      std::min(static_cast<int>(m_pointlights.size()), PTAH_N_POINT_LIGHTS);
+  for (int i = 0; i < n_lights; i++) {
+    auto& pl = m_pointlights[i];
+    m_per_frame_data.point_lights[i] = {glm::vec4(pl.position, 1.0),
+                                        glm::vec4(pl.color, pl.intensity)};
+  }
+  m_per_frame_data.n_active_point_lights = n_lights;
+}
+
+void Renderer::m_UploadPerFrameData() {
+  m_frame_data.SetData(&m_per_frame_data, sizeof(m_per_frame_data));
+  m_frame_data.BindUniform(0);
+}
+
 void Renderer::m_SetState(MaterialProps& props) {
   if (props.cull) {
     glEnable(GL_CULL_FACE);
@@ -97,18 +113,8 @@ void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
 }
 
 void Renderer::Flush() {
-  // TODO: refactor to own function
-  int n_lights =
-      std::min(static_cast<int>(m_pointlights.size()), PTAH_N_POINT_LIGHTS);
-  for (int i = 0; i < n_lights; i++) {
-    m_per_frame_data.point_lights[i] = {
-        glm::vec4(m_pointlights[i].position, 1.0),
-        glm::vec4(m_pointlights[i].color, 1.0)};
-  }
-  m_per_frame_data.n_active_point_lights = n_lights;
-
-  m_frame_data.SetData(&m_per_frame_data, sizeof(m_per_frame_data));
-  m_frame_data.BindUniform(0);
+  m_SetPointLights();
+  m_UploadPerFrameData();
 
   glClearColor(m_settings.background.r, m_settings.background.g,
                m_settings.background.b, m_settings.background.a);
