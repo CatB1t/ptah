@@ -48,9 +48,7 @@ class Material {
   MaterialProps m_props;
   std::array<Texture2D*, std::to_underlying(TextureSlot::Count)> m_textures{};
 
-  unsigned int m_LoadShaderSource(std::filesystem::path filepath,
-                                  unsigned int type,
-                                  const std::vector<std::string>& prepend);
+  unsigned int m_LoadShaderSource(std::filesystem::path filepath, unsigned int type);
   void m_CheckCompileStatus(unsigned int id, const char* type,
                             const std::string& source);
   bool m_IsCompiled(unsigned int id);

@@ -65,10 +65,8 @@ Material::Material(const char* vertex_filepath, const char* fragment_filepath,
       m_vertex{vertex_filepath},
       m_fragment{fragment_filepath},
       m_defines(defines) {
-  m_vertex.id =
-      m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER, defines);
-  m_fragment.id =
-      m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER, defines);
+  m_vertex.id = m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER);
+  m_fragment.id = m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER);
   glAttachShader(m_program.Id(), m_vertex.id);
   glAttachShader(m_program.Id(), m_fragment.id);
   glLinkProgram(m_program.Id());
@@ -93,10 +91,8 @@ void Material::Reload() {
   // Stored even if compilation fails below, so we don't retry every call.
   m_last_modified = latest;
 
-  unsigned int new_vertex_id =
-      m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER, m_defines);
-  unsigned int new_fragment_id =
-      m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER, m_defines);
+  unsigned int new_vertex_id = m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER);
+  unsigned int new_fragment_id = m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER);
 
   if (!m_IsCompiled(new_vertex_id) || !m_IsCompiled(new_fragment_id)) {
     PTAH_RENDER_ERROR(
@@ -140,15 +136,13 @@ void Material::Reload() {
   PTAH_RENDER_DEBUG("Material ({}): shaders reloaded.", m_program.Id());
 }
 
-unsigned int Material::m_LoadShaderSource(
-    std::filesystem::path filepath, unsigned int type,
-    const std::vector<std::string>& prepend) {
+unsigned int Material::m_LoadShaderSource( std::filesystem::path filepath, unsigned int type) {
   unsigned int id = glCreateShader(type);
   const char* type_str = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
 
   std::string source = "#version 460 core\n\n";  // Must be first line
-  if (prepend.size()) {
-    for (const std::string& str : prepend) {
+  if (m_defines.size()) {
+    for (const std::string& str : m_defines) {
       source += "#define " + str + "\n";
     }
     source += "\n// end prepends \n";
