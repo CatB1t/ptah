@@ -93,8 +93,10 @@ void Material::Reload() {
   // Stored even if compilation fails below, so we don't retry every call.
   m_last_modified = latest;
 
-  unsigned int new_vertex_id = m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER);
-  unsigned int new_fragment_id = m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER);
+  unsigned int new_vertex_id =
+      m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER);
+  unsigned int new_fragment_id =
+      m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER);
 
   if (!m_IsCompiled(new_vertex_id) || !m_IsCompiled(new_fragment_id)) {
     PTAH_RENDER_ERROR(
@@ -138,7 +140,8 @@ void Material::Reload() {
   PTAH_RENDER_DEBUG("Material ({}): shaders reloaded.", m_program.Id());
 }
 
-unsigned int Material::m_LoadShaderSource( std::filesystem::path filepath, unsigned int type) {
+unsigned int Material::m_LoadShaderSource(std::filesystem::path filepath,
+                                          unsigned int type) {
   unsigned int id = glCreateShader(type);
   const char* type_str = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
 
