@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "core/material_instance.hpp"
+#include "core/shader_defines.hpp"
 #include "core/texture2d.hpp"
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
@@ -65,6 +66,7 @@ Material::Material(const char* vertex_filepath, const char* fragment_filepath,
       m_vertex{vertex_filepath},
       m_fragment{fragment_filepath},
       m_defines(defines) {
+  m_defines.push_back(PTAH_EXPAND(PTAH_N_POINT_LIGHTS));
   m_vertex.id = m_LoadShaderSource(m_vertex.filepath, GL_VERTEX_SHADER);
   m_fragment.id = m_LoadShaderSource(m_fragment.filepath, GL_FRAGMENT_SHADER);
   glAttachShader(m_program.Id(), m_vertex.id);

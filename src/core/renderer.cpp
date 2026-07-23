@@ -7,6 +7,7 @@
 #include "core/data_buffer.hpp"
 #include "core/material.hpp"
 #include "core/material_props.hpp"
+#include "core/shader_defines.hpp"
 #include "core/window.hpp"
 #include "utils/logger.hpp"
 
@@ -97,7 +98,8 @@ void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
 
 void Renderer::Flush() {
   // TODO: refactor to own function
-  int n_lights = std::min(static_cast<int>(m_pointlights.size()), 4);
+  int n_lights =
+      std::min(static_cast<int>(m_pointlights.size()), PTAH_N_POINT_LIGHTS);
   for (int i = 0; i < n_lights; i++) {
     m_per_frame_data.point_lights[i] = {
         glm::vec4(m_pointlights[i].position, 1.0),

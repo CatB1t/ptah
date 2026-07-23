@@ -10,6 +10,7 @@
 #include "core/material.hpp"
 #include "core/material_instance.hpp"
 #include "core/material_props.hpp"
+#include "core/shader_defines.hpp"
 #include "core/window.hpp"
 #include "light.hpp"
 #include "materials/materials_factory.hpp"
@@ -38,7 +39,7 @@ class Renderer {
     glm::mat4 vp;
     glm::vec4 dir_light_color;
     glm::vec4 dir_light_dir;
-    _PointLight point_lights[4];
+    _PointLight point_lights[PTAH_N_POINT_LIGHTS];
     int n_active_point_lights;
     float time;
   };
