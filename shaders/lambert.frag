@@ -13,6 +13,16 @@ in VS_OUT {
 
 out vec4 oColor;
 
+vec4 pointLightsDiffuse(vec3 normal) {
+  vec3 pl_diffuse = vec3(0.0);
+  for(int i = 0; i < uNActivePointLights; i++) {
+      PointLight pl = uPointLights[i];
+      vec3 pl_light_dir = normalize(pl.position.xyz - fs_in.position);
+      pl_diffuse += pl.color.w * pl.color.xyz * max(dot(normal, pl_light_dir), 0.0f);
+  }
+  return vec4(pl_diffuse, 1.0);
+}
+
 void main() {
   vec4 light_color = vec4(uDirLightColor.xyz, 1.0f);
   vec3 n_normal = normalize(fs_in.normal);
