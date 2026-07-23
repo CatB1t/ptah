@@ -18,11 +18,12 @@ int main() {
   }
 
   ptah::Window window{"Demo", 1280, 720};
+  ptah::Renderer renderer{window};
 
   std::vector<ptah::Vertex> vertices{
-      {glm::vec3(-0.5, -0.5, 0.0)},
-      {glm::vec3(0.5, -0.5, 0.0)},
-      {glm::vec3(0.0, 0.5, 0.0)},
+    {glm::vec3(-0.5, -0.5, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0.0, 0.0)},
+    {glm::vec3(0.5, -0.5, 0.0),  glm::vec3(0.0, 0.0, 1.0), glm::vec2(1.0, 0.0)},
+    {glm::vec3(0.0, 0.5, 0.0),   glm::vec3(0.0, 0.0, 1.0), glm::vec2(0.5, 1.0)},
   };
 
   std::vector<unsigned int> indices{
@@ -30,7 +31,6 @@ int main() {
   };
 
   ptah::Mesh mesh{vertices, indices};
-  ptah::Renderer renderer{window};
 
   ptah::Camera camera;
   camera.view = glm::translate(camera.view, glm::vec3(0, 0, -5.0));
