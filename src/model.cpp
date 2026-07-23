@@ -8,7 +8,6 @@
 #include <glm/mat4x4.hpp>
 
 #include "core/material_instance.hpp"
-#include "core/renderer.hpp"
 #include "core/texture2d.hpp"
 #include "core/texture_slot.hpp"
 #include "utils/file_loading.hpp"
@@ -41,8 +40,7 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
   return nullptr;
 }
 
-MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
-                                        const aiScene* scene,
+MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
                                         int materialIndex) {
   if (m_loaded_materials.contains(materialIndex)) {
     return m_loaded_materials.at(materialIndex);
@@ -50,7 +48,7 @@ MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
 
   aiMaterial* mat = scene->mMaterials[materialIndex];
 
-  MaterialInstance* instance = renderer.defaultMaterial().createInstance();
+  MaterialInstance* instance = m_material.createInstance();
   PTAH_RENDER_DEBUG("Mat[{}] {} :", materialIndex, mat->GetName().C_Str());
 
   Texture2D* albedo_tex = m_LoadTexture(mat, aiTextureType_BASE_COLOR);
@@ -73,7 +71,7 @@ MaterialInstance* Model::m_LoadMaterial(Renderer& renderer,
   return instance;
 }
 
-void Model::m_LoadMesh(Renderer& renderer, const aiScene* scene, aiNode* node,
+void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
                        glm::mat4 parentTransform) {
   glm::mat4 transformation =
       assimp_to_glm(node->mTransformation) * parentTransform;
@@ -106,8 +104,7 @@ void Model::m_LoadMesh(Renderer& renderer, const aiScene* scene, aiNode* node,
       }
     }
 
-    MaterialInstance* material =
-        m_LoadMaterial(renderer, scene, mesh->mMaterialIndex);
+    MaterialInstance* material = m_LoadMaterial(scene, mesh->mMaterialIndex);
 
     std::size_t index = m_meshes.size();
     m_meshes.push_back(Mesh{verts, inds});
@@ -116,11 +113,12 @@ void Model::m_LoadMesh(Renderer& renderer, const aiScene* scene, aiNode* node,
   }
 
   for (int i = 0; i < node->mNumChildren; i++) {
-    m_LoadMesh(renderer, scene, node->mChildren[i], transformation);
+    m_LoadMesh(scene, node->mChildren[i], transformation);
   }
 }
 
-Model::Model(Renderer& renderer, const char* filepath) : m_path(filepath) {
+Model::Model(Material& base_material, const char* filepath)
+    : m_path(filepath), m_material(base_material) {
   Assimp::Importer importer;
   const aiScene* scene = utils::load_object(importer, filepath);
   if (scene == nullptr || scene->mRootNode == nullptr) {
@@ -129,7 +127,7 @@ Model::Model(Renderer& renderer, const char* filepath) : m_path(filepath) {
   }
 
   PTAH_RENDER_DEBUG("Loading {}", filepath);
-  m_LoadMesh(renderer, scene, scene->mRootNode, glm::mat4(1.0f));
+  m_LoadMesh(scene, scene->mRootNode, glm::mat4(1.0f));
 }
 
 std::vector<DrawCommand> Model::GetDrawCommands(

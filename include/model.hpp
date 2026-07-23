@@ -17,9 +17,11 @@ struct aiNode;
 namespace ptah {
 class Renderer;
 class MaterialInstance;
+class Material;
 
 class Model {
  private:
+  Material& m_material;
   std::filesystem::path m_path;
   std::vector<Mesh> m_meshes;
   std::vector<glm::mat4> m_transforms;
@@ -28,13 +30,12 @@ class Model {
   std::vector<Texture2D*> m_loaded_textures;
   Texture2D* m_LoadTexture(const aiMaterial* material,
                            aiTextureType texture_type);
-  MaterialInstance* m_LoadMaterial(Renderer& renderer, const aiScene* scene,
-                                   int materialIndex);
-  void m_LoadMesh(Renderer& renderer, const aiScene* scene, aiNode* node,
+  MaterialInstance* m_LoadMaterial(const aiScene* scene, int materialIndex);
+  void m_LoadMesh(const aiScene* scene, aiNode* node,
                   glm::mat4 parentTransform);
 
  public:
-  Model(Renderer& renderer, const char* filepath);
+  Model(Material& material, const char* filepath);
 
   std::vector<DrawCommand> GetDrawCommands(
       const glm::mat4& transform = glm::mat4(1.0f)) const;
