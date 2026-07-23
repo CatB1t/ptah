@@ -5,4 +5,4 @@
 #define PTAH_STRING(x) PTAH_STRING_IM(x)  // Convert macro value to string
 #define PTAH_EXPAND(x) #x " " PTAH_STRING_IM(x)  // expand to MACRO_NAME VALUE
 
-#define PTAH_N_POINT_LIGHTS 2
+#define PTAH_N_POINT_LIGHTS 8
