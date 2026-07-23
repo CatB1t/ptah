@@ -49,7 +49,7 @@ std::optional<Image> load_image(std::filesystem::path path) {
     PTAH_RENDER_ERROR("Failed to load image: {}\n{}", path.string().c_str(),
                       failure_str);
     PTAH_RENDER_ERROR("STB: {}", failure_str);
-    assert(true);
+    return {};
   }
 
   int size = width * height * channels;
