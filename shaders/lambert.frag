@@ -24,12 +24,12 @@ vec4 pointLightsDiffuse(vec3 normal) {
 }
 
 void main() {
-  vec4 light_color = vec4(uDirLightColor.xyz, 1.0f);
+  vec4 light_color = vec4(uDirLightColor.rgb, 1.0f);
   vec3 n_normal = normalize(fs_in.normal);
   vec3 n_light_dir = uDirLightDirection.xyz;
 
-  float ambient = uDirLightColor.w;
-  float diffuse = uDirLightColor.w * max(dot(n_normal, n_light_dir), 0.0f);
+  float ambient = uDirLightColor.a;
+  float diffuse = uDirLightColor.a * max(dot(n_normal, n_light_dir), 0.0f);
 
   vec4 total_dir_light = (ambient + diffuse) * light_color;
   vec4 total_points_light = pointLightsDiffuse(n_normal);
