@@ -57,7 +57,7 @@ class Renderer {
   Gizmos m_gizmos;
 
   // Lights
-  DirectionalLight default_light{};
+  DirectionalLight m_dirlight{};
   std::vector<PointLight> m_pointlights;
 
   void m_SetPointLights();
@@ -72,6 +72,7 @@ class Renderer {
   void Begin(const Camera& camera, float time = 0.0f);
   void Submit(const DrawCommand& command);
   void Submit(const std::vector<DrawCommand>& commands);
+  void Submit(const DirectionalLight& light);
   void Submit(const PointLight& light);
   void Submit(const std::vector<PointLight>& point_lights);
   void Flush();

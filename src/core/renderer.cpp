@@ -46,9 +46,9 @@ void Renderer::Begin(const Camera& camera, float time) {
   m_per_frame_data.view_position = glm::vec4(camera_position, 1.0);
 
   m_per_frame_data.dir_light_color =
-      glm::vec4(default_light.color, default_light.intensity);
+      glm::vec4(m_dirlight.color, m_dirlight.intensity);
   m_per_frame_data.dir_light_dir =
-      glm::vec4(glm::normalize(default_light.direction), 1.0f);
+      glm::vec4(glm::normalize(m_dirlight.direction), 1.0f);
 }
 
 void Renderer::Submit(const DrawCommand& command) {
@@ -58,6 +58,8 @@ void Renderer::Submit(const DrawCommand& command) {
 void Renderer::Submit(const std::vector<DrawCommand>& commands) {
   m_commands.insert(m_commands.end(), commands.begin(), commands.end());
 }
+
+void Renderer::Submit(const DirectionalLight& light) { m_dirlight = light; }
 
 void Renderer::Submit(const PointLight& light) {
   m_pointlights.push_back(light);
