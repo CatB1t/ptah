@@ -46,8 +46,7 @@ std::optional<Image> load_image(std::filesystem::path path) {
 
   if (!data) {
     auto failure_str = stbi_failure_reason();
-    PTAH_RENDER_ERROR("Failed to load image: {}\n{}", path.string().c_str(),
-                      failure_str);
+    PTAH_RENDER_ERROR("Failed to load image: {}", path.string().c_str());
     PTAH_RENDER_ERROR("STB: {}", failure_str);
     return {};
   }
