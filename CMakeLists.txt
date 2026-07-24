@@ -69,6 +69,7 @@ add_executable(ptah
     src/core/data_buffer.cpp
     src/core/mirrored_buffer.cpp
     src/core/texture2d.cpp
+    src/core/helpers/gizmos.cpp
     src/input.cpp
     src/utils/file_loading.cpp
     src/utils/logger.cpp

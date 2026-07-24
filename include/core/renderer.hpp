@@ -7,6 +7,7 @@
 #include "core/constants.hpp"
 #include "core/data_buffer.hpp"
 #include "core/draw_command.hpp"
+#include "core/helpers/gizmos.hpp"
 #include "core/material.hpp"
 #include "core/material_instance.hpp"
 #include "core/material_props.hpp"
@@ -29,6 +30,7 @@ struct RendererSettings {
 
 class Renderer {
  private:
+  friend class Gizmos;
   struct alignas(16) _PointLight {
     glm::vec4 position{0.0f};
     glm::vec4 color = constants::colors::WHITE;
@@ -52,25 +54,17 @@ class Renderer {
   std::vector<DrawCommand> m_commands;
   DataBuffer m_frame_data;
   PerFrameData m_per_frame_data;
-  Mesh m_quadmesh;
-  Material m_gizmo_material;
-  std::optional<Image> m_light_gizmo;
-  Texture2D m_light_texture;
-  Material m_grid_material;
-  MaterialInstance* m_grid_instance;
+  Gizmos m_gizmos;
 
   // Lights
   DirectionalLight default_light{};
   std::vector<PointLight> m_pointlights;
-  std::array<MaterialInstance*, PTAH_N_POINT_LIGHTS> m_plights_material_pool{};
 
-  void m_SetGrid();
   void m_SetPointLights();
   void m_UploadPerFrameData();
   void m_SetState(MaterialProps& props);
   void m_Draw(const DrawCommand& cmd, MaterialProps& props);
   MaterialInstance* m_ResolveMaterial(MaterialInstance* other);
-  Mesh m_MakeQuad();
 
  public:
   Renderer(Window& window);

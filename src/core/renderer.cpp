@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "core/data_buffer.hpp"
+#include "core/helpers/gizmos.hpp"
 #include "core/material.hpp"
 #include "core/material_props.hpp"
 #include "core/shader_defines.hpp"
@@ -20,14 +21,7 @@ Renderer::Renderer(Window& window)
     : m_width(window.Size().x),
       m_height(window.Size().y),
       m_settings{},
-      m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)),
-      m_quadmesh(m_MakeQuad()),
-      m_gizmo_material(PTAH_SHADERS_DIR "/default.vert",
-                       PTAH_SHADERS_DIR "/gizmo.frag"),
-      m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
-      m_light_texture{m_light_gizmo.value()},
-      m_grid_material(PTAH_SHADERS_DIR "/default.vert",
-                      PTAH_SHADERS_DIR "/grid.frag") {
+      m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
   Material::InitDefaults();
   glViewport(0, 0, m_width, m_height);
 
@@ -39,28 +33,9 @@ Renderer::Renderer(Window& window)
 
   window.AddResizeCallback(
       [&](unsigned int width, unsigned int height) { Resize(width, height); });
-
-  m_grid_instance = m_grid_material.createInstance();
 }
 
 Renderer::~Renderer() { Material::DestroyDefaults(); }
-
-// TODO: move out of Renderer
-Mesh Renderer::m_MakeQuad() {
-  const glm::vec3 normal{0.0f, 0.0f, 1.0f};
-  const glm::vec3 tangent{1.0f, 0.0f, 0.0f};
-
-  std::vector<Vertex> vertices{
-      {{-0.5f, -0.5f, 0.0f}, normal, {0.0f, 0.0f}, tangent},  // bottom-left
-      {{0.5f, -0.5f, 0.0f}, normal, {1.0f, 0.0f}, tangent},   // bottom-right
-      {{0.5f, 0.5f, 0.0f}, normal, {1.0f, 1.0f}, tangent},    // top-right
-      {{-0.5f, 0.5f, 0.0f}, normal, {0.0f, 1.0f}, tangent},   // top-left
-  };
-
-  std::vector<unsigned int> indices{0, 1, 2, 2, 3, 0};
-
-  return Mesh(vertices, indices);
-}
 
 void Renderer::Begin(const Camera& camera, float time) {
   m_per_frame_data.view = camera.view;
@@ -97,44 +72,15 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
   return (m_settings.override_materials) ? m_settings.default_instance : other;
 }
 
-void Renderer::m_SetGrid() {
-  glm::mat4 model{1.0};
-  model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0, 0.0, 0.0));
-  model = glm::scale(model, glm::vec3(50.0));
-  m_commands.push_back(m_quadmesh.GetDrawCommand(model, *m_grid_instance));
-}
-
 void Renderer::m_SetPointLights() {
   int n_lights =
       std::min(static_cast<int>(m_pointlights.size()), PTAH_N_POINT_LIGHTS);
-  auto& material = m_gizmo_material;
+  m_per_frame_data.n_active_point_lights = n_lights;
   for (int i = 0; i < n_lights; i++) {
     auto& pl = m_pointlights[i];
     m_per_frame_data.point_lights[i] = {glm::vec4(pl.position, 1.0),
                                         glm::vec4(pl.color, pl.intensity)};
-
-    // TODO: might not be the best way to this, but since point lights are
-    // flushed and we want full control of how to display them, we need to
-    // manage it and this require us to everytime to set the material instance
-    // color if this needs to be avoided then flushing must be removed.
-    auto* mat_instance = m_plights_material_pool[i];
-    if (mat_instance == nullptr) {
-      m_plights_material_pool[i] = material.createInstance();
-      mat_instance = m_plights_material_pool[i];
-    }
-    mat_instance->SetBlockUniform("color", glm::vec4(pl.color, 1.0));
-    mat_instance->SetTexture(&m_light_texture, ptah::TextureSlot::Albedo);
-
-    glm::vec3 dis = glm::vec3(m_per_frame_data.view_position) - pl.position;
-    glm::mat4 model{1.0f};
-    model = glm::translate(model, pl.position);
-    model =
-        glm::rotate(model, glm::atan(dis.x, dis.z), glm::vec3(0.0, 1.0, 0.0));
-
-    auto draw_cmd = m_quadmesh.GetDrawCommand(model, *mat_instance);
-    m_commands.push_back(draw_cmd);
   }
-  m_per_frame_data.n_active_point_lights = n_lights;
 }
 
 void Renderer::m_UploadPerFrameData() {
@@ -174,7 +120,6 @@ void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
 
 void Renderer::Flush() {
   m_SetPointLights();
-  m_SetGrid();
   m_UploadPerFrameData();
 
   glClearColor(m_settings.background.r, m_settings.background.g,
@@ -211,6 +156,12 @@ void Renderer::Flush() {
     material.Set("uModelInverse", glm::inverse(glm::mat3(cmd.transform)));
     m_Draw(cmd, material.Props());
   }
+
+  for (int i = 0; i < m_per_frame_data.n_active_point_lights; i++) {
+    m_gizmos.DrawPointLight(*this, m_pointlights[i],
+                            glm::vec3(m_per_frame_data.view_position));
+  }
+  m_gizmos.DrawGrid(*this);
 
   m_commands.clear();
   m_pointlights.clear();
