@@ -3,7 +3,7 @@
 #include <glad/gl.h>
 
 namespace ptah {
-int MaterialProps::CullFace() {
+int MaterialProps::CullingFace() {
   switch (cull_face) {
     case CullFace::Front:
       return GL_FRONT;

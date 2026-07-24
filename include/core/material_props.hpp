@@ -11,7 +11,7 @@ struct MaterialProps {
   bool depth_test = true;
   bool cull = false;
 
-  int CullFace();
+  int CullingFace();
   int DrawingMode();
 };
 

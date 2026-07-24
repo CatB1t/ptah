@@ -93,7 +93,7 @@ void Renderer::m_UploadPerFrameData() {
 void Renderer::m_SetState(MaterialProps& props) {
   if (props.cull) {
     glEnable(GL_CULL_FACE);
-    glCullFace(props.CullFace());
+    glCullFace(props.CullingFace());
   } else {
     glDisable(GL_CULL_FACE);
   }
