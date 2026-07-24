@@ -56,7 +56,7 @@ target_include_directories(stb PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_D
 add_library(deps::stb ALIAS stb)
 
 add_executable(ptah
-    demos/triangle.cpp
+    demos/lights.cpp
     src/core/context.cpp
     src/core/window.cpp
     src/core/renderer.cpp
