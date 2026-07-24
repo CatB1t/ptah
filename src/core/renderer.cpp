@@ -62,10 +62,23 @@ void Renderer::Submit(const std::vector<DrawCommand>& commands) {
 void Renderer::Submit(const DirectionalLight& light) { m_dirlight = light; }
 
 void Renderer::Submit(const PointLight& light) {
+  if (m_pointlights.size() == PTAH_N_POINT_LIGHTS) {
+    PTAH_RENDER_WARN("Maximum lights reached, discarding.");
+    return;
+  }
   m_pointlights.push_back(light);
 }
 
 void Renderer::Submit(const std::vector<PointLight>& point_lights) {
+  if (m_pointlights.size() + point_lights.size() > PTAH_N_POINT_LIGHTS) {
+    int slots_available = PTAH_N_POINT_LIGHTS - m_pointlights.size();
+    PTAH_RENDER_WARN("Maximum lights reached, inserting only {}.",
+                     slots_available);
+    m_pointlights.insert(m_pointlights.end(), point_lights.begin(),
+                         point_lights.begin() + slots_available);
+    return;
+  }
+
   m_pointlights.insert(m_pointlights.end(), point_lights.begin(),
                        point_lights.end());
 }
@@ -75,10 +88,8 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
 }
 
 void Renderer::m_SetPointLights() {
-  int n_lights =
-      std::min(static_cast<int>(m_pointlights.size()), PTAH_N_POINT_LIGHTS);
-  m_per_frame_data.n_active_point_lights = n_lights;
-  for (int i = 0; i < n_lights; i++) {
+  m_per_frame_data.n_active_point_lights = m_pointlights.size();
+  for (int i = 0; i < m_pointlights.size(); i++) {
     auto& pl = m_pointlights[i];
     m_per_frame_data.point_lights[i] = {glm::vec4(pl.position, 1.0),
                                         glm::vec4(pl.color, pl.intensity)};
@@ -159,7 +170,7 @@ void Renderer::Flush() {
     m_Draw(cmd, material.Props());
   }
 
-  for (int i = 0; i < m_per_frame_data.n_active_point_lights; i++) {
+  for (int i = 0; i < m_pointlights.size(); i++) {
     m_gizmos.DrawPointLight(*this, m_pointlights[i],
                             glm::vec3(m_per_frame_data.view_position));
   }
