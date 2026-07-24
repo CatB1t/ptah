@@ -29,7 +29,6 @@ void MirroredBuffer::SetData(const void* data, unsigned int size,
 
 void MirroredBuffer::Sync() {
   if (m_dirty) {
-    PTAH_RENDER_DEBUG("Syncing Mateiral Instance to GPU");
     m_gpu_buffer.SetData(m_buffer.data(), m_buffer.size());
     m_dirty = false;
   }

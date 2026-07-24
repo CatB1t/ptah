@@ -30,7 +30,6 @@ class MaterialInstance {
     }
 
     Layout& layout = m_base.m_block_uniforms.at(name);
-    PTAH_RENDER_DEBUG("{} at {} updated ", name, layout.offset);
     m_block.SetData(static_cast<const void*>(&data), sizeof(data),
                     layout.offset);
   };
