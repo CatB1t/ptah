@@ -27,6 +27,8 @@ int main() {
   ptah::Model model {mat, PTAH_ASSETS_DIR "/backpack/backpack.obj"};
   glm::mat4 transform{1.0f};
 
+  ptah::DirectionalLight dir_light;
+
   std::vector<ptah::PointLight> lights;
   lights.emplace_back(ptah::constants::colors::RED, glm::vec3(0.0, 0.0, 5.0), 20.0f);
   lights.emplace_back(ptah::constants::colors::GREEN, glm::vec3(0.0, 0.0, -5.0), 20.0f);
@@ -41,6 +43,7 @@ int main() {
     camera.Update(input_handler);
     double time = window.Time();
     renderer.Begin(camera.Data(), time);
+    renderer.Submit(dir_light);
     renderer.Submit(lights);
     renderer.Submit(model.GetDrawCommands(transform));
     renderer.Flush();
