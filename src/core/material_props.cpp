@@ -14,7 +14,7 @@ int MaterialProps::CullFace() {
   }
 };
 
-int MaterialProps::DrawMode() {
+int MaterialProps::DrawingMode() {
   switch (draw_mode) {
     case DrawMode::Triangles:
     case DrawMode::Wireframe:

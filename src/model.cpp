@@ -76,12 +76,12 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
   glm::mat4 transformation =
       assimp_to_glm(node->mTransformation) * parentTransform;
 
-  for (int n = 0; n < node->mNumMeshes; n++) {
+  for (unsigned int n = 0; n < node->mNumMeshes; n++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[n]];
     std::vector<Vertex> verts;
     std::vector<unsigned int> inds;
 
-    for (int i = 0; i < mesh->mNumVertices; i++) {
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
       auto position = mesh->mVertices[i];
       auto normal = mesh->mNormals[i];
       aiVector3D uv;
@@ -97,9 +97,9 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
       verts.push_back(Vertex{aPosition, aNormal, aUV, aTangent});
     }
 
-    for (int i = 0; i < mesh->mNumFaces; i++) {
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
       auto& face = mesh->mFaces[i];
-      for (int j = 0; j < face.mNumIndices; j++) {
+      for (unsigned int j = 0; j < face.mNumIndices; j++) {
         inds.push_back(face.mIndices[j]);
       }
     }
@@ -112,13 +112,13 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
     m_mesh_materials.insert({index, material});
   }
 
-  for (int i = 0; i < node->mNumChildren; i++) {
+  for (unsigned int i = 0; i < node->mNumChildren; i++) {
     m_LoadMesh(scene, node->mChildren[i], transformation);
   }
 }
 
 Model::Model(Material& base_material, const char* filepath)
-    : m_path(filepath), m_material(base_material) {
+    : m_material(base_material), m_path(filepath) {
   Assimp::Importer importer;
   const aiScene* scene = utils::load_object(importer, filepath);
   if (scene == nullptr || scene->mRootNode == nullptr) {

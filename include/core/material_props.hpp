@@ -12,7 +12,7 @@ struct MaterialProps {
   bool cull = false;
 
   int CullFace();
-  int DrawMode();
+  int DrawingMode();
 };
 
 }  // namespace ptah

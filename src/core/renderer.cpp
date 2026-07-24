@@ -114,9 +114,9 @@ void Renderer::m_SetState(MaterialProps& props) {
 void Renderer::m_Draw(const DrawCommand& cmd, MaterialProps& props) {
   glBindVertexArray(cmd.handle.Id());
   if (cmd.indexed) {
-    glDrawElements(props.DrawMode(), cmd.count, GL_UNSIGNED_INT, 0);
+    glDrawElements(props.DrawingMode(), cmd.count, GL_UNSIGNED_INT, 0);
   } else {
-    glDrawArrays(props.DrawMode(), 0, cmd.count);
+    glDrawArrays(props.DrawingMode(), 0, cmd.count);
   }
 }
 

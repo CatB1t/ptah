@@ -11,10 +11,10 @@ Gizmos::Gizmos()
     : m_quadmesh(m_MakeQuad()),
       m_gizmo_material(PTAH_SHADERS_DIR "/default.vert",
                        PTAH_SHADERS_DIR "/gizmo.frag"),
-      m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
-      m_light_texture{m_light_gizmo.value()},
       m_grid_material(PTAH_SHADERS_DIR "/default.vert",
-                      PTAH_SHADERS_DIR "/grid.frag") {
+                      PTAH_SHADERS_DIR "/grid.frag"),
+      m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
+      m_light_texture{m_light_gizmo.value()} {
   m_grid_instance = m_grid_material.createInstance();
   m_light_instance = m_gizmo_material.createInstance();
   m_light_instance->SetTexture(&m_light_texture, ptah::TextureSlot::Albedo);

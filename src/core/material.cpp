@@ -297,8 +297,6 @@ Layout Material::m_GetUniformLayout(unsigned int uniform_index) {
 }
 
 void Material::m_ResolveLayout() {
-  const int program_id = m_program.Id();
-
   auto material_block = m_FetchBlockMetadata();
   if (material_block.index < 0) {
     return;
@@ -352,7 +350,7 @@ void Material::InitDefaults() {
 }
 
 void Material::DestroyDefaults() {
-  for (int i = 0; i < std::to_underlying(TextureSlot::Count); i++) {
+  for (unsigned int i = 0; i < std::to_underlying(TextureSlot::Count); i++) {
     delete m_texture_defaults[i];
   }
 }
