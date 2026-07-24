@@ -15,6 +15,8 @@
 
 namespace ptah {
 
+class MaterialInstance;
+
 struct MaterialBlock {
   int index;
   int size;
