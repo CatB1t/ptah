@@ -21,7 +21,7 @@ int MaterialProps::DrawingMode() {
     case DrawMode::Wireframe:
       return GL_TRIANGLES;
     case DrawMode::Lines:
-      return GL_LINE_LOOP;
+      return GL_LINES;
     case DrawMode::Points:
       return GL_POINTS;
   }
