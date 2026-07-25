@@ -14,6 +14,7 @@ class Gizmos {
  private:
   Mesh m_quadmesh;
   Mesh m_axeslines;
+  Mesh m_line;
   Material m_gizmo_material;
   Material m_grid_material;
   Material m_axes_material;

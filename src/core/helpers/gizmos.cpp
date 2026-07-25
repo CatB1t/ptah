@@ -12,6 +12,7 @@ namespace ptah {
 Gizmos::Gizmos()
     : m_quadmesh(m_MakeQuad()),
       m_axeslines(m_MakeAxes()),
+      m_line(m_MakeLine()),
       m_gizmo_material(PTAH_SHADERS_DIR "/default.vert",
                        PTAH_SHADERS_DIR "/gizmo.frag"),
       m_grid_material(PTAH_SHADERS_DIR "/default.vert",
@@ -38,9 +39,10 @@ Gizmos::Gizmos()
 void Gizmos::DrawDirLight(Renderer& renderer, const DirectionalLight& light,
                           const glm::vec3& view_position) {
   auto material = m_dir_light_instance->Base();
+  float radius = 10.0f;
   glm::vec3 dis = view_position - light.direction;
   glm::mat4 model{1.0f};
-  model = glm::translate(model, light.direction * 10.0f);
+  model = glm::translate(model, light.direction * radius);
   model = glm::rotate(model, glm::atan(dis.x, dis.z), glm::vec3(0.0, 1.0, 0.0));
   material.Use();
   material.Set("uModel", model);
@@ -50,6 +52,15 @@ void Gizmos::DrawDirLight(Renderer& renderer, const DirectionalLight& light,
   auto draw_cmd = m_quadmesh.GetDrawCommand(model, *m_dir_light_instance);
   renderer.m_SetState(m_gizmo_material.Props());
   renderer.m_Draw(draw_cmd, m_gizmo_material.Props());
+
+  glm::mat4 line_model{1.0f};
+  line_model = glm::scale(line_model, light.direction * radius);
+  m_axes_material.Use();
+  m_axes_material.Set("uModel", line_model);
+  m_axes_material.Set("uModelInverse", glm::mat3(1.0f));
+  renderer.m_SetState(m_axes_material.props);
+  renderer.m_Draw(m_line.GetDrawCommand(glm::mat4{1.0}, *m_axes_instance),
+                  m_axes_material.Props());
 }
 
 void Gizmos::DrawPointLight(Renderer& renderer, const PointLight& point_light,
@@ -128,8 +139,8 @@ Mesh Gizmos::m_MakeAxes() {
 
 Mesh Gizmos::m_MakeLine() {
   std::vector<Vertex> vertices{
-      {{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, glm::vec3{0.0f}},
-      {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, glm::vec3{0.0f}},
+      {{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, glm::vec3{0.0f}},
+      {{1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, glm::vec3{0.0f}},
   };
 
   return Mesh(vertices);
