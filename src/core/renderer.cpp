@@ -24,6 +24,7 @@ Renderer::Renderer(Window& window)
       m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
   Material::InitDefaults();
   glViewport(0, 0, m_width, m_height);
+  glEnable(GL_MULTISAMPLE);
 
   settings.default_material.SetBlockUniform("color",
                                             glm::vec4(0.0, 0.0, 0.0, 1.0));
