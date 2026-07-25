@@ -26,6 +26,8 @@ struct RendererSettings {
   MaterialInstance* default_instance;
   bool override_materials = false;
   bool override_instances = false;
+  bool draw_grid = true;
+  bool draw_light_gizmos = true;
 };
 
 class Renderer {
@@ -50,7 +52,6 @@ class Renderer {
 
   unsigned int m_width;
   unsigned int m_height;
-  RendererSettings m_settings;
   std::vector<DrawCommand> m_commands;
   DataBuffer m_frame_data;
   PerFrameData m_per_frame_data;
@@ -67,6 +68,8 @@ class Renderer {
   MaterialInstance* m_ResolveMaterial(MaterialInstance* other);
 
  public:
+  RendererSettings settings;
+
   Renderer(Window& window);
   ~Renderer();
   void Begin(const Camera& camera, float time = 0.0f);

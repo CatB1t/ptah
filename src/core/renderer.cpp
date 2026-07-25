@@ -20,16 +20,16 @@ namespace ptah {
 Renderer::Renderer(Window& window)
     : m_width(window.Size().x),
       m_height(window.Size().y),
-      m_settings{},
+      settings{},
       m_frame_data(BufferType::UNIFORM, sizeof(PerFrameData)) {
   Material::InitDefaults();
   glViewport(0, 0, m_width, m_height);
 
-  m_settings.default_material.SetBlockUniform("color",
-                                              glm::vec4(0.0, 0.0, 0.0, 1.0));
-  m_settings.default_instance = m_settings.default_material.createInstance();
-  m_settings.default_instance->SetBlockUniform("color",
-                                               glm::vec4(1.0, 0.0, 0.0, 1.0));
+  settings.default_material.SetBlockUniform("color",
+                                            glm::vec4(0.0, 0.0, 0.0, 1.0));
+  settings.default_instance = settings.default_material.createInstance();
+  settings.default_instance->SetBlockUniform("color",
+                                             glm::vec4(1.0, 0.0, 0.0, 1.0));
 
   window.AddResizeCallback(
       [&](unsigned int width, unsigned int height) { Resize(width, height); });
@@ -84,7 +84,7 @@ void Renderer::Submit(const std::vector<PointLight>& point_lights) {
 }
 
 MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
-  return (m_settings.override_materials) ? m_settings.default_instance : other;
+  return (settings.override_materials) ? settings.default_instance : other;
 }
 
 void Renderer::m_SetPointLights() {
@@ -135,8 +135,8 @@ void Renderer::Flush() {
   m_SetPointLights();
   m_UploadPerFrameData();
 
-  glClearColor(m_settings.background.r, m_settings.background.g,
-               m_settings.background.b, m_settings.background.a);
+  glClearColor(settings.background.r, settings.background.g,
+               settings.background.b, settings.background.a);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -159,7 +159,7 @@ void Renderer::Flush() {
       last_material = &material;
     };
 
-    if (m_settings.override_materials && m_settings.override_instances) {
+    if (settings.override_materials && settings.override_instances) {
       material_instance->Bind();
     } else {
       cmd.material->Bind();
@@ -170,11 +170,14 @@ void Renderer::Flush() {
     m_Draw(cmd, material.Props());
   }
 
-  for (int i = 0; i < m_pointlights.size(); i++) {
-    m_gizmos.DrawPointLight(*this, m_pointlights[i],
-                            glm::vec3(m_per_frame_data.view_position));
+  if (settings.draw_light_gizmos) {
+    for (int i = 0; i < m_pointlights.size(); i++) {
+      m_gizmos.DrawPointLight(*this, m_pointlights[i],
+                              glm::vec3(m_per_frame_data.view_position));
+    }
   }
-  m_gizmos.DrawGrid(*this);
+
+  if (settings.draw_grid) m_gizmos.DrawGrid(*this);
 
   m_commands.clear();
   m_pointlights.clear();
@@ -184,6 +187,6 @@ void Renderer::Resize(unsigned int width, unsigned int height) {
   glViewport(0, 0, width, height);
 }
 
-Material& Renderer::defaultMaterial() { return m_settings.default_material; };
+Material& Renderer::defaultMaterial() { return settings.default_material; };
 
 }  // namespace ptah
