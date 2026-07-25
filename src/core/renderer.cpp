@@ -126,6 +126,12 @@ void Renderer::m_SetState(MaterialProps& props) {
     glDisable(GL_DEPTH_TEST);
   }
 
+  if (props.depth_write) {
+    glDepthMask(GL_TRUE);
+  } else {
+    glDepthMask(GL_FALSE);
+  }
+
   if (props.draw_mode == DrawMode::Wireframe) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   } else {
@@ -149,6 +155,8 @@ void Renderer::Flush() {
   glClearColor(settings.background.r, settings.background.g,
                settings.background.b, settings.background.a);
 
+  glDepthMask(GL_TRUE);
+  glDepthFunc(GL_LEQUAL);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   std::vector<DrawCommand> sorted_commands{m_commands};

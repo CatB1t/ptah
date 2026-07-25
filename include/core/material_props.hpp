@@ -9,6 +9,7 @@ struct MaterialProps {
   CullFace cull_face = CullFace::Back;
   DrawMode draw_mode = DrawMode::Triangles;
   bool depth_test = true;
+  bool depth_write = true;
   bool cull = false;
 
   int CullingFace();
