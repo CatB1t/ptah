@@ -71,6 +71,7 @@ add_executable(ptah
     src/core/texture2d.cpp
     src/core/texture_cube.cpp
     src/core/helpers/gizmos.cpp
+    src/core/helpers/primitives.cpp
     src/input.cpp
     src/utils/file_loading.cpp
     src/utils/logger.cpp
