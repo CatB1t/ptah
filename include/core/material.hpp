@@ -47,7 +47,6 @@ class Material {
   std::filesystem::file_time_type m_last_modified;
   std::vector<std::string> m_defines;
 
-  MaterialProps m_props;
   std::array<Texture2D*, std::to_underlying(TextureSlot::Count)> m_textures{};
 
   unsigned int m_LoadShaderSource(std::filesystem::path filepath,
@@ -69,6 +68,7 @@ class Material {
   Texture2D* m_ResolveTexture(TextureSlot slot);
 
  public:
+  MaterialProps props;
   void static InitDefaults();
   void static DestroyDefaults();
 
