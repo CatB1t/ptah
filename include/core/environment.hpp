@@ -9,7 +9,6 @@ namespace ptah {
 class MaterialInstance;
 
 class Environment {
-
  private:
   Mesh m_unitcube;
   TextureCube m_skybox;
