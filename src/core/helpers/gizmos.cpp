@@ -16,7 +16,7 @@ Gizmos::Gizmos()
                        PTAH_SHADERS_DIR "/gizmo.frag"),
       m_grid_material(PTAH_SHADERS_DIR "/default.vert",
                       PTAH_SHADERS_DIR "/grid.frag"),
-      m_axes_material(PTAH_SHADERS_DIR "/axes.vert",
+      m_axes_material(PTAH_SHADERS_DIR "/default.vert",
                       PTAH_SHADERS_DIR "/axes.frag"),
       m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
       m_light_texture{m_light_gizmo.value()} {
@@ -84,6 +84,8 @@ void Gizmos::DrawGrid(Renderer& renderer) {
 
 void Gizmos::DrawAxes(Renderer& renderer) {
   m_axes_material.Use();
+  m_axes_material.Set("uModel", glm::mat4(1.0f));
+  m_axes_material.Set("uModelInverse", glm::mat3(1.0f));
   renderer.m_SetState(m_axes_material.props);
   renderer.m_Draw(m_axeslines.GetDrawCommand(glm::mat4{1.0}, *m_axes_instance),
                   m_axes_material.Props());
