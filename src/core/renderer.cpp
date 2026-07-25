@@ -179,6 +179,7 @@ void Renderer::Flush() {
   }
 
   if (settings.draw_grid) m_gizmos.DrawGrid(*this);
+  if (settings.draw_axes) m_gizmos.DrawAxes(*this);
 
   m_commands.clear();
   m_pointlights.clear();
