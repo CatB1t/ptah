@@ -16,7 +16,7 @@ void TextureCube::m_SetTextureParams(TextureProps props) {
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T,
                   props.to_gl(props.t_wrap));
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R,
-                  props.to_gl(props.s_wrap));
+                  props.to_gl(props.r_wrap));
 }
 
 TextureCube::TextureCube(const std::filesystem::path& textures_dir) {
@@ -39,6 +39,7 @@ TextureCube::TextureCube(const std::filesystem::path& textures_dir) {
   props.mag_filter = MagFilter::Linear;
   props.s_wrap = AxisWrap::CLAMP_EDGE;
   props.t_wrap = AxisWrap::CLAMP_EDGE;
+  props.r_wrap = AxisWrap::CLAMP_EDGE;
   m_SetTextureParams(props);
   for (int i = 0; i < 6; i++) {
     auto img = utils::load_image(textures_dir / textures[i]);
