@@ -205,7 +205,10 @@ void Material::m_CheckLinkStatus(const MaterialHandle& program) {
   }
 }
 
-void Material::Use() { glUseProgram(m_program.Id()); }
+void Material::Use() {
+  Reload();
+  glUseProgram(m_program.Id());
+}
 
 int Material::m_GetUniformLocation(const char* name) {
   int loc = glGetUniformLocation(m_program.Id(), name);

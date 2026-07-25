@@ -165,7 +165,6 @@ void Renderer::Flush() {
     Material& material = material_instance->Base();
 
     if (last_material != &material) {
-      material.Reload();
       material.Use();
       m_SetState(material.props);
       last_material = &material;
