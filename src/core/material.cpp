@@ -209,43 +209,45 @@ void Material::Use() { glUseProgram(m_program.Id()); }
 
 int Material::m_GetUniformLocation(const char* name) {
   int loc = glGetUniformLocation(m_program.Id(), name);
-  if (loc < 0) {
-    PTAH_RENDER_WARN("Material({}): uniform {} not found, value is ignored.",
-                     m_program.Id(), name);
-  }
+  // TODO: Bit spammy for optimized uniforms
+  // Either log once of keep it disabled
+  // if (loc < 0) {
+  //   PTAH_RENDER_WARN("Material({}): uniform {} not found, value is ignored.",
+  //                    m_program.Id(), name);
+  // }
   return loc;
 }
 
 void Material::Set(const char* name, const glm::mat4& matrix) {
-  int loc = m_GetUniformLocation(name);
-  glProgramUniformMatrix4fv(m_program.Id(), loc, 1, GL_FALSE,
-                            glm::value_ptr(matrix));
+  if (int loc = m_GetUniformLocation(name); loc >= 0)
+    glProgramUniformMatrix4fv(m_program.Id(), loc, 1, GL_FALSE,
+                              glm::value_ptr(matrix));
 }
 
 void Material::Set(const char* name, const glm::mat3& matrix) {
-  int loc = m_GetUniformLocation(name);
-  glProgramUniformMatrix3fv(m_program.Id(), loc, 1, GL_FALSE,
-                            glm::value_ptr(matrix));
+  if (int loc = m_GetUniformLocation(name); loc >= 0)
+    glProgramUniformMatrix3fv(m_program.Id(), loc, 1, GL_FALSE,
+                              glm::value_ptr(matrix));
 }
 
 void Material::Set(const char* name, const glm::vec4& vec) {
-  int loc = m_GetUniformLocation(name);
-  glProgramUniform4fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
+  if (int loc = m_GetUniformLocation(name); loc >= 0)
+    glProgramUniform4fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
 }
 
 void Material::Set(const char* name, const glm::vec3& vec) {
-  int loc = m_GetUniformLocation(name);
-  glProgramUniform3fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
+  if (int loc = m_GetUniformLocation(name); loc >= 0)
+    glProgramUniform3fv(m_program.Id(), loc, 1, glm::value_ptr(vec));
 }
 
 void Material::Set(const char* name, float value) {
-  int loc = m_GetUniformLocation(name);
-  glProgramUniform1f(m_program.Id(), loc, value);
+  if (int loc = m_GetUniformLocation(name); loc >= 0)
+    glProgramUniform1f(m_program.Id(), loc, value);
 }
 
 void Material::Set(const char* name, int value) {
-  int loc = m_GetUniformLocation(name);
-  glProgramUniform1i(m_program.Id(), loc, value);
+  if (int loc = m_GetUniformLocation(name); loc >= 0)
+    glProgramUniform1i(m_program.Id(), loc, value);
 }
 
 MaterialBlock Material::m_FetchBlockMetadata() {
