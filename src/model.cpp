@@ -15,6 +15,41 @@
 
 namespace ptah {
 
+namespace {
+
+std::filesystem::path resolve_texture_path(
+    const std::filesystem::path& model_dir,
+    const std::filesystem::path& filename) {
+  const std::filesystem::path search_dirs[] = {
+      model_dir,
+      model_dir.parent_path() / "textures",
+      model_dir / "textures",
+  };
+  const std::string extensions[] = {filename.extension().string(), ".png",
+                                    ".jpg", ".jpeg"};
+
+  auto default_path = model_dir / filename;
+  for (const auto& extension : extensions) {
+    auto candidate_name =
+        std::filesystem::path(filename).replace_extension(extension);
+    for (const auto& dir : search_dirs) {
+      auto candidate = dir / candidate_name;
+      if (!std::filesystem::exists(candidate)) {
+        continue;
+      }
+      if (candidate != default_path) {
+        PTAH_RENDER_WARN("Texture {} not found, falling back to {}",
+                         default_path.make_preferred().string(),
+                         candidate.make_preferred().string());
+      }
+      return candidate;
+    }
+  }
+  return default_path;
+}
+
+}  // namespace
+
 glm::mat4 assimp_to_glm(aiMatrix4x4& mat) {
   glm::mat4 ret{
       mat.a1, mat.b1, mat.c1, mat.d1, mat.a2, mat.b2, mat.c2, mat.d2,
@@ -27,8 +62,8 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
                                 aiTextureType texture_type) {
   aiString path;
   if (aiGetMaterialTexture(material, texture_type, 0, &path) == AI_SUCCESS) {
-    auto new_path =
-        m_path.parent_path() / std::filesystem::path(path.C_Str()).filename();
+    auto new_path = resolve_texture_path(
+        m_path.parent_path(), std::filesystem::path(path.C_Str()).filename());
     PTAH_RENDER_DEBUG("Loading {} texture: {}", (unsigned int)texture_type,
                       new_path.make_preferred().string().c_str());
     if (auto texture_img = utils::load_image(new_path)) {
