@@ -7,6 +7,7 @@
 #include "core/constants.hpp"
 #include "core/data_buffer.hpp"
 #include "core/draw_command.hpp"
+#include "core/environment.hpp"
 #include "core/helpers/gizmos.hpp"
 #include "core/material.hpp"
 #include "core/material_instance.hpp"
@@ -57,6 +58,7 @@ class Renderer {
   DataBuffer m_frame_data;
   PerFrameData m_per_frame_data;
   Gizmos m_gizmos;
+  Environment m_environment{};
 
   // Lights
   DirectionalLight m_dirlight{};
@@ -65,6 +67,7 @@ class Renderer {
   void m_SetPointLights();
   void m_UploadPerFrameData();
   void m_SetState(MaterialProps& props);
+  void m_DrawEnvironment();
   void m_Draw(const DrawCommand& cmd, MaterialProps& props);
   MaterialInstance* m_ResolveMaterial(MaterialInstance* other);
 

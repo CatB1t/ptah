@@ -70,6 +70,7 @@ add_executable(ptah
     src/core/mirrored_buffer.cpp
     src/core/texture2d.cpp
     src/core/texture_cube.cpp
+    src/core/environment.cpp
     src/core/helpers/gizmos.cpp
     src/core/helpers/primitives.cpp
     src/input.cpp

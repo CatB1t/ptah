@@ -88,6 +88,16 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
   return (settings.override_materials) ? settings.default_instance : other;
 }
 
+void Renderer::m_DrawEnvironment() {
+  auto cmd = m_environment.GetDrawCommand();
+  Material& material = cmd.material->Base();
+  material.Use();
+  material.Set("uModel", cmd.transform);
+  cmd.material->Bind();
+  m_SetState(material.props);
+  m_Draw(cmd, material.props);
+}
+
 void Renderer::m_SetPointLights() {
   m_per_frame_data.n_active_point_lights = m_pointlights.size();
   for (int i = 0; i < m_pointlights.size(); i++) {
@@ -149,6 +159,7 @@ void Renderer::Flush() {
 
   Material* last_material = nullptr;
 
+  m_DrawEnvironment();
   for (auto cmd : sorted_commands) {
     auto material_instance = m_ResolveMaterial(cmd.material);
     Material& material = material_instance->Base();
