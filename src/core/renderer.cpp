@@ -167,7 +167,6 @@ void Renderer::Flush() {
 
   Material* last_material = nullptr;
 
-  m_DrawEnvironment();
   for (auto cmd : sorted_commands) {
     auto material_instance = m_ResolveMaterial(cmd.material);
     Material& material = material_instance->Base();
@@ -202,6 +201,7 @@ void Renderer::Flush() {
   if (settings.draw_grid) m_gizmos.DrawGrid(*this);
   if (settings.draw_axes) m_gizmos.DrawAxes(*this);
 
+  m_DrawEnvironment();
   m_commands.clear();
   m_pointlights.clear();
 }

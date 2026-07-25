@@ -9,7 +9,8 @@ out VS_OUT {
 
 void main() {
   mat4 viewMat = mat4(mat3(uView));
-  gl_Position = uProjection * viewMat * vec4(aPosition, 1.0);
+  vec4 position = uProjection * viewMat * vec4(aPosition, 1.0);
+  gl_Position = position.xyww;
   vs_out.position = aPosition;
   vs_out.normal = aNormal;
   vs_out.uv = aUV;

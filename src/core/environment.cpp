@@ -10,7 +10,7 @@ Environment::Environment()
       m_skybox{TextureCube(PTAH_ASSETS_DIR "/skybox/")},
       m_material{PTAH_SHADERS_DIR "/skybox.vert",
                  PTAH_SHADERS_DIR "/skybox.frag"} {
-  m_material.props.depth_test = false;
+  m_material.props.depth_write = false;
   m_instance = m_material.createInstance();
   m_instance->SetTexture(&m_skybox, TextureSlot::Slot8);
 }
