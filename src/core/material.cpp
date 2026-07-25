@@ -333,8 +333,8 @@ void Material::Dispose() {
 
 int Material::Size() { return m_block_size; }
 
-Texture2D* Material::m_texture_defaults[std::to_underlying(
-    TextureSlot::Count)] = {nullptr};
+Texture* Material::m_texture_defaults[std::to_underlying(TextureSlot::Count)] =
+    {nullptr};
 
 void Material::InitDefaults() {
   auto white_img = Image{1, 1, std::vector<unsigned char>({255, 255, 255, 255}),
@@ -357,11 +357,11 @@ void Material::DestroyDefaults() {
   }
 }
 
-void Material::SetTexture(TextureSlot slot, Texture2D* texture) {
+void Material::SetTexture(TextureSlot slot, Texture* texture) {
   m_textures[std::to_underlying(slot)] = texture;
 }
 
-Texture2D* Material::m_ResolveTexture(TextureSlot slot) {
+Texture* Material::m_ResolveTexture(TextureSlot slot) {
   auto slot_idx = std::to_underlying(slot);
   if (m_textures[slot_idx]) return m_textures[slot_idx];
 

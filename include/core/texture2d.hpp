@@ -1,12 +1,13 @@
 #pragma once
 
+#include "core/texture.hpp"
 #include "core/texture2d_props.hpp"
 #include "handle.hpp"
 #include "utils/image.hpp"
 
 namespace ptah {
 
-class Texture2D {
+class Texture2D : public Texture {
  private:
   Texture2DHandle m_handle;
   unsigned int m_ToGlFormat(ImageFormat format);
@@ -14,7 +15,7 @@ class Texture2D {
 
  public:
   explicit Texture2D(Image& image, Texture2D_Props props = {});
-  void Bind(unsigned int slot);
+  void Bind(unsigned int slot) override;
 };
 
 }  // namespace ptah

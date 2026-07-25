@@ -1,5 +1,7 @@
 #include "core/material_instance.hpp"
 
+#include <utility>
+
 #include "core/material.hpp"
 
 namespace ptah {
@@ -10,15 +12,15 @@ MaterialInstance::MaterialInstance(Material& base)
                   0);
 }
 
-void MaterialInstance::SetTexture(Texture2D* texture, TextureSlot slot) {
-  m_textures[(unsigned int)slot] = texture;
+void MaterialInstance::SetTexture(Texture* texture, TextureSlot slot) {
+  m_textures[std::to_underlying(slot)] = texture;
 }
 
 void MaterialInstance::Bind() {
   m_block.Sync();
   m_block.GPUBuffer().BindUniform(1);
   for (int slot = 0; slot < m_textures.size(); slot++) {
-    Texture2D* texture = m_textures[slot];
+    Texture* texture = m_textures[slot];
     if (texture == nullptr) {
       texture = m_base.m_ResolveTexture(static_cast<TextureSlot>(slot));
     }

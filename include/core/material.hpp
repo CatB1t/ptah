@@ -9,7 +9,7 @@
 
 #include "core/handle.hpp"
 #include "core/material_props.hpp"
-#include "texture2d.hpp"
+#include "core/texture.hpp"
 #include "texture_slot.hpp"
 #include "utils/logger.hpp"
 
@@ -47,7 +47,7 @@ class Material {
   std::filesystem::file_time_type m_last_modified;
   std::vector<std::string> m_defines;
 
-  std::array<Texture2D*, std::to_underlying(TextureSlot::Count)> m_textures{};
+  std::array<Texture*, std::to_underlying(TextureSlot::Count)> m_textures{};
 
   unsigned int m_LoadShaderSource(std::filesystem::path filepath,
                                   unsigned int type);
@@ -64,8 +64,8 @@ class Material {
   Layout m_GetUniformLayout(unsigned int uniform_index);
   void m_ResolveLayout();
 
-  static Texture2D* m_texture_defaults[std::to_underlying(TextureSlot::Count)];
-  Texture2D* m_ResolveTexture(TextureSlot slot);
+  static Texture* m_texture_defaults[std::to_underlying(TextureSlot::Count)];
+  Texture* m_ResolveTexture(TextureSlot slot);
 
  public:
   MaterialProps props;
@@ -84,7 +84,7 @@ class Material {
   void Reload();
   void Dispose();
   int Size();
-  void SetTexture(TextureSlot slot, Texture2D* texture);
+  void SetTexture(TextureSlot slot, Texture* texture);
   MaterialInstance* createInstance();
   bool operator<(const Material& other) const;
 
