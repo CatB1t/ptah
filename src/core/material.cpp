@@ -349,11 +349,24 @@ void Material::InitDefaults() {
 
   m_texture_defaults[std::to_underlying(TextureSlot::Albedo)] = white_texture;
   m_texture_defaults[std::to_underlying(TextureSlot::Normal)] = normal_texture;
+
+  for (auto slot = std::to_underlying(TextureSlot::Normal) + 1;
+       slot < std::to_underlying(TextureSlot::Count); slot++) {
+    m_texture_defaults[slot] = white_texture;
+  }
 }
 
 void Material::DestroyDefaults() {
   for (unsigned int i = 0; i < std::to_underlying(TextureSlot::Count); i++) {
-    delete m_texture_defaults[i];
+    Texture* texture = m_texture_defaults[i];
+    if (texture == nullptr) continue;
+
+    // Slots share default textures, so clear every alias before deleting.
+    for (unsigned int j = i; j < std::to_underlying(TextureSlot::Count); j++) {
+      if (m_texture_defaults[j] == texture) m_texture_defaults[j] = nullptr;
+    }
+
+    delete texture;
   }
 }
 
