@@ -176,6 +176,9 @@ void Renderer::Flush() {
       m_gizmos.DrawPointLight(*this, m_pointlights[i],
                               glm::vec3(m_per_frame_data.view_position));
     }
+
+    m_gizmos.DrawDirLight(*this, m_dirlight,
+                          glm::vec3(m_per_frame_data.view_position));
   }
 
   if (settings.draw_grid) m_gizmos.DrawGrid(*this);

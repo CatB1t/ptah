@@ -27,6 +27,29 @@ Gizmos::Gizmos()
   m_axes_material.props.cull = false;
   m_axes_material.props.depth_test = false;
   m_axes_instance = m_axes_material.createInstance();
+
+  m_dir_light_instance = m_gizmo_material.createInstance();
+  auto sun_icon = utils::load_image(PTAH_GIZMOS_DIR "/dir_light.png");
+  m_dir_light_texture = new Texture2D(sun_icon.value());
+  m_dir_light_instance->SetTexture(m_dir_light_texture,
+                                   ptah::TextureSlot::Albedo);
+}
+
+void Gizmos::DrawDirLight(Renderer& renderer, const DirectionalLight& light,
+                          const glm::vec3& view_position) {
+  auto material = m_dir_light_instance->Base();
+  glm::vec3 dis = view_position - light.direction;
+  glm::mat4 model{1.0f};
+  model = glm::translate(model, light.direction * 10.0f);
+  model = glm::rotate(model, glm::atan(dis.x, dis.z), glm::vec3(0.0, 1.0, 0.0));
+  material.Use();
+  material.Set("uModel", model);
+  material.Set("uModelInverse", glm::inverse(glm::mat3(model)));
+  m_dir_light_instance->SetBlockUniform("color", glm::vec4(light.color, 1.0));
+  m_dir_light_instance->Bind();
+  auto draw_cmd = m_quadmesh.GetDrawCommand(model, *m_dir_light_instance);
+  renderer.m_SetState(m_gizmo_material.Props());
+  renderer.m_Draw(draw_cmd, m_gizmo_material.Props());
 }
 
 void Gizmos::DrawPointLight(Renderer& renderer, const PointLight& point_light,
@@ -99,6 +122,15 @@ Mesh Gizmos::m_MakeAxes() {
   std::vector<unsigned int> indices{0, 1, 2, 3, 4, 5};
 
   return Mesh(vertices, indices);
+}
+
+Mesh Gizmos::m_MakeLine() {
+  std::vector<Vertex> vertices{
+      {{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, glm::vec3{0.0f}},
+      {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, glm::vec3{0.0f}},
+  };
+
+  return Mesh(vertices);
 }
 
 }  // namespace ptah
