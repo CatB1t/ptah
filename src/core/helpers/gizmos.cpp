@@ -19,7 +19,8 @@ Gizmos::Gizmos()
                       PTAH_SHADERS_DIR "/grid.frag"),
       m_axes_material(PTAH_SHADERS_DIR "/default.vert",
                       PTAH_SHADERS_DIR "/axes.frag"),
-      m_light_gizmo(utils::load_image(PTAH_GIZMOS_DIR "/point_light.png")),
+      m_light_gizmo(
+          utils::load_image(PTAH_ENGINE_ASSETS_DIR "/gizmos/point_light.png")),
       m_light_texture{m_light_gizmo.value()} {
   m_grid_instance = m_grid_material.createInstance();
   m_light_instance = m_gizmo_material.createInstance();
@@ -30,7 +31,8 @@ Gizmos::Gizmos()
   m_axes_instance = m_axes_material.createInstance();
 
   m_dir_light_instance = m_gizmo_material.createInstance();
-  auto sun_icon = utils::load_image(PTAH_GIZMOS_DIR "/dir_light.png");
+  auto sun_icon =
+      utils::load_image(PTAH_ENGINE_ASSETS_DIR "/gizmos/dir_light.png");
   m_dir_light_texture = new Texture2D(sun_icon.value());
   m_dir_light_instance->SetTexture(m_dir_light_texture,
                                    ptah::TextureSlot::Albedo);
