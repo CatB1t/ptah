@@ -12,6 +12,7 @@ int MaterialProps::CullingFace() {
     case CullFace::FrontBack:
       return GL_FRONT_AND_BACK;
   }
+  return GL_BACK;
 };
 
 int MaterialProps::DrawingMode() {
@@ -24,5 +25,6 @@ int MaterialProps::DrawingMode() {
     case DrawMode::Points:
       return GL_POINTS;
   }
+  return GL_TRIANGLES;
 };
 }  // namespace ptah
