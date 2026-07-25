@@ -372,8 +372,6 @@ MaterialInstance* Material::createInstance() {
   return new MaterialInstance(*this);
 }
 
-MaterialProps& Material::Props() { return props; }
-
 bool Material::operator<(const Material& other) const {
   return m_program.Id() < other.m_program.Id();
 }

@@ -156,7 +156,7 @@ void Renderer::Flush() {
     if (last_material != &material) {
       material.Reload();
       material.Use();
-      m_SetState(material.Props());
+      m_SetState(material.props);
       last_material = &material;
     };
 
@@ -168,7 +168,7 @@ void Renderer::Flush() {
 
     material.Set("uModel", cmd.transform);
     material.Set("uModelInverse", glm::inverse(glm::mat3(cmd.transform)));
-    m_Draw(cmd, material.Props());
+    m_Draw(cmd, material.props);
   }
 
   if (settings.draw_light_gizmos) {

@@ -50,8 +50,8 @@ void Gizmos::DrawDirLight(Renderer& renderer, const DirectionalLight& light,
   m_dir_light_instance->SetBlockUniform("color", glm::vec4(light.color, 1.0));
   m_dir_light_instance->Bind();
   auto draw_cmd = m_quadmesh.GetDrawCommand(model, *m_dir_light_instance);
-  renderer.m_SetState(m_gizmo_material.Props());
-  renderer.m_Draw(draw_cmd, m_gizmo_material.Props());
+  renderer.m_SetState(m_gizmo_material.props);
+  renderer.m_Draw(draw_cmd, m_gizmo_material.props);
 
   glm::mat4 line_model{1.0f};
   line_model = glm::scale(line_model, light.direction * radius);
@@ -60,7 +60,7 @@ void Gizmos::DrawDirLight(Renderer& renderer, const DirectionalLight& light,
   m_axes_material.Set("uModelInverse", glm::mat3(1.0f));
   renderer.m_SetState(m_axes_material.props);
   renderer.m_Draw(m_line.GetDrawCommand(glm::mat4{1.0}, *m_axes_instance),
-                  m_axes_material.Props());
+                  m_axes_material.props);
 }
 
 void Gizmos::DrawPointLight(Renderer& renderer, const PointLight& point_light,
@@ -77,8 +77,8 @@ void Gizmos::DrawPointLight(Renderer& renderer, const PointLight& point_light,
   m_light_instance->SetBlockUniform("color", glm::vec4(point_light.color, 1.0));
   m_light_instance->Bind();
   auto draw_cmd = m_quadmesh.GetDrawCommand(model, *m_light_instance);
-  renderer.m_SetState(m_gizmo_material.Props());
-  renderer.m_Draw(draw_cmd, m_gizmo_material.Props());
+  renderer.m_SetState(m_gizmo_material.props);
+  renderer.m_Draw(draw_cmd, m_gizmo_material.props);
 }
 
 void Gizmos::DrawGrid(Renderer& renderer) {
@@ -88,9 +88,9 @@ void Gizmos::DrawGrid(Renderer& renderer) {
   m_grid_material.Use();
   m_grid_material.Set("uModel", model);
   m_grid_material.Set("uModelInverse", glm::inverse(glm::mat3(model)));
-  renderer.m_SetState(m_grid_material.Props());
+  renderer.m_SetState(m_grid_material.props);
   renderer.m_Draw(m_quadmesh.GetDrawCommand(model, *m_grid_instance),
-                  m_grid_material.Props());
+                  m_grid_material.props);
 }
 
 void Gizmos::DrawAxes(Renderer& renderer) {
@@ -99,7 +99,7 @@ void Gizmos::DrawAxes(Renderer& renderer) {
   m_axes_material.Set("uModelInverse", glm::mat3(1.0f));
   renderer.m_SetState(m_axes_material.props);
   renderer.m_Draw(m_axeslines.GetDrawCommand(glm::mat4{1.0}, *m_axes_instance),
-                  m_axes_material.Props());
+                  m_axes_material.props);
 }
 
 Mesh Gizmos::m_MakeQuad() {

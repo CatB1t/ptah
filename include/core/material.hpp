@@ -85,7 +85,6 @@ class Material {
   void Dispose();
   int Size();
   void SetTexture(TextureSlot slot, Texture2D* texture);
-  MaterialProps& Props();
   MaterialInstance* createInstance();
   bool operator<(const Material& other) const;
 
