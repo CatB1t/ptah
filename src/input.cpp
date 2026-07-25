@@ -2,6 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <utility>
+
 #include "core/window.hpp"
 
 namespace ptah {
@@ -43,12 +45,16 @@ void Input::Update() {
   m_mousescroll = {0, 0};
 }
 
-bool Input::IsDown(int key) const { return m_keys[key]; }
-bool Input::IsPressed(int key) const {
-  return m_keys[key] && !m_keys_prev[key];
+bool Input::IsDown(KeyboardKey key) const {
+  return m_keys[std::to_underlying(key)];
 }
-bool Input::IsReleased(int key) const {
-  return !m_keys[key] && m_keys_prev[key];
+bool Input::IsPressed(KeyboardKey key) const {
+  return m_keys[std::to_underlying(key)] &&
+         !m_keys_prev[std::to_underlying(key)];
+}
+bool Input::IsReleased(KeyboardKey key) const {
+  return !m_keys[std::to_underlying(key)] &&
+         m_keys_prev[std::to_underlying(key)];
 }
 
 bool Input::IsMouseDown(MouseButton key) const {

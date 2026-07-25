@@ -31,9 +31,9 @@ class Input {
   void Attach(Window& window);
   void Update();  // Must be called before PollEvents()
 
-  bool IsDown(int key) const;
-  bool IsPressed(int key) const;
-  bool IsReleased(int key) const;
+  bool IsDown(KeyboardKey key) const;
+  bool IsPressed(KeyboardKey key) const;
+  bool IsReleased(KeyboardKey key) const;
 
   bool IsMouseDown(MouseButton key) const;
   bool IsMousePressed(MouseButton key) const;
