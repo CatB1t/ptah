@@ -14,7 +14,7 @@ unsigned int Texture2D::m_ToGlFormat(ImageFormat format) {
   return GL_RGB;
 }
 
-Texture2D::Texture2D(Image& image, Texture2D_Props props) {
+Texture2D::Texture2D(Image& image, TextureProps props) {
   unsigned int temp;
   glGenTextures(1, &temp);
   m_handle.Set(temp);
@@ -27,7 +27,7 @@ Texture2D::Texture2D(Image& image, Texture2D_Props props) {
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture2D::m_SetTextureParams(Texture2D_Props props) {
+void Texture2D::m_SetTextureParams(TextureProps props) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                   props.to_gl(props.min_filter));
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,

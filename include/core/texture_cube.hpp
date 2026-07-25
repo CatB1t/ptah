@@ -4,14 +4,14 @@
 
 #include "core/handle.hpp"
 #include "core/texture.hpp"
-#include "core/texture2d_props.hpp"
+#include "core/texture_props.hpp"
 
 namespace ptah {
 class TextureCube : public Texture {
  private:
   TextureCubeHandle m_handle;
 
-  void m_SetTextureParams(Texture2D_Props props);
+  void m_SetTextureParams(TextureProps props);
 
  public:
   TextureCube(const std::filesystem::path& textures_dir);

@@ -6,7 +6,7 @@
 #include "utils/logger.hpp"
 
 namespace ptah {
-void TextureCube::m_SetTextureParams(Texture2D_Props props) {
+void TextureCube::m_SetTextureParams(TextureProps props) {
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,
                   props.to_gl(props.min_filter));
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER,
@@ -34,7 +34,7 @@ TextureCube::TextureCube(const std::filesystem::path& textures_dir) {
   };
 
   glBindTexture(GL_TEXTURE_CUBE_MAP, m_handle.Id());
-  Texture2D_Props props{};
+  TextureProps props{};
   props.min_filter = MinFilter::Linear;
   props.mag_filter = MagFilter::Linear;
   props.s_wrap = AxisWrap::CLAMP_EDGE;

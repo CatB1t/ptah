@@ -23,11 +23,12 @@ enum class AxisWrap {
   CLAMP_EDGE_MIRROR
 };
 
-struct Texture2D_Props {
+struct TextureProps {
   MinFilter min_filter = MinFilter::NearestLinear;
   MagFilter mag_filter = MagFilter::Linear;
   AxisWrap s_wrap = AxisWrap::REPEAT;
   AxisWrap t_wrap = AxisWrap::REPEAT;
+  AxisWrap r_wrap = AxisWrap::REPEAT;
 
   int to_gl(MinFilter filter) {
     switch (filter) {
