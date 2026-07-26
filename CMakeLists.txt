@@ -55,6 +55,26 @@ add_library(stb STATIC external/stb/src/stb_image.c)
 target_include_directories(stb PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/stb/include>)
 add_library(deps::stb ALIAS stb)
 
+set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui)
+add_library(imgui STATIC
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+)
+# external/ gives consumers <imgui/imgui.h>; IMGUI_DIR is still needed because
+# imgui's own sources and backend headers include "imgui.h" unprefixed
+target_include_directories(imgui PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external>
+    $<BUILD_INTERFACE:${IMGUI_DIR}>
+)
+target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
+target_compile_definitions(imgui PUBLIC GLFW_INCLUDE_NONE)
+add_library(deps::imgui ALIAS imgui)
+
 add_executable(ptah
     demos/lights.cpp
     src/core/context.cpp
@@ -82,6 +102,7 @@ target_include_directories(ptah PRIVATE include)
 target_link_libraries(ptah PRIVATE
     deps::glad
     deps::stb
+    deps::imgui
     OpenGL::GL
     glfw
     spdlog::spdlog
