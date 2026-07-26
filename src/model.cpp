@@ -5,11 +5,16 @@
 
 #include <assimp/Importer.hpp>
 #include <filesystem>
+#include <glm/common.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/mat4x4.hpp>
 
+#include "core/helpers/primitives.hpp"
 #include "core/material_instance.hpp"
 #include "core/texture2d.hpp"
 #include "core/texture_slot.hpp"
+#include "materials/materials_factory.hpp"
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 
@@ -106,6 +111,16 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
   return instance;
 }
 
+void Model::m_UpdateBoundingBox(const glm::vec3& vertex_position) {
+  m_min_pos.x = glm::min(vertex_position.x, m_min_pos.x);
+  m_min_pos.y = glm::min(vertex_position.y, m_min_pos.y);
+  m_min_pos.z = glm::min(vertex_position.z, m_min_pos.z);
+
+  m_max_pos.x = glm::max(vertex_position.x, m_max_pos.x);
+  m_max_pos.y = glm::max(vertex_position.y, m_max_pos.y);
+  m_max_pos.z = glm::max(vertex_position.z, m_max_pos.z);
+}
+
 void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
                        glm::mat4 parentTransform) {
   glm::mat4 transformation =
@@ -130,6 +145,7 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
       auto aUV = glm::vec2(uv.x, uv.y);
       auto aTangent = glm::vec3(tangent.x, tangent.y, tangent.z);
       verts.push_back(Vertex{aPosition, aNormal, aUV, aTangent});
+      m_UpdateBoundingBox(aPosition);
     }
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
@@ -152,7 +168,11 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
 }
 
 Model::Model(Material& base_material, const char* filepath)
-    : m_material(base_material), m_path(filepath) {
+    : m_material(base_material),
+      m_path(filepath),
+      // TODO: Very wasteful allocation here, for each model.
+      m_bb_material(MakeUnlit()),
+      m_bb_material_instance(m_bb_material.createInstance()) {
   Assimp::Importer importer;
   const aiScene* scene = utils::load_object(importer, filepath);
   if (scene == nullptr || scene->mRootNode == nullptr) {
@@ -162,17 +182,28 @@ Model::Model(Material& base_material, const char* filepath)
 
   PTAH_RENDER_DEBUG("Loading {}", filepath);
   m_LoadMesh(scene, scene->mRootNode, glm::mat4(1.0f));
+  m_bounding_box =
+      new Mesh{primitives::MakeWireframeAABB(m_min_pos, m_max_pos)};
+  m_bb_material.props.draw_mode = DrawMode::Lines;
+  m_bb_material_instance->SetBlockUniform("color", glm::vec3(0.0f, 0.5f, 0.0f));
 }
 
-std::vector<DrawCommand> Model::GetDrawCommands(
-    const glm::mat4& transform) const {
+std::vector<DrawCommand> Model::GetDrawCommands(const glm::mat4& transform,
+                                                bool draw_bounding_box) const {
   std::vector<DrawCommand> commands;
   commands.reserve(m_meshes.size());
   for (std::size_t i = 0; i < m_meshes.size(); i++) {
     MaterialInstance* material = m_mesh_materials.at(i);
     commands.push_back(m_meshes[i].GetDrawCommand(transform, *material));
   }
+
+  if (draw_bounding_box) commands.push_back(m_GetBoundingBox(transform));
+
   return commands;
+}
+
+DrawCommand Model::m_GetBoundingBox(const glm::mat4& transform) const {
+  return m_bounding_box->GetDrawCommand(transform, *m_bb_material_instance);
 }
 
 }  // namespace ptah

@@ -4,10 +4,12 @@
 
 #include <filesystem>
 #include <glm/mat4x4.hpp>
+#include <limits>
 #include <unordered_map>
 #include <vector>
 
 #include "core/draw_command.hpp"
+#include "core/material.hpp"
 #include "core/mesh.hpp"
 #include "core/texture2d.hpp"
 
@@ -17,7 +19,6 @@ struct aiNode;
 namespace ptah {
 class Renderer;
 class MaterialInstance;
-class Material;
 
 class Model {
  private:
@@ -27,17 +28,28 @@ class Model {
   std::unordered_map<int, MaterialInstance*> m_loaded_materials;
   std::unordered_map<int, MaterialInstance*> m_mesh_materials;
   std::vector<Texture2D*> m_loaded_textures;
+
+  Material m_bb_material;
+  MaterialInstance* m_bb_material_instance;
+  Mesh* m_bounding_box;
+  glm::vec3 m_min_pos{std::numeric_limits<float>::max()};
+  glm::vec3 m_max_pos{std::numeric_limits<float>::lowest()};
+
   Texture2D* m_LoadTexture(const aiMaterial* material,
                            aiTextureType texture_type);
   MaterialInstance* m_LoadMaterial(const aiScene* scene, int materialIndex);
   void m_LoadMesh(const aiScene* scene, aiNode* node,
                   glm::mat4 parentTransform);
+  void m_UpdateBoundingBox(const glm::vec3& vertex_position);
+  DrawCommand m_GetBoundingBox(
+      const glm::mat4& transform = glm::mat4(1.0f)) const;
 
  public:
   Model(Material& material, const char* filepath);
 
   std::vector<DrawCommand> GetDrawCommands(
-      const glm::mat4& transform = glm::mat4(1.0f)) const;
+      const glm::mat4& transform = glm::mat4(1.0f),
+      bool draw_bounding_box = false) const;
 };
 
 }  // namespace ptah
