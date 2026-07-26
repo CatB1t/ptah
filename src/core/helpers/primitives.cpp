@@ -62,15 +62,11 @@ Mesh MakeCube(float width, float height, float depth) {
 
 Mesh MakeWireframeAABB(const glm::vec3& min, const glm::vec3& max) {
   std::vector<Vertex> vertices{
-      {{min.x, min.y, min.z}},
-      {{max.x, min.y, min.z}},
-      {{max.x, max.y, min.z}},
-      {{min.x, max.y, min.z}},
+      {{min.x, min.y, min.z}}, {{max.x, min.y, min.z}},
+      {{max.x, max.y, min.z}}, {{min.x, max.y, min.z}},
 
-      {{min.x, min.y, max.z}},
-      {{max.x, min.y, max.z}},
-      {{max.x, max.y, max.z}},
-      {{min.x, max.y, max.z}},
+      {{min.x, min.y, max.z}}, {{max.x, min.y, max.z}},
+      {{max.x, max.y, max.z}}, {{min.x, max.y, max.z}},
   };
 
   std::vector<unsigned int> indices;

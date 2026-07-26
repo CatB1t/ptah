@@ -140,7 +140,8 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
       }
       auto tangent = mesh->mTangents[i];
 
-      auto aPosition = glm::vec3(transformation * glm::vec4(position.x, position.y, position.z, 1.0));
+      auto aPosition = glm::vec3(
+          transformation * glm::vec4(position.x, position.y, position.z, 1.0));
       auto aNormal = glm::vec3(normal.x, normal.y, normal.z);
       auto aUV = glm::vec2(uv.x, uv.y);
       auto aTangent = glm::vec3(tangent.x, tangent.y, tangent.z);
