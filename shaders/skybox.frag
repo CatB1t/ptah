@@ -15,5 +15,5 @@ in VS_OUT {
 out vec4 oColor;
 
 void main() {
-  oColor = texture(uCubemap, normalize(fs_in.position));
+  oColor = texture(uCubemap, normalize(fs_in.position)) - 0.4 * vec4(1.0, 1.0, 1.0, 0.0);
 }
