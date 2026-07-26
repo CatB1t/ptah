@@ -167,7 +167,8 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
   }
 }
 
-Model::Model(Material& base_material, const char* filepath)
+Model::Model(Material& base_material, const char* filepath, bool reposition,
+             bool resize)
     : m_material(base_material),
       m_path(filepath),
       // TODO: Very wasteful allocation here, for each model.
@@ -186,18 +187,39 @@ Model::Model(Material& base_material, const char* filepath)
       new Mesh{primitives::MakeWireframeAABB(m_min_pos, m_max_pos)};
   m_bb_material.props.draw_mode = DrawMode::Lines;
   m_bb_material_instance->SetBlockUniform("color", glm::vec3(0.0f, 0.5f, 0.0f));
+
+  if (reposition || resize) {
+    auto delta = m_max_pos - m_min_pos;
+
+    if (resize) {
+      const float target_size = 5.0f;  // 5 units
+      float scale_ratio = target_size / glm::length(delta);
+      m_internal_transform =
+          glm::scale(m_internal_transform, glm::vec3{scale_ratio});
+    }
+
+    if (reposition) {
+      m_internal_transform = glm::translate(
+          m_internal_transform, -1.0f * (m_min_pos + (delta / 2.0f)));
+      m_internal_transform = glm::translate(
+          m_internal_transform, glm::vec3(0.0, 1.0, 0.0) * (delta / 2.0f));
+    }
+  }
 }
 
 std::vector<DrawCommand> Model::GetDrawCommands(const glm::mat4& transform,
                                                 bool draw_bounding_box) const {
   std::vector<DrawCommand> commands;
   commands.reserve(m_meshes.size());
+
+  auto world = transform * m_internal_transform;
+
   for (std::size_t i = 0; i < m_meshes.size(); i++) {
     MaterialInstance* material = m_mesh_materials.at(i);
-    commands.push_back(m_meshes[i].GetDrawCommand(transform, *material));
+    commands.push_back(m_meshes[i].GetDrawCommand(world, *material));
   }
 
-  if (draw_bounding_box) commands.push_back(m_GetBoundingBox(transform));
+  if (draw_bounding_box) commands.push_back(m_GetBoundingBox(world));
 
   return commands;
 }
