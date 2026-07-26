@@ -60,4 +60,34 @@ Mesh MakeCube(float width, float height, float depth) {
   return Mesh{vertices, indices};
 }
 
+Mesh MakeWireframeAABB(const glm::vec3& min, const glm::vec3& max) {
+  std::vector<Vertex> vertices{
+      {{min.x, min.y, min.z}},
+      {{max.x, min.y, min.z}},
+      {{max.x, max.y, min.z}},
+      {{min.x, max.y, min.z}},
+
+      {{min.x, min.y, max.z}},
+      {{max.x, min.y, max.z}},
+      {{max.x, max.y, max.z}},
+      {{min.x, max.y, max.z}},
+  };
+
+  std::vector<unsigned int> indices;
+  indices.reserve(24);
+  for (unsigned int corner = 0; corner < 4; ++corner) {
+    const unsigned int next = (corner + 1) % 4;
+    indices.insert(indices.end(), {
+                                      corner,
+                                      next,  // back ring
+                                      corner + 4,
+                                      next + 4,  // front ring
+                                      corner,
+                                      corner + 4,  // connector
+                                  });
+  }
+
+  return Mesh{vertices, indices};
+}
+
 }  // namespace ptah::primitives
