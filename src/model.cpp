@@ -109,7 +109,7 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
 void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
                        glm::mat4 parentTransform) {
   glm::mat4 transformation =
-      assimp_to_glm(node->mTransformation) * parentTransform;
+      parentTransform * assimp_to_glm(node->mTransformation);
 
   for (unsigned int n = 0; n < node->mNumMeshes; n++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[n]];
