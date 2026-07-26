@@ -24,7 +24,6 @@ class Model {
   Material& m_material;
   std::filesystem::path m_path;
   std::vector<Mesh> m_meshes;
-  std::vector<glm::mat4> m_transforms;
   std::unordered_map<int, MaterialInstance*> m_loaded_materials;
   std::unordered_map<int, MaterialInstance*> m_mesh_materials;
   std::vector<Texture2D*> m_loaded_textures;

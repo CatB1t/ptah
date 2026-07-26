@@ -125,7 +125,7 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
       }
       auto tangent = mesh->mTangents[i];
 
-      auto aPosition = glm::vec3(position.x, position.y, position.z);
+      auto aPosition = glm::vec3(transformation * glm::vec4(position.x, position.y, position.z, 1.0));
       auto aNormal = glm::vec3(normal.x, normal.y, normal.z);
       auto aUV = glm::vec2(uv.x, uv.y);
       auto aTangent = glm::vec3(tangent.x, tangent.y, tangent.z);
@@ -143,7 +143,6 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
 
     std::size_t index = m_meshes.size();
     m_meshes.push_back(Mesh{verts, inds});
-    m_transforms.push_back(transformation);
     m_mesh_materials.insert({index, material});
   }
 
@@ -171,8 +170,7 @@ std::vector<DrawCommand> Model::GetDrawCommands(
   commands.reserve(m_meshes.size());
   for (std::size_t i = 0; i < m_meshes.size(); i++) {
     MaterialInstance* material = m_mesh_materials.at(i);
-    glm::mat4 world = transform * m_transforms[i];
-    commands.push_back(m_meshes[i].GetDrawCommand(world, *material));
+    commands.push_back(m_meshes[i].GetDrawCommand(transform, *material));
   }
   return commands;
 }
