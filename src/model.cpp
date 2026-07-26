@@ -135,10 +135,13 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
       auto position = mesh->mVertices[i];
       auto normal = mesh->mNormals[i];
       aiVector3D uv;
+      aiVector3D tangent;
       if (mesh->mTextureCoords[0]) {
         uv = mesh->mTextureCoords[0][i];
       }
-      auto tangent = mesh->mTangents[i];
+      if (mesh->mTangents) {
+        tangent = mesh->mTangents[i];
+      }
 
       auto aPosition = glm::vec3(
           transformation * glm::vec4(position.x, position.y, position.z, 1.0));
