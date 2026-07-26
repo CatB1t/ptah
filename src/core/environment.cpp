@@ -7,7 +7,7 @@ namespace ptah {
 
 Environment::Environment()
     : m_unitcube{primitives::MakeCube()},
-      m_skybox{TextureCube(PTAH_ASSETS_DIR "/skybox/")},
+      m_skybox{TextureCube(PTAH_ENGINE_ASSETS_DIR "/skybox/")},
       m_material{PTAH_SHADERS_DIR "/skybox.vert",
                  PTAH_SHADERS_DIR "/skybox.frag"} {
   m_material.props.depth_write = false;
