@@ -96,6 +96,7 @@ add_executable(ptah
     src/input.cpp
     src/utils/file_loading.cpp
     src/utils/logger.cpp
+    src/editor/editor_context.cpp
 )
 
 target_include_directories(ptah PRIVATE include)
