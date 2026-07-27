@@ -11,6 +11,8 @@ int MaterialProps::CullingFace() {
       return GL_BACK;
     case CullFace::FrontBack:
       return GL_FRONT_AND_BACK;
+    case CullFace::Count:
+      break;
   }
   return GL_BACK;
 };
@@ -24,6 +26,8 @@ int MaterialProps::DrawingMode() {
       return GL_LINES;
     case DrawMode::Points:
       return GL_POINTS;
+    case DrawMode::Count:
+      break;
   }
   return GL_TRIANGLES;
 };

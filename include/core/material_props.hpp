@@ -2,8 +2,8 @@
 
 namespace ptah {
 
-enum class CullFace { Front, Back, FrontBack };
-enum class DrawMode { Triangles, Lines, Wireframe, Points };
+enum class CullFace { Front, Back, FrontBack, Count };
+enum class DrawMode { Triangles, Lines, Wireframe, Points, Count };
 
 struct MaterialProps {
   CullFace cull_face = CullFace::Back;
