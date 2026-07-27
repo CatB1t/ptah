@@ -24,7 +24,7 @@ int main() {
   ptah::Renderer renderer{window};
 
   ptah::Material mat = ptah::MakeLambert();
-  ptah::Model model {mat, PTAH_ASSETS_DIR "/backpack/backpack.obj"};
+  ptah::Model model{mat, PTAH_ASSETS_DIR "/cube/cube.obj"};
   glm::mat4 transform{1.0f};
 
   ptah::DirectionalLight dir_light;

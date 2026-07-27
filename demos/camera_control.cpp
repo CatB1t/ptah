@@ -24,7 +24,7 @@ int main() {
   ptah::Renderer renderer{window};
 
   ptah::Material mat = ptah::MakeLambert();
-  ptah::Model model {mat, PTAH_ASSETS_DIR "/cube.fbx"};
+  ptah::Model model {mat, PTAH_ASSETS_DIR "/cube/cube.obj"};
   glm::mat4 transform{1.0f};
 
   ptah::OrbitCamera camera{window};

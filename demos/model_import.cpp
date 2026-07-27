@@ -22,7 +22,7 @@ int main() {
   ptah::Renderer renderer{window};
 
   ptah::Material mat = ptah::MakeLambert();
-  ptah::Model model {mat, PTAH_ASSETS_DIR "/cube.fbx"};
+  ptah::Model model {mat, PTAH_ASSETS_DIR "/cube/cube.obj"};
   ptah::Camera camera;
   camera.view = glm::translate(camera.view, glm::vec3(0, -2, -20.0));
   camera.projection = glm::perspective(glm::radians(45.0), 16.0/9.0, 0.01, 100.0);
