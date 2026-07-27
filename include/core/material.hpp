@@ -87,6 +87,7 @@ class Material {
   void SetTexture(TextureSlot slot, Texture* texture);
   MaterialInstance* createInstance();
   bool operator<(const Material& other) const;
+  const std::unordered_map<std::string, Layout>& GetLayout() const;
 
   template <typename T>
   void SetBlockUniform(const char* name, const T& data) {

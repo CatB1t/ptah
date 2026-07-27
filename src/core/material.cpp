@@ -391,4 +391,8 @@ MaterialInstance* Material::createInstance() {
 bool Material::operator<(const Material& other) const {
   return m_program.Id() < other.m_program.Id();
 }
+
+const std::unordered_map<std::string, Layout>& Material::GetLayout() const {
+  return m_block_uniforms;
+}
 }  // namespace ptah
