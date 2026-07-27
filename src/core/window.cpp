@@ -94,6 +94,7 @@ void Window::AddMouseScrollCallback(WindowMouseScrollFn callback) {
   m_mouse_scroll_fns.push_back(callback);
 }
 
+GLFWwindow* Window::RawWindow() const { return m_window; }
 glm::ivec2 Window::Size() const { return {m_width, m_height}; }
 
 double Window::DeltaTime() {

@@ -39,6 +39,7 @@ class Window {
   double Time();
   double DeltaTime();
   glm::ivec2 Size() const;
+  GLFWwindow* RawWindow() const;
   void AddResizeCallback(WindowResizeFn callback);
   void AddKeyCallback(WindowKeyFn callback);
   void AddMouseCallback(WindowMouseFn callback);
