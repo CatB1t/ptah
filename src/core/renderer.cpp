@@ -89,6 +89,7 @@ MaterialInstance* Renderer::m_ResolveMaterial(MaterialInstance* other) {
 }
 
 void Renderer::m_DrawEnvironment() {
+  if (!settings.draw_skybox) return;
   auto cmd = m_environment.GetDrawCommand();
   Material& material = cmd.material->Base();
   material.Use();

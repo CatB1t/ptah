@@ -30,6 +30,7 @@ struct RendererSettings {
   bool draw_grid = true;
   bool draw_light_gizmos = true;
   bool draw_axes = true;
+  bool draw_skybox = true;
 };
 
 class Renderer {
