@@ -26,6 +26,7 @@ class MirroredBuffer {
   void Allocate(unsigned int size);
   void SetData(const void* data, unsigned int size, unsigned int offset);
   void Sync();
+  void* At(unsigned int offset);
 };
 
 }  // namespace ptah

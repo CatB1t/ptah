@@ -22,6 +22,17 @@ class MaterialInstance {
   Material& Base();
 
   template <typename T>
+  T* View(const char* name) {
+    if (!m_base.m_block_uniforms.contains(name)) {
+      PTAH_RENDER_WARN("Requested uniform {} does not exist.", name);
+      return nullptr;
+    }
+
+    Layout& layout = m_base.m_block_uniforms.at(name);
+    return static_cast<T*>(m_block.At(layout.offset));
+  }
+
+  template <typename T>
   void SetBlockUniform(const char* name, const T& data) {
     if (!m_base.m_block_uniforms.contains(name)) {
       PTAH_RENDER_WARN("Material block does not contain {}, value is ignored.",

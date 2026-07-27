@@ -36,4 +36,6 @@ void MirroredBuffer::Sync() {
 
 DataBuffer& MirroredBuffer::GPUBuffer() { return m_gpu_buffer; }
 
+void* MirroredBuffer::At(unsigned int offset) { return &m_buffer[offset]; }
+
 }  // namespace ptah
