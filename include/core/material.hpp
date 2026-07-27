@@ -24,9 +24,11 @@ struct MaterialBlock {
 
 struct Layout {
   std::string name;
+  std::string type_name;
   unsigned int type;  // GL Types
   int length;         // Number of elements
-  int offset;         // Offset
+  int size;
+  int offset;  // Offset
 };
 
 struct ShaderStage {

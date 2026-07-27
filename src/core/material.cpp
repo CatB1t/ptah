@@ -58,6 +58,104 @@ std::string preprocess_shader_source(const std::string& source,
   return source_out.str();
 };
 
+unsigned int gl_type_byte_size(unsigned int type) {
+  const unsigned int base_size = 4;
+  const unsigned int double_size = 8;
+  switch (type) {
+    case GL_FLOAT:
+    case GL_INT:
+    case GL_UNSIGNED_INT:
+    case GL_SAMPLER_2D:
+    case GL_SAMPLER_CUBE:
+      return base_size;
+    case GL_FLOAT_VEC2:
+    case GL_INT_VEC2:
+    case GL_UNSIGNED_INT_VEC2:
+      return base_size * 2;
+    case GL_FLOAT_VEC3:
+    case GL_INT_VEC3:
+    case GL_UNSIGNED_INT_VEC3:
+      return base_size * 3;
+    case GL_FLOAT_VEC4:
+    case GL_INT_VEC4:
+    case GL_UNSIGNED_INT_VEC4:
+    case GL_FLOAT_MAT2:
+      return base_size * 4;
+    case GL_FLOAT_MAT3:
+      return base_size * 9;
+    case GL_FLOAT_MAT4:
+      return base_size * 16;
+    case GL_DOUBLE:
+      return double_size;
+    case GL_DOUBLE_VEC2:
+      return double_size * 2;
+    case GL_DOUBLE_VEC3:
+      return double_size * 3;
+    case GL_DOUBLE_VEC4:
+    case GL_DOUBLE_MAT2:
+      return double_size * 4;
+    case GL_DOUBLE_MAT3:
+      return double_size * 9;
+    case GL_DOUBLE_MAT4:
+      return double_size * 16;
+  }
+  return 0;
+}
+
+std::string gl_type_string(unsigned int type) {
+  switch (type) {
+    case GL_FLOAT:
+      return "float";
+    case GL_FLOAT_VEC2:
+      return "fvec2";
+    case GL_FLOAT_VEC3:
+      return "fvec3";
+    case GL_FLOAT_VEC4:
+      return "fvec4";
+    case GL_FLOAT_MAT2:
+      return "fmat2";
+    case GL_FLOAT_MAT3:
+      return "fmat3";
+    case GL_FLOAT_MAT4:
+      return "fmat4";
+    case GL_INT:
+      return "int";
+    case GL_INT_VEC2:
+      return "ivec2";
+    case GL_INT_VEC3:
+      return "ivec3";
+    case GL_INT_VEC4:
+      return "ivec4";
+    case GL_UNSIGNED_INT:
+      return "uint";
+    case GL_UNSIGNED_INT_VEC2:
+      return "uvec2";
+    case GL_UNSIGNED_INT_VEC3:
+      return "uvec3";
+    case GL_UNSIGNED_INT_VEC4:
+      return "uvec4";
+    case GL_DOUBLE:
+      return "double";
+    case GL_DOUBLE_VEC2:
+      return "dvec2";
+    case GL_DOUBLE_VEC3:
+      return "dvec3";
+    case GL_DOUBLE_VEC4:
+      return "dvec4";
+    case GL_DOUBLE_MAT2:
+      return "dmat2";
+    case GL_DOUBLE_MAT3:
+      return "dmat3";
+    case GL_DOUBLE_MAT4:
+      return "dmat4";
+    case GL_SAMPLER_2D:
+      return "sampler2D";
+    case GL_SAMPLER_CUBE:
+      return "samplerCube";
+  }
+  return "<unknown>";
+}
+
 }  // namespace _utils
 
 Material::Material(const char* vertex_filepath, const char* fragment_filepath,
@@ -298,6 +396,8 @@ Layout Material::m_GetUniformLayout(unsigned int uniform_index) {
   glGetActiveUniformsiv(program_id, 1, &uniform_index, GL_UNIFORM_OFFSET,
                         &layout.offset);
 
+  layout.type_name = _utils::gl_type_string(layout.type);
+  layout.size = _utils::gl_type_byte_size(layout.type);
   return layout;
 }
 
