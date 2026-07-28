@@ -17,6 +17,7 @@ class Environment {
 
  public:
   Environment();
+  void SetSkybox(TextureCube skybox);
   DrawCommand GetDrawCommand();
 };
 

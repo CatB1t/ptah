@@ -19,4 +19,9 @@ DrawCommand Environment::GetDrawCommand() {
   return m_unitcube.GetDrawCommand(glm::mat4{1.0}, *m_instance);
 }
 
+void Environment::SetSkybox(TextureCube skybox) {
+  // m_skybox.Dispose();
+  m_skybox = skybox;
+}
+
 }  // namespace ptah
