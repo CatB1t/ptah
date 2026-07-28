@@ -80,7 +80,7 @@ target_compile_definitions(imgui PUBLIC GLFW_INCLUDE_NONE)
 add_library(deps::imgui ALIAS imgui)
 
 add_executable(ptah
-    demos/lights.cpp
+    demos/editor.cpp
     src/core/context.cpp
     src/core/window.cpp
     src/core/renderer.cpp
