@@ -59,7 +59,6 @@ class Renderer {
   DataBuffer m_frame_data;
   PerFrameData m_per_frame_data;
   Gizmos m_gizmos;
-  Environment m_environment{};
 
   // Lights
   DirectionalLight m_dirlight{};
@@ -74,6 +73,7 @@ class Renderer {
 
  public:
   RendererSettings settings;
+  Environment environment{};
 
   Renderer(Window& window);
   ~Renderer();
