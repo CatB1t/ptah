@@ -41,7 +41,5 @@ void Texture2D::Bind(unsigned int slot) {
   glBindTexture(GL_TEXTURE_2D, m_handle.Id());
 }
 
-Texture2DHandle Texture2D::Handle() {
-  return m_handle;
-}
+Texture2DHandle Texture2D::Handle() { return m_handle; }
 }  // namespace ptah
