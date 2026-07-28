@@ -1,6 +1,7 @@
 #include "editor/widgets.hpp"
 
 #include <imgui/imgui.h>
+#include <portable_file_dialogs.h>
 
 #include <glm/common.hpp>
 #include <utility>
@@ -9,16 +10,44 @@
 #include "core/material_props.hpp"
 #include "core/renderer.hpp"
 #include "core/window.hpp"
+#include "model.hpp"
+#include "utils/file_loading.hpp"
+#include "utils/logger.hpp"
+
+// This is a bit messy. I'm not a UI specialist
+// but this is good enough for the purpose of debugging
+// this is not an actual editor for the engine
 
 namespace {
 using namespace ptah;
 
-void ShowTexture2D(const char* label, Texture2D* texture) {
+void ShowTexture2D(const char* label, MaterialInstance& mat, TextureSlot slot) {
+  auto* texture = static_cast<Texture2D*>(mat.GetTexture(slot));
   if (texture == nullptr) return;
 
-  ImGui::SeparatorText(label);
-  ImGui::Image(texture->Handle().Id(), ImVec2(128, 128), ImVec2(0.0f, 0.0f),
-               ImVec2(1.0f, 1.0f));
+  ImGui::Separator();
+  if (ImGui::ImageButton(label, texture->Handle().Id(), ImVec2(64, 64),
+                         ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f))) {
+    auto files =
+        pfd::open_file("Load Texture", ".",
+                       {"Texture", "*.png *.jpeg *.jpg", "All Files", "*"})
+            .result();
+    if (files.size() > 0) {
+      auto image = utils::load_image(files[0]);
+      if (image) {
+        auto texture = new Texture2D(*image);
+        mat.SetTexture(texture, slot);
+      }
+    }
+  }
+  ImGui::PushID(label);
+  ImGui::SameLine();
+  ImGui::Text(label);
+  ImGui::SameLine(0, 10);
+  if (ImGui::Button("Clear Texture")) {
+    mat.SetTexture(nullptr, slot);
+  }
+  ImGui::PopID();
 }
 
 void UniformFloat4(MaterialInstance& material, Layout& layout) {
@@ -70,20 +99,69 @@ void ShowOverview(Renderer& renderer, Window& window) {
 
 void InspectMaterialInstance(MaterialInstance& material) {
   ImGui::Begin("Material");
+  ImGui::SeparatorText("Base Properties");
   auto& base_props = material.Base().props;
   ::ShowMaterialProps(base_props);
+
+  ImGui::SeparatorText("Instance Properties");
+
   auto layouts = material.Base().GetLayout();
-  ImGui::SeparatorText("Material Uniforms: ");
+  ImGui::SeparatorText("Material Uniforms");
   for (auto& [name, layout] : layouts) {
     if (layout.type_name == "fvec4") {
       UniformFloat4(material, layout);
     }
   }
 
-  auto* tex = static_cast<Texture2D*>(material.GetTexture(TextureSlot::Albedo));
-  ShowTexture2D("Albedo", tex);
-  tex = static_cast<Texture2D*>(material.GetTexture(TextureSlot::Normal));
-  ShowTexture2D("Normal", tex);
+  ShowTexture2D("Albedo", material, TextureSlot::Albedo);
+  ShowTexture2D("Normal", material, TextureSlot::Normal);
   ImGui::End();
+}
+
+void InspectModel(Model& model,
+                  std::function<void(std::string)> model_load_cb) {
+  ImGui::Begin("Model");
+  ImGui::SeparatorText("Properties");
+  ImGui::Checkbox("Draw Bounding Box", &model.draw_bounding_box);
+  ImGui::Spacing();
+  ImGui::Text("# Meshes: %zu", model.meshes.size());
+  ImGui::Text("# Materials: %zu", model.material_instances.size());
+  ImGui::Text("# Textures: %zu", model.textures.size());
+
+  ImGui::Separator();
+  static Model* last_selected_model = nullptr;
+  static int selected_instance = 0;
+  if (last_selected_model != &model) {
+    selected_instance = 0;
+    last_selected_model = &model;
+  }
+  if (ImGui::BeginListBox("Material Instances")) {
+    for (int n = 0; n < model.material_instances.size(); n++) {
+      const bool is_selected = (selected_instance == n);
+      if (ImGui::Selectable(std::format("{}", n).c_str(), is_selected))
+        selected_instance = n;
+
+      // Set the initial focus when opening the combo (scrolling + keyboard
+      // navigation focus)
+      if (is_selected) ImGui::SetItemDefaultFocus();
+    }
+    ImGui::EndListBox();
+  }
+
+  if (ImGui::Button("Load model")) {
+    auto files =
+        pfd::open_file("Load Model", ".",
+                       {"Model", "*.obj *.fbx *.gltf", "All Files", "*"})
+            .result();
+    if (files.size() > 0) {
+      model_load_cb(files[0]);
+      ImGui::End();
+      return;
+    }
+  }
+  ImGui::End();
+  if (model.material_instances.at(selected_instance) != nullptr) {
+    InspectMaterialInstance(*model.material_instances.at(selected_instance));
+  }
 }
 }  // namespace ptah::editor::widgets
