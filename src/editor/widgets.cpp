@@ -154,7 +154,7 @@ void InspectModel(Model& model,
   if (ImGui::Button("Load model")) {
     auto files =
         pfd::open_file("Load Model", ".",
-                       {"Model", "*.obj *.fbx *.gltf", "All Files", "*"})
+                       {"Model", "*.obj *.fbx *.gltf *.glb", "All Files", "*"})
             .result();
     if (files.size() > 0) {
       model_load_cb(files[0]);
