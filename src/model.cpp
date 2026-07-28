@@ -212,8 +212,8 @@ Model::Model(Material& base_material, const char* filepath, bool reposition,
   }
 }
 
-std::vector<DrawCommand> Model::GetDrawCommands(const glm::mat4& transform,
-                                                bool draw_bounding_box) const {
+std::vector<DrawCommand> Model::GetDrawCommands(
+    const glm::mat4& transform) const {
   std::vector<DrawCommand> commands;
   commands.reserve(meshes.size());
 

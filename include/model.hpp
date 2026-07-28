@@ -46,13 +46,13 @@ class Model {
   std::vector<Texture2D*> textures;
   std::unordered_map<int, MaterialInstance*> mesh_materials;
   std::unordered_map<int, MaterialInstance*> material_instances;
+  bool draw_bounding_box = false;
 
   Model(Material& base_material, const char* filepath, bool reposition = false,
         bool resize = false);
 
   std::vector<DrawCommand> GetDrawCommands(
-      const glm::mat4& transform = glm::mat4(1.0f),
-      bool draw_bounding_box = false) const;
+      const glm::mat4& transform = glm::mat4(1.0f)) const;
 };
 
 }  // namespace ptah
