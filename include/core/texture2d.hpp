@@ -16,6 +16,7 @@ class Texture2D : public Texture {
  public:
   explicit Texture2D(Image& image, TextureProps props = {});
   void Bind(unsigned int slot) override;
+  Texture2DHandle Handle();
 };
 
 }  // namespace ptah

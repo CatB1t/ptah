@@ -40,4 +40,8 @@ void Texture2D::Bind(unsigned int slot) {
   glActiveTexture(GL_TEXTURE0 + slot);
   glBindTexture(GL_TEXTURE_2D, m_handle.Id());
 }
+
+Texture2DHandle Texture2D::Handle() {
+  return m_handle;
+}
 }  // namespace ptah
