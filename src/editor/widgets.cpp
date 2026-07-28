@@ -97,6 +97,13 @@ void ShowOverview(Renderer& renderer, Window& window) {
   ImGui::Checkbox("Override materials", &renderer.settings.override_materials);
   ImGui::Checkbox("Override instances", &renderer.settings.override_instances);
   ImGui::ColorEdit4("Background color", &renderer.settings.background.r);
+  if (ImGui::Button("Load skybox")) {
+    auto ret = pfd::select_folder("Skybox", ".");
+    if (ret.result() != "") {
+      TextureCube skybox{ret.result()};
+      renderer.environment.SetSkybox(skybox);
+    }
+  };
   ImGui::End();
 }
 
