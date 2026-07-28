@@ -151,6 +151,10 @@ void InspectModel(Model& model,
     ImGui::EndListBox();
   }
 
+  if (model.material_instances.at(selected_instance) != nullptr) {
+    InspectMaterialInstance(*model.material_instances.at(selected_instance));
+  }
+
   if (ImGui::Button("Load model")) {
     auto files =
         pfd::open_file("Load Model", ".",
@@ -158,13 +162,8 @@ void InspectModel(Model& model,
             .result();
     if (files.size() > 0) {
       model_load_cb(files[0]);
-      ImGui::End();
-      return;
     }
   }
   ImGui::End();
-  if (model.material_instances.at(selected_instance) != nullptr) {
-    InspectMaterialInstance(*model.material_instances.at(selected_instance));
-  }
 }
 }  // namespace ptah::editor::widgets
