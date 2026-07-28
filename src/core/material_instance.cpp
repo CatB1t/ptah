@@ -13,6 +13,7 @@ MaterialInstance::MaterialInstance(Material& base)
 }
 
 void MaterialInstance::SetTexture(Texture* texture, TextureSlot slot) {
+  // TODO: Handle current texture disposal
   m_textures[std::to_underlying(slot)] = texture;
 }
 
