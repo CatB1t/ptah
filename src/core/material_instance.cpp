@@ -16,6 +16,12 @@ void MaterialInstance::SetTexture(Texture* texture, TextureSlot slot) {
   m_textures[std::to_underlying(slot)] = texture;
 }
 
+Texture* MaterialInstance::GetTexture(TextureSlot slot) {
+  int slot_idx = std::to_underlying(slot);
+  return m_textures[slot_idx] != nullptr ? m_textures[slot_idx]
+                                         : m_base.m_ResolveTexture(slot);
+}
+
 void MaterialInstance::Bind() {
   m_block.Sync();
   m_block.GPUBuffer().BindUniform(1);

@@ -18,6 +18,7 @@ class MaterialInstance {
  public:
   MaterialInstance(Material& base);
   void SetTexture(Texture* texture, TextureSlot slot);
+  Texture* GetTexture(TextureSlot slot);
   void Bind();
   Material& Base();
 
