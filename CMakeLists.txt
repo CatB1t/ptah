@@ -55,6 +55,10 @@ add_library(stb STATIC external/stb/src/stb_image.c)
 target_include_directories(stb PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/stb/include>)
 add_library(deps::stb ALIAS stb)
 
+add_library(pfd INTERFACE)
+target_include_directories(pfd INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/pfd/include>)
+add_library(deps::pfd ALIAS pfd)
+
 set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui)
 add_library(imgui STATIC
     ${IMGUI_DIR}/imgui.cpp
@@ -105,6 +109,7 @@ target_link_libraries(ptah PRIVATE
     deps::glad
     deps::stb
     deps::imgui
+    deps::pfd
     OpenGL::GL
     glfw
     spdlog::spdlog
