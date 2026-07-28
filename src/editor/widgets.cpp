@@ -134,7 +134,7 @@ void InspectModel(Model& model, ModelLoadFn model_load_cb) {
   static Model* last_selected_model = nullptr;
   static int selected_instance = 0;
   if (last_selected_model != &model) {
-    selected_instance = 0;
+    selected_instance = model.material_instances.begin()->first;
     last_selected_model = &model;
   }
   if (ImGui::BeginListBox("Material Instances")) {
