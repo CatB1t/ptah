@@ -121,8 +121,7 @@ void InspectMaterialInstance(MaterialInstance& material) {
   ImGui::End();
 }
 
-void InspectModel(Model& model,
-                  std::function<void(std::string)> model_load_cb) {
+void InspectModel(Model& model, ModelLoadFn model_load_cb) {
   ImGui::Begin("Model");
   ImGui::SeparatorText("Properties");
   ImGui::Checkbox("Draw Bounding Box", &model.draw_bounding_box);
@@ -155,15 +154,49 @@ void InspectModel(Model& model,
     InspectMaterialInstance(*model.material_instances.at(selected_instance));
   }
 
+  static std::string selected_model = "";
+
   if (ImGui::Button("Load model")) {
     auto files =
         pfd::open_file("Load Model", ".",
                        {"Model", "*.obj *.fbx *.gltf *.glb", "All Files", "*"})
             .result();
     if (files.size() > 0) {
-      model_load_cb(files[0]);
+      selected_model = files[0];
+      ImGui::OpenPopup("ModelLoadOptions");
     }
   }
+
+  if (ImGui::BeginPopupModal("ModelLoadOptions", NULL,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+    static bool reposition = false;
+    static bool resize = false;
+    static bool flip_uvs = true;
+    auto reset_vars = [&]() {
+      reposition = false;
+      resize = false;
+      flip_uvs = true;
+    };
+
+    ImGui::Checkbox("Reposition", &reposition);
+    ImGui::Checkbox("Rescale", &resize);
+    ImGui::Checkbox("Flip UVs", &flip_uvs);
+
+    if (ImGui::Button("Import", ImVec2(120, 0))) {
+      ImGui::CloseCurrentPopup();
+      model_load_cb(selected_model, reposition, resize, flip_uvs);
+      reset_vars();
+    }
+
+    ImGui::SetItemDefaultFocus();
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+      ImGui::CloseCurrentPopup();
+      reset_vars();
+    }
+    ImGui::EndPopup();
+  }
+
   ImGui::End();
 }
 }  // namespace ptah::editor::widgets

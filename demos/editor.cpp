@@ -43,9 +43,9 @@ int main() {
     camera.Update(input_handler);
     editor.NewFrame();
     ptah::editor::widgets::ShowOverview(renderer, window);
-    ptah::editor::widgets::InspectModel(*model, [&](std::string filepath) {
+    ptah::editor::widgets::InspectModel(*model, [&](std::string filepath, bool reposition, bool resize, bool flip_uv) {
       delete model;
-      model = new ptah::Model{mat, filepath.c_str(), true, true};
+      model = new ptah::Model{mat, filepath.c_str(), reposition, resize, flip_uv};
     });
 
     if (input_handler.IsReleased(ptah::KeyboardKey::Escape)) {
