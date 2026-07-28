@@ -22,12 +22,7 @@ class MaterialInstance;
 
 class Model {
  private:
-  Material& m_material;
   std::filesystem::path m_path;
-  std::vector<Mesh> m_meshes;
-  std::unordered_map<int, MaterialInstance*> m_loaded_materials;
-  std::unordered_map<int, MaterialInstance*> m_mesh_materials;
-  std::vector<Texture2D*> m_loaded_textures;
   glm::mat4 m_internal_transform{1.0f};
 
   Material m_bb_material;
@@ -46,7 +41,13 @@ class Model {
       const glm::mat4& transform = glm::mat4(1.0f)) const;
 
  public:
-  Model(Material& material, const char* filepath, bool reposition = false,
+  Material& material;
+  std::vector<Mesh> meshes;
+  std::vector<Texture2D*> textures;
+  std::unordered_map<int, MaterialInstance*> mesh_materials;
+  std::unordered_map<int, MaterialInstance*> material_instances;
+
+  Model(Material& base_material, const char* filepath, bool reposition = false,
         bool resize = false);
 
   std::vector<DrawCommand> GetDrawCommands(

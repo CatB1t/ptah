@@ -73,7 +73,7 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
                       new_path.make_preferred().string().c_str());
     if (auto texture_img = utils::load_image(new_path)) {
       Texture2D* tex = new Texture2D{texture_img.value()};
-      m_loaded_textures.push_back(tex);
+      textures.push_back(tex);
       return tex;
     }
   }
@@ -82,13 +82,13 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
 
 MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
                                         int materialIndex) {
-  if (m_loaded_materials.contains(materialIndex)) {
-    return m_loaded_materials.at(materialIndex);
+  if (material_instances.contains(materialIndex)) {
+    return material_instances.at(materialIndex);
   }
 
   aiMaterial* mat = scene->mMaterials[materialIndex];
 
-  MaterialInstance* instance = m_material.createInstance();
+  MaterialInstance* instance = material.createInstance();
   PTAH_RENDER_DEBUG("Mat[{}] {} :", materialIndex, mat->GetName().C_Str());
 
   Texture2D* albedo_tex = m_LoadTexture(mat, aiTextureType_BASE_COLOR);
@@ -107,7 +107,7 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
                               glm::vec4(color.r, color.g, color.b, color.a));
   }
 
-  m_loaded_materials.insert(std::make_pair(materialIndex, instance));
+  material_instances.insert(std::make_pair(materialIndex, instance));
   return instance;
 }
 
@@ -159,11 +159,12 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
       }
     }
 
-    MaterialInstance* material = m_LoadMaterial(scene, mesh->mMaterialIndex);
+    MaterialInstance* mat_instance =
+        m_LoadMaterial(scene, mesh->mMaterialIndex);
 
-    std::size_t index = m_meshes.size();
-    m_meshes.push_back(Mesh{verts, inds});
-    m_mesh_materials.insert({index, material});
+    std::size_t index = meshes.size();
+    meshes.push_back(Mesh{verts, inds});
+    mesh_materials.insert({index, mat_instance});
   }
 
   for (unsigned int i = 0; i < node->mNumChildren; i++) {
@@ -173,11 +174,11 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
 
 Model::Model(Material& base_material, const char* filepath, bool reposition,
              bool resize)
-    : m_material(base_material),
-      m_path(filepath),
+    : m_path(filepath),
       // TODO: Very wasteful allocation here, for each model.
       m_bb_material(MakeUnlit()),
-      m_bb_material_instance(m_bb_material.createInstance()) {
+      m_bb_material_instance(m_bb_material.createInstance()),
+      material(base_material) {
   Assimp::Importer importer;
   const aiScene* scene = utils::load_object(importer, filepath);
   if (scene == nullptr || scene->mRootNode == nullptr) {
@@ -214,13 +215,13 @@ Model::Model(Material& base_material, const char* filepath, bool reposition,
 std::vector<DrawCommand> Model::GetDrawCommands(const glm::mat4& transform,
                                                 bool draw_bounding_box) const {
   std::vector<DrawCommand> commands;
-  commands.reserve(m_meshes.size());
+  commands.reserve(meshes.size());
 
   auto world = transform * m_internal_transform;
 
-  for (std::size_t i = 0; i < m_meshes.size(); i++) {
-    MaterialInstance* material = m_mesh_materials.at(i);
-    commands.push_back(m_meshes[i].GetDrawCommand(world, *material));
+  for (std::size_t i = 0; i < meshes.size(); i++) {
+    MaterialInstance* mat_instance = mesh_materials.at(i);
+    commands.push_back(meshes[i].GetDrawCommand(world, *mat_instance));
   }
 
   if (draw_bounding_box) commands.push_back(m_GetBoundingBox(world));
