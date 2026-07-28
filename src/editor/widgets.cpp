@@ -23,11 +23,14 @@ using namespace ptah;
 
 void ShowTexture2D(const char* label, MaterialInstance& mat, TextureSlot slot) {
   auto* texture = static_cast<Texture2D*>(mat.GetTexture(slot));
-  if (texture == nullptr) return;
+  ImTextureRef texture_ref;
+  if (texture != nullptr) {
+    texture_ref = texture->Handle().Id();
+  }
 
   ImGui::Separator();
-  if (ImGui::ImageButton(label, texture->Handle().Id(), ImVec2(64, 64),
-                         ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f))) {
+  if (ImGui::ImageButton(label, texture_ref, ImVec2(64, 64), ImVec2(0.0f, 0.0f),
+                         ImVec2(1.0f, 1.0f))) {
     auto files =
         pfd::open_file("Load Texture", ".",
                        {"Texture", "*.png *.jpeg *.jpg", "All Files", "*"})
