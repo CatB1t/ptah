@@ -1,6 +1,7 @@
 #include "model.hpp"
 
 #include <assimp/material.h>
+#include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
 #include <assimp/Importer.hpp>
@@ -173,14 +174,17 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
 }
 
 Model::Model(Material& base_material, const char* filepath, bool reposition,
-             bool resize)
+             bool resize, bool flip_uvs)
     : m_path(filepath),
       // TODO: Very wasteful allocation here, for each model.
       m_bb_material(MakeUnlit()),
       m_bb_material_instance(m_bb_material.createInstance()),
       material(base_material) {
+  unsigned int flags = aiProcess_Triangulate | aiProcess_CalcTangentSpace;
+  if (flip_uvs) flags |= aiProcess_FlipUVs;
+
   Assimp::Importer importer;
-  const aiScene* scene = utils::load_object(importer, filepath);
+  const aiScene* scene = utils::load_object(importer, filepath, flags);
   if (scene == nullptr || scene->mRootNode == nullptr) {
     PTAH_RENDER_ERROR("Failed to load model: {}", filepath);
     return;

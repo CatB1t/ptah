@@ -49,7 +49,7 @@ class Model {
   bool draw_bounding_box = false;
 
   Model(Material& base_material, const char* filepath, bool reposition = false,
-        bool resize = false);
+        bool resize = false, bool flip_uvs = true);
 
   std::vector<DrawCommand> GetDrawCommands(
       const glm::mat4& transform = glm::mat4(1.0f)) const;
