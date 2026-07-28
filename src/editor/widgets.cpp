@@ -8,7 +8,7 @@
 namespace ptah::editor::widgets {
 void ShowOverview(Renderer& renderer, Window& window) {
   ImGui::Begin("Renderer");
-  ImGui::Text("Window size (%d), (%d)", window.Size().x, window.Size().y);
+  ImGui::Text("Window size %dx%d", window.Size().x, window.Size().y);
   ImGui::SeparatorText("Renderer Settings");
   ImGui::Checkbox("Grid", &renderer.settings.draw_grid);
   ImGui::Checkbox("Gizmos", &renderer.settings.draw_light_gizmos);
