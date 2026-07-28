@@ -8,4 +8,5 @@ class MaterialInstance;
 
 namespace ptah::editor::widgets {
 void ShowOverview(Renderer& renderer, Window& window);
-}
+void InspectMaterialInstance(MaterialInstance& material);
+}  // namespace ptah::editor::widgets
