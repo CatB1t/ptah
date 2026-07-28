@@ -17,10 +17,13 @@ void MaterialInstance::SetTexture(Texture* texture, TextureSlot slot) {
   m_textures[std::to_underlying(slot)] = texture;
 }
 
-Texture* MaterialInstance::GetTexture(TextureSlot slot) {
+Texture* MaterialInstance::GetTexture(TextureSlot slot, bool fall_to_base) {
   int slot_idx = std::to_underlying(slot);
-  return m_textures[slot_idx] != nullptr ? m_textures[slot_idx]
-                                         : m_base.m_ResolveTexture(slot);
+  auto texture = m_textures[slot_idx];
+  if (fall_to_base) {
+    return texture == nullptr ? m_base.m_ResolveTexture(slot) : texture;
+  }
+  return texture;
 }
 
 void MaterialInstance::Bind() {
