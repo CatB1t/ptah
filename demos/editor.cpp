@@ -40,16 +40,21 @@ int main() {
   while (!window.ShouldClose()) {
     input_handler.Update();
     window.PollEvents();
-    camera.Update(input_handler);
     editor.NewFrame();
-    double deltaTime = window.DeltaTime();
-    ptah::editor::widgets::ShowOverview(renderer, window, deltaTime);
-    ptah::editor::widgets::InspectModel(*model, [&](std::string filepath, bool reposition, bool resize, bool flip_uv) {
-      delete model;
-      model = new ptah::Model{mat, filepath.c_str(), reposition, resize, flip_uv};
-    });
+    editor.RouteInput(input_handler);
 
-    if (input_handler.IsReleased(ptah::KeyboardKey::Escape)) {
+    double deltaTime = window.DeltaTime();
+    if (editor.IsEnabled()) {
+      ptah::editor::widgets::ShowOverview(renderer, window, deltaTime);
+      ptah::editor::widgets::InspectModel(*model, [&](std::string filepath, bool reposition, bool resize, bool flip_uv) {
+        delete model;
+        model = new ptah::Model{mat, filepath.c_str(), reposition, resize, flip_uv};
+      });
+    }
+
+    camera.Update(input_handler);
+
+    if (input_handler.IsPressedRaw(ptah::KeyboardKey::Escape)) {
       window.Close();
     }
 

@@ -45,31 +45,48 @@ void Input::Update() {
   m_mousescroll = {0, 0};
 }
 
-bool Input::IsDown(KeyboardKey key) const {
-  return m_keys[std::to_underlying(key)];
+void Input::SetBlocked(bool blocked) {
+  if (blocked == m_blocked) return;
+  m_blocked = blocked;
+  // Swallow the delta accumulated while blocked, otherwise the first unblocked
+  // frame reports one big jump.
+  if (!blocked) m_mousepos_prev = m_mousepos;
 }
-bool Input::IsPressed(KeyboardKey key) const {
+
+bool Input::IsBlocked() const { return m_blocked; }
+
+bool Input::IsPressedRaw(KeyboardKey key) const {
   return m_keys[std::to_underlying(key)] &&
          !m_keys_prev[std::to_underlying(key)];
 }
+
+bool Input::IsDown(KeyboardKey key) const {
+  return !m_blocked && m_keys[std::to_underlying(key)];
+}
+bool Input::IsPressed(KeyboardKey key) const {
+  return !m_blocked && IsPressedRaw(key);
+}
 bool Input::IsReleased(KeyboardKey key) const {
-  return !m_keys[std::to_underlying(key)] &&
+  return !m_blocked && !m_keys[std::to_underlying(key)] &&
          m_keys_prev[std::to_underlying(key)];
 }
 
 bool Input::IsMouseDown(MouseButton key) const {
-  return m_mouse_keys[static_cast<int>(key)];
+  return !m_blocked && m_mouse_keys[static_cast<int>(key)];
 }
 bool Input::IsMousePressed(MouseButton key) const {
-  return m_mouse_keys[static_cast<int>(key)] &&
+  return !m_blocked && m_mouse_keys[static_cast<int>(key)] &&
          !m_mouse_keys_prev[static_cast<int>(key)];
 }
 bool Input::IsMouseReleased(MouseButton key) const {
-  return !m_mouse_keys[static_cast<int>(key)] &&
+  return !m_blocked && !m_mouse_keys[static_cast<int>(key)] &&
          m_mouse_keys_prev[static_cast<int>(key)];
 }
 
-glm::vec2 Input::MouseDelta() const { return m_mousepos - m_mousepos_prev; }
+glm::vec2 Input::MouseDelta() const {
+  if (m_blocked) return {0.0f, 0.0f};
+  return m_mousepos - m_mousepos_prev;
+}
 
 glm::vec2 Input::MouseDeltaNormalized() const {
   auto delta = MouseDelta();
@@ -78,6 +95,9 @@ glm::vec2 Input::MouseDeltaNormalized() const {
 
 glm::vec2 Input::MousePosition() const { return m_mousepos; }
 
-glm::vec2 Input::MouseScroll() const { return m_mousescroll; }
+glm::vec2 Input::MouseScroll() const {
+  if (m_blocked) return {0.0f, 0.0f};
+  return m_mousescroll;
+}
 
 }  // namespace ptah

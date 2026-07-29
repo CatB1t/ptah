@@ -5,6 +5,7 @@
 #include <imgui/imgui.h>
 
 #include "core/window.hpp"
+#include "input.hpp"
 
 namespace ptah::editor {
 EditorContext::EditorContext(Window& window) {
@@ -28,8 +29,21 @@ void EditorContext::NewFrame() {
 }
 
 void EditorContext::Flush() {
+  if (!m_enabled) {
+    ImGui::EndFrame();
+    return;
+  }
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void EditorContext::SetEnabled(bool enabled) { m_enabled = enabled; }
+bool EditorContext::IsEnabled() const { return m_enabled; }
+void EditorContext::Toggle() { SetEnabled(!m_enabled); }
+
+void EditorContext::RouteInput(Input& input, KeyboardKey key) {
+  if (!ImGui::GetIO().WantTextInput && input.IsPressedRaw(key)) Toggle();
+  input.SetBlocked(m_enabled);
 }
 
 EditorContext::~EditorContext() {

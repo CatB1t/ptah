@@ -25,11 +25,19 @@ class Input {
   unsigned int m_width = 1;
   unsigned int m_height = 1;
 
+  bool m_blocked = false;
+
  public:
   Input();
   Input(Window& window);
   void Attach(Window& window);
   void Update();  // Must be called before PollEvents()
+
+  void SetBlocked(bool blocked);
+  bool IsBlocked() const;
+
+  // Ignores blocking
+  bool IsPressedRaw(KeyboardKey key) const;
 
   bool IsDown(KeyboardKey key) const;
   bool IsPressed(KeyboardKey key) const;
