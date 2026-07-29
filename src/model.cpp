@@ -64,19 +64,38 @@ glm::mat4 assimp_to_glm(aiMatrix4x4& mat) {
   return ret;
 }
 
-Texture2D* Model::m_LoadTexture(const aiMaterial* material,
+Texture2D* Model::m_LoadTexture(const aiScene* scene,
+                                const aiMaterial* material,
                                 std::vector<aiTextureType> texture_types) {
   aiString path;
   for (auto texture_type : texture_types) {
     if (aiGetMaterialTexture(material, texture_type, 0, &path) == AI_SUCCESS) {
-      auto new_path = resolve_texture_path(
-          m_path.parent_path(), std::filesystem::path(path.C_Str()).filename());
-      PTAH_RENDER_DEBUG("Loading {} texture: {}", (unsigned int)texture_type,
-                        new_path.make_preferred().string().c_str());
-      if (auto texture_img = utils::load_image(new_path)) {
-        Texture2D* tex = new Texture2D{texture_img.value()};
-        textures.push_back(tex);
-        return tex;
+      if (auto texture = scene->GetEmbeddedTexture(path.C_Str());
+          texture != nullptr) {
+        if (texture->mHeight == 0) {
+          std::vector<unsigned char> data;
+          data.resize(texture->mWidth);
+          memcpy(data.data(), texture->pcData, texture->mWidth);
+          if (auto texture_img = utils::load_image(data)) {
+            PTAH_RENDER_DEBUG("Loading embedded texture: {}.{}({} bytes)",
+                              texture->mFilename.C_Str(),
+                              texture->achFormatHint, texture->mWidth);
+            Texture2D* tex = new Texture2D{texture_img.value()};
+            textures.push_back(tex);
+            return tex;
+          }
+        }
+      } else {
+        auto new_path = resolve_texture_path(
+            m_path.parent_path(),
+            std::filesystem::path(path.C_Str()).filename());
+        PTAH_RENDER_DEBUG("Loading {} texture: {}", (unsigned int)texture_type,
+                          new_path.make_preferred().string().c_str());
+        if (auto texture_img = utils::load_image(new_path)) {
+          Texture2D* tex = new Texture2D{texture_img.value()};
+          textures.push_back(tex);
+          return tex;
+        }
       }
     }
   }
@@ -92,11 +111,11 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
   MaterialInstance* instance = material.createInstance();
   PTAH_RENDER_DEBUG("Mat[{}] {} :", materialIndex, str_name);
 
-  Texture2D* albedo_tex =
-      m_LoadTexture(mat, {aiTextureType_BASE_COLOR, aiTextureType_DIFFUSE});
+  Texture2D* albedo_tex = m_LoadTexture(
+      scene, mat, {aiTextureType_BASE_COLOR, aiTextureType_DIFFUSE});
   instance->SetTexture(albedo_tex, TextureSlot::Albedo);
 
-  Texture2D* normal_tex = m_LoadTexture(mat, {aiTextureType_NORMALS});
+  Texture2D* normal_tex = m_LoadTexture(scene, mat, {aiTextureType_NORMALS});
   instance->SetTexture(normal_tex, TextureSlot::Normal);
 
   aiColor4D color;
