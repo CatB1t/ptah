@@ -32,7 +32,7 @@ class Model {
   glm::vec3 m_max_pos{std::numeric_limits<float>::lowest()};
 
   Texture2D* m_LoadTexture(const aiMaterial* material,
-                           aiTextureType texture_type);
+                           std::vector<aiTextureType> texture_types);
   MaterialInstance* m_LoadMaterial(const aiScene* scene, int materialIndex);
   void m_LoadMesh(const aiScene* scene, aiNode* node,
                   glm::mat4 parentTransform);

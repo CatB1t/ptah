@@ -65,17 +65,19 @@ glm::mat4 assimp_to_glm(aiMatrix4x4& mat) {
 }
 
 Texture2D* Model::m_LoadTexture(const aiMaterial* material,
-                                aiTextureType texture_type) {
+                                std::vector<aiTextureType> texture_types) {
   aiString path;
-  if (aiGetMaterialTexture(material, texture_type, 0, &path) == AI_SUCCESS) {
-    auto new_path = resolve_texture_path(
-        m_path.parent_path(), std::filesystem::path(path.C_Str()).filename());
-    PTAH_RENDER_DEBUG("Loading {} texture: {}", (unsigned int)texture_type,
-                      new_path.make_preferred().string().c_str());
-    if (auto texture_img = utils::load_image(new_path)) {
-      Texture2D* tex = new Texture2D{texture_img.value()};
-      textures.push_back(tex);
-      return tex;
+  for (auto texture_type : texture_types) {
+    if (aiGetMaterialTexture(material, texture_type, 0, &path) == AI_SUCCESS) {
+      auto new_path = resolve_texture_path(
+          m_path.parent_path(), std::filesystem::path(path.C_Str()).filename());
+      PTAH_RENDER_DEBUG("Loading {} texture: {}", (unsigned int)texture_type,
+                        new_path.make_preferred().string().c_str());
+      if (auto texture_img = utils::load_image(new_path)) {
+        Texture2D* tex = new Texture2D{texture_img.value()};
+        textures.push_back(tex);
+        return tex;
+      }
     }
   }
   return nullptr;
@@ -90,13 +92,11 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
   MaterialInstance* instance = material.createInstance();
   PTAH_RENDER_DEBUG("Mat[{}] {} :", materialIndex, str_name);
 
-  Texture2D* albedo_tex = m_LoadTexture(mat, aiTextureType_BASE_COLOR);
-  if (albedo_tex == nullptr) {
-    albedo_tex = m_LoadTexture(mat, aiTextureType_DIFFUSE);
-  }
+  Texture2D* albedo_tex =
+      m_LoadTexture(mat, {aiTextureType_BASE_COLOR, aiTextureType_DIFFUSE});
   instance->SetTexture(albedo_tex, TextureSlot::Albedo);
 
-  Texture2D* normal_tex = m_LoadTexture(mat, aiTextureType_NORMALS);
+  Texture2D* normal_tex = m_LoadTexture(mat, {aiTextureType_NORMALS});
   instance->SetTexture(normal_tex, TextureSlot::Normal);
 
   aiColor4D color;
