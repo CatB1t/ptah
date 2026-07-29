@@ -10,7 +10,7 @@ enum class TextureSlot : unsigned int {
   Slot4 = 4,
   Slot5 = 5,
   Slot6 = 6,
-  Slot7 = 7,
+  Environment = 7,
   Slot8 = 8,
   Slot9 = 9,
   Slot10 = 10,

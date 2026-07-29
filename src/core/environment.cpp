@@ -12,7 +12,7 @@ Environment::Environment()
                  PTAH_SHADERS_DIR "/skybox.frag"} {
   m_material.props.depth_write = false;
   m_instance = m_material.createInstance();
-  m_instance->SetTexture(&m_skybox, TextureSlot::Slot8);
+  m_instance->SetTexture(&m_skybox, TextureSlot::Environment);
 }
 
 DrawCommand Environment::GetDrawCommand() {
