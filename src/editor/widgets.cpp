@@ -133,10 +133,36 @@ void InspectModel(Model& model, ModelLoadFn model_load_cb) {
   ImGui::Separator();
   static Model* last_selected_model = nullptr;
   static int selected_instance = 0;
+  static int selected_mesh = 0;
   if (last_selected_model != &model) {
     selected_instance = 0;
+    selected_mesh = 0;
     last_selected_model = &model;
   }
+
+  if (ImGui::BeginListBox("Meshes")) {
+    for (int n = 0; n < model.meshes.size(); n++) {
+      const bool is_selected = (selected_mesh == n);
+      if (ImGui::Selectable(model.meshes[n].first.c_str(), is_selected))
+        selected_mesh = n;
+
+      // Set the initial focus when opening the combo (scrolling + keyboard
+      // navigation focus)
+      if (is_selected) ImGui::SetItemDefaultFocus();
+    }
+    ImGui::EndListBox();
+  }
+
+  std::string material_name = "";
+  for (int i = 0; i < model.material_instances.size(); i++) {
+    auto pair = model.material_instances[i];
+    if (pair.second == model.mesh_materials.at(selected_mesh)) {
+      material_name = pair.first;
+      selected_instance = i;
+    }
+  }
+  ImGui::Text("%s", material_name.c_str());
+
   if (ImGui::BeginListBox("Material Instances")) {
     for (int n = 0; n < model.material_instances.size(); n++) {
       const bool is_selected = (selected_instance == n);
