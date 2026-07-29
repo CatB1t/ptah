@@ -83,14 +83,12 @@ Texture2D* Model::m_LoadTexture(const aiMaterial* material,
 
 MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
                                         int materialIndex) {
-  if (material_instances.contains(materialIndex)) {
-    return material_instances.at(materialIndex);
-  }
-
   aiMaterial* mat = scene->mMaterials[materialIndex];
+  auto name = mat->GetName();
+  std::string str_name = name.length ? name.C_Str() : "<unknown>";
 
   MaterialInstance* instance = material.createInstance();
-  PTAH_RENDER_DEBUG("Mat[{}] {} :", materialIndex, mat->GetName().C_Str());
+  PTAH_RENDER_DEBUG("Mat[{}] {} :", materialIndex, str_name);
 
   Texture2D* albedo_tex = m_LoadTexture(mat, aiTextureType_BASE_COLOR);
   if (albedo_tex == nullptr) {
@@ -108,7 +106,7 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
                               glm::vec4(color.r, color.g, color.b, color.a));
   }
 
-  material_instances.insert(std::make_pair(materialIndex, instance));
+  material_instances[materialIndex] = std::make_pair(str_name, instance);
   return instance;
 }
 
@@ -161,7 +159,7 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
     }
 
     MaterialInstance* mat_instance =
-        m_LoadMaterial(scene, mesh->mMaterialIndex);
+        material_instances[mesh->mMaterialIndex].second;
 
     std::size_t index = meshes.size();
     meshes.push_back(Mesh{verts, inds});
@@ -191,6 +189,12 @@ Model::Model(Material& base_material, const char* filepath, bool reposition,
   }
 
   PTAH_RENDER_DEBUG("Loading {}", filepath);
+
+  material_instances.resize(scene->mNumMaterials);
+  for (int i = 0; i < material_instances.size(); i++) {
+    m_LoadMaterial(scene, i);
+  }
+
   m_LoadMesh(scene, scene->mRootNode, glm::mat4(1.0f));
   m_bounding_box =
       new Mesh{primitives::MakeWireframeAABB(m_min_pos, m_max_pos)};

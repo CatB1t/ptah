@@ -45,7 +45,7 @@ class Model {
   std::vector<Mesh> meshes;
   std::vector<Texture2D*> textures;
   std::unordered_map<int, MaterialInstance*> mesh_materials;
-  std::unordered_map<int, MaterialInstance*> material_instances;
+  std::vector<std::pair<std::string, MaterialInstance*>> material_instances;
   bool draw_bounding_box = false;
 
   Model(Material& base_material, const char* filepath, bool reposition = false,
