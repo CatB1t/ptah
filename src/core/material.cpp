@@ -62,6 +62,7 @@ unsigned int gl_type_byte_size(unsigned int type) {
   const unsigned int base_size = 4;
   const unsigned int double_size = 8;
   switch (type) {
+    case GL_BOOL:
     case GL_FLOAT:
     case GL_INT:
     case GL_UNSIGNED_INT:
@@ -104,6 +105,8 @@ unsigned int gl_type_byte_size(unsigned int type) {
 
 std::string gl_type_string(unsigned int type) {
   switch (type) {
+    case GL_BOOL:
+      return "bool";
     case GL_FLOAT:
       return "float";
     case GL_FLOAT_VEC2:
