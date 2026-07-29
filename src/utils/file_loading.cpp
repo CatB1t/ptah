@@ -59,5 +59,27 @@ std::optional<Image> load_image(std::filesystem::path path) {
   return Image{width, height, img_data, image_format};
 }
 
+std::optional<Image> load_image(const std::vector<unsigned char>& image_data) {
+  int width, height, channels;
+
+  unsigned char* data = stbi_load_from_memory(
+      image_data.data(), image_data.size(), &width, &height, &channels, 0);
+
+  if (!data) {
+    auto failure_str = stbi_failure_reason();
+    PTAH_RENDER_ERROR("Failed to load image from memory");
+    PTAH_RENDER_ERROR("STB: {}", failure_str);
+    return {};
+  }
+
+  int size = width * height * channels;
+  std::vector<unsigned char> img_data(data, data + size);
+  stbi_image_free(data);
+  auto image_format = channels == 3 ? ImageFormat::RGB : ImageFormat::RGBA;
+  PTAH_RENDER_DEBUG("Loaded image ({}x{}x{}) from memory", width, height,
+                    channels);
+  return Image{width, height, img_data, image_format};
+}
+
 }  // namespace utils
 }  // namespace ptah
