@@ -2,6 +2,8 @@
 
 #include <glad/gl.h>
 
+#include <format>
+
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 
@@ -23,8 +25,15 @@ TextureCube::TextureCube(const std::filesystem::path& textures_dir) {
   unsigned int tmp;
   glGenTextures(1, &tmp);
   m_handle.Set(tmp);
+  std::string ext = "png";
+  if (std::filesystem::exists(textures_dir / "px.jpg")) {
+    ext = "jpg";
+  } else if (std::filesystem::exists(textures_dir / "px.jpeg")) {
+    ext = "jpeg";
+  }
+
   constexpr const char* textures[6]{
-      "px.png", "nx.png", "py.png", "ny.png", "pz.png", "nz.png",
+      "px", "nx", "py", "ny", "pz", "nz",
   };
 
   constexpr int tex_targets[6]{
@@ -42,7 +51,8 @@ TextureCube::TextureCube(const std::filesystem::path& textures_dir) {
   props.r_wrap = AxisWrap::CLAMP_EDGE;
   m_SetTextureParams(props);
   for (int i = 0; i < 6; i++) {
-    auto img = utils::load_image(textures_dir / textures[i]);
+    auto img = utils::load_image(textures_dir /
+                                 std::format("{}.{}", textures[i], ext));
     if (!img) {
       continue;
     }
