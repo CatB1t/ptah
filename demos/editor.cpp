@@ -42,7 +42,8 @@ int main() {
     window.PollEvents();
     camera.Update(input_handler);
     editor.NewFrame();
-    ptah::editor::widgets::ShowOverview(renderer, window);
+    double deltaTime = window.DeltaTime();
+    ptah::editor::widgets::ShowOverview(renderer, window, deltaTime);
     ptah::editor::widgets::InspectModel(*model, [&](std::string filepath, bool reposition, bool resize, bool flip_uv) {
       delete model;
       model = new ptah::Model{mat, filepath.c_str(), reposition, resize, flip_uv};

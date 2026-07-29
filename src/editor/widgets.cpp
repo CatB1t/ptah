@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 #include <portable_file_dialogs.h>
 
+#include <format>
 #include <glm/common.hpp>
 #include <utility>
 
@@ -86,9 +87,11 @@ void ShowMaterialProps(MaterialProps& props) {
 }  // namespace
 
 namespace ptah::editor::widgets {
-void ShowOverview(Renderer& renderer, Window& window) {
+void ShowOverview(Renderer& renderer, Window& window, double delta_time) {
   ImGui::Begin("Renderer");
   ImGui::Text("Window size %dx%d", window.Size().x, window.Size().y);
+  ImGui::Text("Frametime %lfms", delta_time * 1000.0);
+  ImGui::Text("FPS %lf", 1.0 / delta_time);
   ImGui::SeparatorText("Renderer Settings");
   ImGui::Checkbox("Grid", &renderer.settings.draw_grid);
   ImGui::Checkbox("Gizmos", &renderer.settings.draw_light_gizmos);
@@ -107,22 +110,23 @@ void ShowOverview(Renderer& renderer, Window& window) {
   ImGui::End();
 }
 
-void InspectMaterialInstance(MaterialInstance& material) {
-  ImGui::Begin("Material");
-  ImGui::SeparatorText("Base Properties");
-  auto& base_props = material.Base().props;
-  ::ShowMaterialProps(base_props);
-
-  ImGui::SeparatorText("Instance Properties");
+void InspectMaterialInstance(const std::string& label,
+                             MaterialInstance& material) {
+  ImGui::Begin(std::format("Material ({})###MaterialEditor", label).c_str());
+  if (ImGui::CollapsingHeader("Base Properties")) {
+    auto& base_props = material.Base().props;
+    ::ShowMaterialProps(base_props);
+  }
 
   auto layouts = material.Base().GetLayout();
-  ImGui::SeparatorText("Material Uniforms");
+  ImGui::SeparatorText("Uniforms");
   for (auto& [name, layout] : layouts) {
     if (layout.type_name == "fvec4") {
       UniformFloat4(material, layout);
     }
   }
 
+  ImGui::SeparatorText("Textures");
   ShowTexture2D("Albedo", material, TextureSlot::Albedo);
   ShowTexture2D("Normal", material, TextureSlot::Normal);
   ImGui::End();
@@ -183,7 +187,8 @@ void InspectModel(Model& model, ModelLoadFn model_load_cb) {
     ImGui::EndListBox();
   }
 
-  InspectMaterialInstance(*model.material_instances[selected_instance].second);
+  InspectMaterialInstance(model.material_instances[selected_instance].first,
+                          *model.material_instances[selected_instance].second);
 
   static std::string selected_model = "";
 
