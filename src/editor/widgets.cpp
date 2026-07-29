@@ -45,7 +45,7 @@ void ShowTexture2D(const char* label, MaterialInstance& mat, TextureSlot slot) {
   }
   ImGui::PushID(label);
   ImGui::SameLine();
-  ImGui::Text(label);
+  ImGui::Text("%s", label);
   ImGui::SameLine(0, 10);
   if (ImGui::Button("Clear Texture")) {
     mat.SetTexture(nullptr, slot);
