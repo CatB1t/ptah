@@ -174,6 +174,7 @@ void Renderer::Flush() {
 
     if (last_material != &material) {
       material.Use();
+      environment.BindSkybox(material);
       m_SetState(material.props);
       last_material = &material;
     };

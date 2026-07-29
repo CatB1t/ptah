@@ -15,6 +15,10 @@ Environment::Environment()
   m_instance->SetTexture(&m_skybox, TextureSlot::Environment);
 }
 
+void Environment::BindSkybox(Material& material) {
+  material.SetTexture(TextureSlot::Environment, &m_skybox);
+}
+
 DrawCommand Environment::GetDrawCommand() {
   return m_unitcube.GetDrawCommand(glm::mat4{1.0}, *m_instance);
 }
