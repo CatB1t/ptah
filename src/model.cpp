@@ -127,6 +127,8 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
 
   for (unsigned int n = 0; n < node->mNumMeshes; n++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[n]];
+    auto name = mesh->mName;
+    std::string str_name = name.length ? name.C_Str() : "<unknown>";
     std::vector<Vertex> verts;
     std::vector<unsigned int> inds;
 
@@ -162,7 +164,7 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
         material_instances[mesh->mMaterialIndex].second;
 
     std::size_t index = meshes.size();
-    meshes.push_back(Mesh{verts, inds});
+    meshes.push_back({str_name, Mesh{verts, inds}});
     mesh_materials.insert({index, mat_instance});
   }
 
@@ -229,7 +231,7 @@ std::vector<DrawCommand> Model::GetDrawCommands(
 
   for (std::size_t i = 0; i < meshes.size(); i++) {
     MaterialInstance* mat_instance = mesh_materials.at(i);
-    commands.push_back(meshes[i].GetDrawCommand(world, *mat_instance));
+    commands.push_back(meshes[i].second.GetDrawCommand(world, *mat_instance));
   }
 
   if (draw_bounding_box) commands.push_back(m_GetBoundingBox(world));

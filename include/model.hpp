@@ -42,7 +42,7 @@ class Model {
 
  public:
   Material& material;
-  std::vector<Mesh> meshes;
+  std::vector<std::pair<std::string, Mesh>> meshes;
   std::vector<Texture2D*> textures;
   std::unordered_map<int, MaterialInstance*> mesh_materials;
   std::vector<std::pair<std::string, MaterialInstance*>> material_instances;
