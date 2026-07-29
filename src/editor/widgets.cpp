@@ -150,8 +150,16 @@ void InspectModel(Model& model, ModelLoadFn model_load_cb) {
   if (ImGui::BeginListBox("Meshes")) {
     for (int n = 0; n < model.meshes.size(); n++) {
       const bool is_selected = (selected_mesh == n);
-      if (ImGui::Selectable(model.meshes[n].first.c_str(), is_selected))
+      if (ImGui::Selectable(model.meshes[n].first.c_str(), is_selected)) {
         selected_mesh = n;
+        for (int i = 0; i < model.material_instances.size(); i++) {
+          auto pair = model.material_instances[i];
+          if (pair.second == model.mesh_materials.at(selected_mesh)) {
+            selected_instance = i;
+            break;
+          }
+        }
+      }
 
       // Set the initial focus when opening the combo (scrolling + keyboard
       // navigation focus)
@@ -160,22 +168,13 @@ void InspectModel(Model& model, ModelLoadFn model_load_cb) {
     ImGui::EndListBox();
   }
 
-  std::string material_name = "";
-  for (int i = 0; i < model.material_instances.size(); i++) {
-    auto pair = model.material_instances[i];
-    if (pair.second == model.mesh_materials.at(selected_mesh)) {
-      material_name = pair.first;
-      selected_instance = i;
-    }
-  }
-  ImGui::Text("%s", material_name.c_str());
-
   if (ImGui::BeginListBox("Material Instances")) {
     for (int n = 0; n < model.material_instances.size(); n++) {
       const bool is_selected = (selected_instance == n);
       if (ImGui::Selectable(model.material_instances[n].first.c_str(),
-                            is_selected))
+                            is_selected)) {
         selected_instance = n;
+      }
 
       // Set the initial focus when opening the combo (scrolling + keyboard
       // navigation focus)
