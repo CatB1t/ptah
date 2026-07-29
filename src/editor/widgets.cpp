@@ -63,6 +63,20 @@ void UniformFloat4(MaterialInstance& material, Layout& layout) {
   }
 }
 
+void UniformFloat(MaterialInstance& material, Layout& layout) {
+  float* flag = material.View<float>(layout.name.c_str());
+  if (ImGui::DragFloat(layout.name.c_str(), flag, 0.05f, 1.0f, 2.0f)) {
+    material.SetBlockUniform(layout.name.c_str(), *flag);
+  }
+}
+
+void UniformBool(MaterialInstance& material, Layout& layout) {
+  bool* flag = material.View<bool>(layout.name.c_str());
+  if (ImGui::Checkbox(layout.name.c_str(), flag)) {
+    material.SetBlockUniform(layout.name.c_str(), *flag);
+  }
+}
+
 void ShowMaterialProps(MaterialProps& props) {
   ImGui::Checkbox("Depth test", &props.depth_test);
   ImGui::Checkbox("Depth write", &props.depth_write);
@@ -123,6 +137,14 @@ void InspectMaterialInstance(const std::string& label,
   for (auto& [name, layout] : layouts) {
     if (layout.type_name == "fvec4") {
       UniformFloat4(material, layout);
+    }
+
+    if (layout.type_name == "bool") {
+      UniformBool(material, layout);
+    }
+
+    if (layout.type_name == "float") {
+      UniformFloat(material, layout);
     }
   }
 
