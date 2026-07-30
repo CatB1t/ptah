@@ -4,6 +4,7 @@
 
 #include <filesystem>
 #include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 #include <limits>
 #include <unordered_map>
 #include <vector>
@@ -28,8 +29,8 @@ class Model {
   Material m_bb_material;
   MaterialInstance* m_bb_material_instance;
   Mesh* m_bounding_box;
-  glm::vec3 m_min_pos{std::numeric_limits<float>::max()};
-  glm::vec3 m_max_pos{std::numeric_limits<float>::lowest()};
+  glm::vec3 m_min_pos{(std::numeric_limits<float>::max)()};
+  glm::vec3 m_max_pos{(std::numeric_limits<float>::lowest)()};
 
   Texture2D* m_LoadTexture(const aiScene* scene, const aiMaterial* material,
                            std::vector<aiTextureType> texture_types);
