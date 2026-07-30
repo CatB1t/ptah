@@ -12,6 +12,7 @@
 #include "core/renderer.hpp"
 #include "core/window.hpp"
 #include "model.hpp"
+#include "transform.hpp"
 #include "utils/file_loading.hpp"
 #include "utils/logger.hpp"
 
@@ -154,7 +155,8 @@ void InspectMaterialInstance(const std::string& label,
   ImGui::End();
 }
 
-void InspectModel(Model& model, ModelLoadFn model_load_cb) {
+void InspectModel(Model& model, Transform& transform,
+                  ModelLoadFn model_load_cb) {
   ImGui::Begin("Model");
   ImGui::SeparatorText("Properties");
   ImGui::Checkbox("Draw Bounding Box", &model.draw_bounding_box);
@@ -162,6 +164,17 @@ void InspectModel(Model& model, ModelLoadFn model_load_cb) {
   ImGui::Text("# Meshes: %zu", model.meshes.size());
   ImGui::Text("# Materials: %zu", model.material_instances.size());
   ImGui::Text("# Textures: %zu", model.textures.size());
+
+  ImGui::SeparatorText("Transform");
+  ImGui::DragFloat3("Position", &transform.position.x, 1.0f, 0.0f, 0.0f, "%.3f",
+                    ImGuiSliderFlags_ColorMarkers);
+  ImGui::DragFloat3("Rotation", &transform.rotation.x, 1.0f, 0.0f, 0.0f, "%.3f",
+                    ImGuiSliderFlags_ColorMarkers);
+  ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f, 0.0f, 0.0f, "%.3f",
+                    ImGuiSliderFlags_ColorMarkers);
+  if (ImGui::Button("Reset")) {
+    transform.Reset();
+  }
 
   ImGui::Separator();
   static Model* last_selected_model = nullptr;

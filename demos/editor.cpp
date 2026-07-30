@@ -18,6 +18,7 @@
 #include "input.hpp"
 #include "model.hpp"
 #include "orbit_camera.hpp"
+#include "transform.hpp"
 
 int main() {
   ptah::Context ctx{};
@@ -31,8 +32,7 @@ int main() {
   ptah::Material mat = ptah::MakeLambert();
   ptah::Model* model = new ptah::Model{mat, PTAH_ASSETS_DIR "/cube/cube.obj"};
 
-  glm::mat4 transform{1.0f};
-
+  ptah::Transform transform;
   ptah::DirectionalLight dir_light;
 
   ptah::OrbitCamera camera{window};
@@ -46,9 +46,10 @@ int main() {
     double deltaTime = window.DeltaTime();
     if (editor.IsEnabled()) {
       ptah::editor::widgets::ShowOverview(renderer, window, deltaTime);
-      ptah::editor::widgets::InspectModel(*model, [&](std::string filepath, bool reposition, bool resize, bool flip_uv) {
+      ptah::editor::widgets::InspectModel(*model, transform, [&](std::string filepath, bool reposition, bool resize, bool flip_uv) {
         delete model;
         model = new ptah::Model{mat, filepath.c_str(), reposition, resize, flip_uv};
+        transform.Reset();
       });
     }
 
@@ -62,7 +63,7 @@ int main() {
     renderer.Begin(camera.Data(), time);
     renderer.Submit(dir_light);
 
-    renderer.Submit(model->GetDrawCommands(transform));
+    renderer.Submit(model->GetDrawCommands(transform.GetMatrix()));
     renderer.Flush();
     editor.Flush();
     window.SwapBuffers();
