@@ -189,7 +189,9 @@ void InspectModel(Model& model, Transform& transform,
   if (ImGui::BeginListBox("Meshes")) {
     for (int n = 0; n < model.meshes.size(); n++) {
       const bool is_selected = (selected_mesh == n);
-      if (ImGui::Selectable(model.meshes[n].first.c_str(), is_selected)) {
+      if (ImGui::Selectable(
+              std::format("{}##{}", model.meshes[n].first, n).c_str(),
+              is_selected)) {
         selected_mesh = n;
         for (int i = 0; i < model.material_instances.size(); i++) {
           auto pair = model.material_instances[i];
@@ -210,8 +212,10 @@ void InspectModel(Model& model, Transform& transform,
   if (ImGui::BeginListBox("Material Instances")) {
     for (int n = 0; n < model.material_instances.size(); n++) {
       const bool is_selected = (selected_instance == n);
-      if (ImGui::Selectable(model.material_instances[n].first.c_str(),
-                            is_selected)) {
+      if (ImGui::Selectable(
+              std::format("{}##{}", model.material_instances[n].first, n)
+                  .c_str(),
+              is_selected)) {
         selected_instance = n;
       }
 
