@@ -22,6 +22,7 @@ Gizmos::Gizmos()
       m_light_gizmo(
           utils::load_image(PTAH_ENGINE_ASSETS_DIR "/gizmos/point_light.png")),
       m_light_texture{m_light_gizmo.value()} {
+  m_grid_material.props.cull = true;
   m_grid_instance = m_grid_material.createInstance();
   m_light_instance = m_gizmo_material.createInstance();
   m_light_instance->SetTexture(&m_light_texture, ptah::TextureSlot::Albedo);
@@ -85,7 +86,7 @@ void Gizmos::DrawPointLight(Renderer& renderer, const PointLight& point_light,
 
 void Gizmos::DrawGrid(Renderer& renderer) {
   glm::mat4 model{1.0};
-  model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0, 0.0, 0.0));
+  model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
   model = glm::scale(model, glm::vec3(50.0));
   m_grid_material.Use();
   m_grid_material.Set("uModel", model);
