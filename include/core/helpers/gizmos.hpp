@@ -18,6 +18,7 @@ class Gizmos {
   Material m_gizmo_material;
   Material m_grid_material;
   Material m_axes_material;
+  Material m_line_material;
   std::optional<Image> m_light_gizmo;
   Texture2D m_light_texture;
   Texture2D* m_dir_light_texture;
@@ -25,6 +26,7 @@ class Gizmos {
   MaterialInstance* m_light_instance;
   MaterialInstance* m_dir_light_instance;
   MaterialInstance* m_axes_instance;
+  MaterialInstance* m_line_instance;
 
   Mesh m_MakeQuad();
   Mesh m_MakeAxes();

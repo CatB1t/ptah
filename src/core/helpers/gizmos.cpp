@@ -19,6 +19,8 @@ Gizmos::Gizmos()
                       PTAH_SHADERS_DIR "/grid.frag"),
       m_axes_material(PTAH_SHADERS_DIR "/default.vert",
                       PTAH_SHADERS_DIR "/axes.frag"),
+      m_line_material(PTAH_SHADERS_DIR "/default.vert",
+                      PTAH_SHADERS_DIR "/axes.frag"),
       m_light_gizmo(
           utils::load_image(PTAH_ENGINE_ASSETS_DIR "/gizmos/point_light.png")),
       m_light_texture{m_light_gizmo.value()} {
@@ -30,6 +32,10 @@ Gizmos::Gizmos()
   m_axes_material.props.cull = false;
   m_axes_material.props.depth_test = false;
   m_axes_instance = m_axes_material.createInstance();
+
+  m_line_material.props.draw_mode = DrawMode::Lines;
+  m_line_material.props.cull = false;
+  m_line_instance = m_line_material.createInstance();
 
   m_dir_light_instance = m_gizmo_material.createInstance();
   auto sun_icon =
@@ -58,12 +64,12 @@ void Gizmos::DrawDirLight(Renderer& renderer, const DirectionalLight& light,
 
   glm::mat4 line_model{1.0f};
   line_model = glm::scale(line_model, light.direction * radius);
-  m_axes_material.Use();
-  m_axes_material.Set("uModel", line_model);
-  m_axes_material.Set("uModelInverse", glm::mat3(1.0f));
-  renderer.m_SetState(m_axes_material.props);
-  renderer.m_Draw(m_line.GetDrawCommand(glm::mat4{1.0}, *m_axes_instance),
-                  m_axes_material.props);
+  m_line_material.Use();
+  m_line_material.Set("uModel", line_model);
+  m_line_material.Set("uModelInverse", glm::mat3(1.0f));
+  renderer.m_SetState(m_line_material.props);
+  renderer.m_Draw(m_line.GetDrawCommand(glm::mat4{1.0}, *m_line_instance),
+                  m_line_material.props);
 }
 
 void Gizmos::DrawPointLight(Renderer& renderer, const PointLight& point_light,
