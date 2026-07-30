@@ -144,6 +144,9 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
   glm::mat4 transformation =
       parentTransform * assimp_to_glm(node->mTransformation);
 
+  glm::mat3 normal_transform =
+      glm::transpose(glm::inverse(glm::mat3(transformation)));
+
   for (unsigned int n = 0; n < node->mNumMeshes; n++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[n]];
     auto name = mesh->mName;
@@ -165,9 +168,11 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
 
       auto aPosition = glm::vec3(
           transformation * glm::vec4(position.x, position.y, position.z, 1.0));
-      auto aNormal = glm::vec3(normal.x, normal.y, normal.z);
+
+      auto aNormal = normal_transform * glm::vec3(normal.x, normal.y, normal.z);
       auto aUV = glm::vec2(uv.x, uv.y);
-      auto aTangent = glm::vec3(tangent.x, tangent.y, tangent.z);
+      auto aTangent = glm::mat3(transformation) *
+                      glm::vec3(tangent.x, tangent.y, tangent.z);
       verts.push_back(Vertex{aPosition, aNormal, aUV, aTangent});
       m_UpdateBoundingBox(aPosition);
     }
