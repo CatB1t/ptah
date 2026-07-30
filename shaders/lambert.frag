@@ -24,8 +24,18 @@ vec4 pointLightsDiffuse(vec3 normal) {
 }
 
 void main() {
+  vec3 N = normalize(fs_in.normal);
+  // Gram-Schmidt
+  vec3 T = normalize(fs_in.tangent - N * dot(N, fs_in.tangent));
+  vec3 B = 1.0 * normalize(cross(N, T));
+  // TODO: Fix handedness
+  mat3 TBN = mat3(T, B, N); // from tangent space to world space
+  vec3 normal_map = texture(normal_tex, fs_in.uv).xyz;
+  normal_map = 2.0 * normal_map - 1.0;
+  normal_map = normalize(TBN * normal_map);
+
   vec4 light_color = vec4(uDirLightColor.rgb, 1.0f);
-  vec3 n_normal = normalize(fs_in.normal);
+  vec3 n_normal = normal_map;
   vec3 n_light_dir = uDirLightDirection.xyz;
 
   float ambient = uDirLightColor.a;

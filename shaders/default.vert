@@ -9,5 +9,6 @@ void main() {
   gl_Position =  uVP * uModel * vec4(aPosition, 1.0);
   vs_out.position = (uModel * vec4(aPosition, 1.0)).xyz;
   vs_out.normal = uModelInverse * aNormal;
+  vs_out.tangent = mat3(uModel) * aTangent;
   vs_out.uv = aUV;
 }
