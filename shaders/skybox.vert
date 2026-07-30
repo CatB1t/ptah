@@ -1,11 +1,6 @@
 #include "attrib.glsl"
 #include "framedata.glsl"
-
-out VS_OUT {
-  vec3 position;
-  vec3 normal;
-  vec2 uv;
-} vs_out;
+#include "vertex_out.glsl"
 
 void main() {
   mat4 viewMat = mat4(mat3(uView));

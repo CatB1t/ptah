@@ -1,5 +1,6 @@
 #include "framedata.glsl"
 #include "textures.glsl"
+#include "fragment_in.glsl"
 
 layout(std140, binding = 1) uniform uMaterial {
   vec4 color;
@@ -7,12 +8,6 @@ layout(std140, binding = 1) uniform uMaterial {
   bool b_reflect;
   bool b_refract;
 };
-
-in VS_OUT {
-  vec3 position;
-  vec3 normal;
-  vec2 uv;
-} fs_in;
 
 out vec4 oColor;
 

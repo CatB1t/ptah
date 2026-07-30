@@ -1,12 +1,6 @@
 #include "framedata.glsl"
 #include "textures.glsl"
-
-
-in VS_OUT {
-  vec3 position;
-  vec3 normal;
-  vec2 uv;
-} fs_in;
+#include "fragment_in.glsl"
 
 out vec4 oColor;
 

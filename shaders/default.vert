@@ -1,14 +1,9 @@
 #include "attrib.glsl"
 #include "framedata.glsl"
+#include "vertex_out.glsl"
 
 uniform mat4 uModel;
 uniform mat3 uModelInverse;
-
-out VS_OUT {
-  vec3 position;
-  vec3 normal;
-  vec2 uv;
-} vs_out;
 
 void main() {
   gl_Position =  uVP * uModel * vec4(aPosition, 1.0);
