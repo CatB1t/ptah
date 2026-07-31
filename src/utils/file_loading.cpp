@@ -26,11 +26,11 @@ std::string load_file(std::filesystem::path path) {
   return contents.str();
 }
 
-const aiScene* load_object(Assimp::Importer& importer, const char* path,
-                           unsigned int flags) {
-  const aiScene* scene = importer.ReadFile(path, flags);
+const aiScene* load_object(Assimp::Importer& importer,
+                           std::filesystem::path path, unsigned int flags) {
+  const aiScene* scene = importer.ReadFile(path.string().c_str(), flags);
   if (scene == nullptr) {
-    PTAH_RENDER_ERROR("Assimp failed to load model {}", path);
+    PTAH_RENDER_ERROR("Assimp failed to load model {}", path.string());
     PTAH_RENDER_ERROR("{}", importer.GetErrorString());
     return nullptr;
   }

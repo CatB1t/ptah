@@ -197,9 +197,9 @@ void Model::m_LoadMesh(const aiScene* scene, aiNode* node,
   }
 }
 
-Model::Model(Material& base_material, const char* filepath, bool reposition,
-             bool resize, bool flip_uvs)
-    : m_path(filepath),
+Model::Model(Material& base_material, std::filesystem::path filepath,
+             bool reposition, bool resize, bool flip_uvs)
+    : m_path(filepath.lexically_normal()),
       // TODO: Very wasteful allocation here, for each model.
       m_bb_material(MakeUnlit()),
       m_bb_material_instance(m_bb_material.createInstance()),
@@ -208,13 +208,13 @@ Model::Model(Material& base_material, const char* filepath, bool reposition,
   if (flip_uvs) flags |= aiProcess_FlipUVs;
 
   Assimp::Importer importer;
-  const aiScene* scene = utils::load_object(importer, filepath, flags);
+  const aiScene* scene = utils::load_object(importer, m_path, flags);
   if (scene == nullptr || scene->mRootNode == nullptr) {
-    PTAH_RENDER_ERROR("Failed to load model: {}", filepath);
+    PTAH_RENDER_ERROR("Failed to load model: {}", m_path.string());
     return;
   }
 
-  PTAH_RENDER_DEBUG("Loading {}", filepath);
+  PTAH_RENDER_DEBUG("Loading {}", m_path.string());
 
   material_instances.resize(scene->mNumMaterials);
   for (int i = 0; i < material_instances.size(); i++) {
