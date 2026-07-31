@@ -74,9 +74,10 @@ void UniformFloat(MaterialInstance& material, Layout& layout) {
 }
 
 void UniformBool(MaterialInstance& material, Layout& layout) {
-  bool* flag = material.View<bool>(layout.name.c_str());
-  if (ImGui::Checkbox(layout.name.c_str(), flag)) {
-    material.SetBlockUniform(layout.name.c_str(), *flag);
+  int* value = material.View<int>(layout.name.c_str());
+  bool flag = *value != 0;
+  if (ImGui::Checkbox(layout.name.c_str(), &flag)) {
+    material.SetBlockUniform(layout.name.c_str(), static_cast<int>(flag));
   }
 }
 
