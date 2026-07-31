@@ -1,6 +1,6 @@
-#include "attrib.glsl"
-#include "framedata.glsl"
-#include "vertex_out.glsl"
+#include "common/attrib.glsl"
+#include "common/framedata.glsl"
+#include "common/vertex_out.glsl"
 
 uniform mat4 uModel;
 uniform mat3 uModelInverse;

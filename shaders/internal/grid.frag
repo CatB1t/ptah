@@ -1,6 +1,6 @@
-#include "fragment_in.glsl"
-#include "framedata.glsl"
-#include "textures.glsl"
+#include "../common/framedata.glsl"
+#include "../common/textures.glsl"
+#include "../common/fragment_in.glsl"
 
 
 layout(std140, binding = 1) uniform uMaterial { vec4 color; };

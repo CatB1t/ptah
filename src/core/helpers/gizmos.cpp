@@ -14,13 +14,13 @@ Gizmos::Gizmos()
       m_axeslines(m_MakeAxes()),
       m_line(m_MakeLine()),
       m_gizmo_material(PTAH_SHADERS_DIR "/default.vert",
-                       PTAH_SHADERS_DIR "/gizmo.frag"),
+                       PTAH_SHADERS_DIR "/internal/gizmo.frag"),
       m_grid_material(PTAH_SHADERS_DIR "/default.vert",
-                      PTAH_SHADERS_DIR "/grid.frag"),
+                      PTAH_SHADERS_DIR "/internal/grid.frag"),
       m_axes_material(PTAH_SHADERS_DIR "/default.vert",
-                      PTAH_SHADERS_DIR "/axes.frag"),
+                      PTAH_SHADERS_DIR "/internal/axes.frag"),
       m_line_material(PTAH_SHADERS_DIR "/default.vert",
-                      PTAH_SHADERS_DIR "/axes.frag"),
+                      PTAH_SHADERS_DIR "/internal/axes.frag"),
       m_light_gizmo(
           utils::load_image(PTAH_ENGINE_ASSETS_DIR "/gizmos/point_light.png")),
       m_light_texture{m_light_gizmo.value()} {

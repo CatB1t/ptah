@@ -1,6 +1,6 @@
-#include "attrib.glsl"
-#include "framedata.glsl"
-#include "vertex_out.glsl"
+#include "../common/attrib.glsl"
+#include "../common/framedata.glsl"
+#include "../common/vertex_out.glsl"
 
 void main() {
   mat4 viewMat = mat4(mat3(uView));
