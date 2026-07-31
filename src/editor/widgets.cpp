@@ -6,7 +6,9 @@
 #include <format>
 #include <glm/common.hpp>
 #include <utility>
+#include <vector>
 
+#include "core/light.hpp"
 #include "core/material_instance.hpp"
 #include "core/material_props.hpp"
 #include "core/renderer.hpp"
@@ -272,6 +274,47 @@ void InspectModel(Model& model, Transform& transform,
     ImGui::EndPopup();
   }
 
+  ImGui::End();
+}
+
+void InspectLights(DirectionalLight& dir_light,
+                   std::vector<PointLight>& point_lights) {
+  ImGui::Begin("Lights");
+  ImGui::SeparatorText("Directional Light");
+  ImGui::ColorEdit3("Color", &dir_light.color[0]);
+  ImGui::DragFloat3("Position", &dir_light.direction.x, 0.1f, 0.0f, 0.0f,
+                    "%.3f", ImGuiSliderFlags_ColorMarkers);
+  ImGui::DragFloat("Intensity", &dir_light.intensity, 0.05f, 0.0f, 1.0f);
+
+  ImGui::SeparatorText("Point Lights");
+
+  if (ImGui::Button("Add")) {
+    point_lights.emplace_back();
+  }
+
+  static int selected_pl = point_lights.size() - 1;
+  if (ImGui::BeginListBox("##lights_list")) {
+    for (int n = 0; n < point_lights.size(); n++) {
+      const bool is_selected = (selected_pl == n);
+      if (ImGui::Selectable(std::format("{}", n).c_str(), is_selected)) {
+        selected_pl = n;
+      }
+      if (is_selected) ImGui::SetItemDefaultFocus();
+    }
+    ImGui::EndListBox();
+  }
+
+  if (selected_pl >= 0 && selected_pl < point_lights.size()) {
+    auto& pl = point_lights[selected_pl];
+    ImGui::ColorEdit3("Color##pl", &pl.color[0]);
+    ImGui::DragFloat3("Position##pl", &pl.position.x, 0.1f, 0.0f, 0.0f, "%.3f",
+                      ImGuiSliderFlags_ColorMarkers);
+    ImGui::DragFloat("Intensity##pl", &pl.intensity, 0.05f, 0.0f, 1000.0f);
+    if (ImGui::Button("Delete")) {
+      point_lights.erase(point_lights.begin() + selected_pl);
+      selected_pl = point_lights.size() - 1;
+    }
+  }
   ImGui::End();
 }
 }  // namespace ptah::editor::widgets
