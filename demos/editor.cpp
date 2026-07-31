@@ -34,6 +34,7 @@ int main() {
 
   ptah::Transform transform;
   ptah::DirectionalLight dir_light;
+  std::vector<ptah::PointLight> lights{};
 
   ptah::OrbitCamera camera{window};
   ptah::Input input_handler{window};
@@ -51,6 +52,7 @@ int main() {
         model = new ptah::Model{mat, filepath.c_str(), reposition, resize, flip_uv};
         transform.Reset();
       });
+      ptah::editor::widgets::InspectLights(dir_light, lights);
     }
 
     camera.Update(input_handler);
@@ -62,6 +64,7 @@ int main() {
     double time = window.Time();
     renderer.Begin(camera.Data(), time);
     renderer.Submit(dir_light);
+    renderer.Submit(lights);
 
     renderer.Submit(model->GetDrawCommands(transform.GetMatrix()));
     renderer.Flush();
