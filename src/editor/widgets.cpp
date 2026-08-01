@@ -34,8 +34,8 @@ void ShowTexture2D(const char* label, MaterialInstance& mat, TextureSlot slot,
   }
 
   ImGui::Separator();
-  ImVec4 bg_color {0.0,0.0,0.0,0.0};
-  ImVec4 tint {channels.r, channels.g, channels.b, channels.a};
+  ImVec4 bg_color{0.0, 0.0, 0.0, 0.0};
+  ImVec4 tint{channels.r, channels.g, channels.b, channels.a};
   if (ImGui::ImageButton(label, texture_ref, ImVec2(64, 64), ImVec2(0.0f, 0.0f),
                          ImVec2(1.0f, 1.0f), bg_color, tint)) {
     auto files =
@@ -158,8 +158,10 @@ void InspectMaterialInstance(const std::string& label,
   ImGui::SeparatorText("Textures");
   ShowTexture2D("Albedo", material, TextureSlot::Albedo);
   ShowTexture2D("Normal", material, TextureSlot::Normal);
-  ShowTexture2D("Roughness", material, TextureSlot::Roughness, glm::vec4{0.0, 1.0, 0.0, 1.0});
-  ShowTexture2D("Metalness", material, TextureSlot::Metalness, glm::vec4(0.0, 0.0, 1.0, 1.0));
+  ShowTexture2D("Roughness", material, TextureSlot::Roughness,
+                glm::vec4{0.0, 1.0, 0.0, 1.0});
+  ShowTexture2D("Metalness", material, TextureSlot::Metalness,
+                glm::vec4(0.0, 0.0, 1.0, 1.0));
   ShowTexture2D("AO", material, TextureSlot::AO, glm::vec4(1.0, 0.0, 0.0, 1.0));
   ImGui::End();
 }
