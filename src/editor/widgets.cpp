@@ -68,7 +68,7 @@ void UniformFloat4(MaterialInstance& material, Layout& layout) {
 
 void UniformFloat(MaterialInstance& material, Layout& layout) {
   float* flag = material.View<float>(layout.name.c_str());
-  if (ImGui::DragFloat(layout.name.c_str(), flag, 0.05f, 1.0f, 2.0f)) {
+  if (ImGui::DragFloat(layout.name.c_str(), flag, 0.05f, 0.0f, 0.0f)) {
     material.SetBlockUniform(layout.name.c_str(), *flag);
   }
 }
