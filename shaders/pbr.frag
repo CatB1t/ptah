@@ -18,7 +18,6 @@ float saturate(float value) {
 
 float ndf(float alpha, vec3 n, vec3 h) {
     // Trowbridge-Reitz GGX
-    // Based on UE4 alpha
     float alpha_sqr = pow(alpha, 2.0);
     float numerator = alpha_sqr;
     float denom = PI * pow((pow(dot(n, h), 2.0) * (alpha_sqr - 1.0) + 1.0), 2.0);
@@ -30,7 +29,7 @@ vec3 fresnel(vec3 fo, vec3 v, vec3 h) {
     return fo + (1.0 - fo) * pow((1.0 - dot(v, h)), 5.0);
 }
 
-float gshlick(float alpha, vec3 n, vec3 v) {
+float gschlick(float alpha, vec3 n, vec3 v) {
     float k = pow(alpha + 1, 2.0) / 8.0; // Not same as one used in the UE4 (they used alpha / 2)
     float numerator = saturate(dot(n, v));
     float denom = saturate(dot(n , v)) * (1.0 - k)  + k;
@@ -38,9 +37,10 @@ float gshlick(float alpha, vec3 n, vec3 v) {
 }
 
 vec3 computeSpecular(vec3 Ks, vec3 n, vec3 v, vec3 l, vec3 h) {
+    // Based on UE4 alpha
     float alpha = pow(roughness, 2.0);
     float N = ndf(alpha, n, h);
-    float G = gshlick(alpha, n, v) * gshlick(alpha, n, l);
+    float G = gschlick(alpha, n, v) * gschlick(alpha, n, l);
     float denom = 4 * saturate(dot(n, v)) * saturate(dot(n, l));
     return Ks * N * G / (denom + 0.0001);
 }
@@ -56,8 +56,8 @@ void main() {
   vec3 h = normalize(l + v);
 
   vec3 Fo = vec3(0.04);
-  vec3 baseReflectince = mix(Fo, albedo, metalness);
-  vec3 Ks = fresnel(baseReflectince, v, h);
+  vec3 baseReflectance = mix(Fo, albedo, metalness);
+  vec3 Ks = fresnel(baseReflectance, v, h);
   vec3 Kd = vec3(1.0) - Ks;
 
   vec3 f_cook = (Kd * albedo / PI) + computeSpecular(Ks, n, v, l, h);
