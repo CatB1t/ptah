@@ -4,6 +4,27 @@ A real-time 3D rendering engine written in C++23 on top of OpenGL 4.6.
 
 This is a learning project — I'm building it to understand how real-time renderers work from the ground up. It's not a product, it's not meant to be used in anything serious, and the API changes whenever I feel like it.
 
+## Showcase
+
+![Chess set rendered with the PBR material](imgs/abeautifulgame.jpg)
+
+<table>
+<tr>
+<td width="50%">
+<img src="imgs/sphere_reflect.jpg" alt="Reflective sphere sampling the skybox cubemap">
+<br><sub><b>Reflection</b> — the sphere samples the environment cubemap</sub>
+</td>
+<td width="50%">
+<img src="imgs/rabbit_refract.jpg" alt="Refractive bunny sampling the skybox cubemap">
+<br><sub><b>Refraction</b> — same cubemap, with an adjustable index ratio</sub>
+</td>
+</tr>
+</table>
+
+![The editor inspecting a model lit by coloured point lights](imgs/rabbit_pbr.png)
+
+<sub>The editor — renderer settings, model and transform inspector, material uniforms and texture slots generated from the shader's reflected layout, and light controls with gizmos.</sub>
+
 ## Features
 
 Forward rendering, with:
