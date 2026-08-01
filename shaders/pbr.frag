@@ -45,9 +45,26 @@ vec3 computeSpecular(float t_roughness, vec3 Ks, vec3 n, vec3 v, vec3 l, vec3 h)
     return Ks * N * G / (denom + 0.0001);
 }
 
+
+// Out going light dir from fragment to light
+vec3 BRDF(float t_rough, float t_metal, vec3 albedo, vec3 N, vec3 V, vec3 light_dir, vec4 light_color) {
+  vec3 l = normalize(light_dir);
+  vec3 h = normalize(l + V);
+
+  vec3 Fo = vec3(0.04);
+  vec3 baseReflectance = mix(Fo, albedo, t_metal);
+  vec3 Ks = fresnel(baseReflectance, V, h);
+  vec3 Kd = vec3(1.0) - Ks;
+
+  vec3 f_cook = (Kd * albedo / PI) + computeSpecular(t_rough, Ks, N, V, l, h);
+  float geometry = saturate(dot(N, l));
+  vec3 lc = light_color.rgb * light_color.a;
+  vec3 wo = (f_cook * lc * geometry);
+  return wo;
+}
+
 void main() {
   // TODO: Flag to use float controls or map
-  // TODO: Support Point Lights
   // TODO: Support IBL
   float t_ao = texture(ao_tex, fs_in.uv).r;
   vec3 albedo = color.rgb * texture(albedo_tex, fs_in.uv).rgb;
@@ -57,20 +74,20 @@ void main() {
   float t_metalness = texture(metalness_tex, fs_in.uv).b;
 
   vec3 n = normalize(fs_in.normal);
-  // from frag to light
-  vec3 l = normalize(uDirLightDirection.xyz);
   vec3 v = normalize(uViewPosition.xyz - fs_in.position);
-  vec3 h = normalize(l + v);
+  vec3 wtotal = vec3(0.0);
 
-  vec3 Fo = vec3(0.04);
-  vec3 baseReflectance = mix(Fo, albedo, t_metalness);
-  vec3 Ks = fresnel(baseReflectance, v, h);
-  vec3 Kd = vec3(1.0) - Ks;
+  wtotal += BRDF(t_roughness, t_metalness, albedo, n, v, uDirLightDirection.xyz, uDirLightColor);
 
-  vec3 f_cook = (Kd * albedo / PI) + computeSpecular(t_roughness, Ks, n, v, l, h);
+  for (int i = 0; i < uNActivePointLights; i++) {
+    PointLight pl = uPointLights[i];
+    vec3 pl_dir = normalize(pl.position.xyz - fs_in.position);
+    float pl_distance = distance(pl.position.xyz, fs_in.position);
+    float atten = 1.0 / (pl_distance * pl_distance);
+    vec4 atten_color = pl.color * vec4(1.0, 1.0, 1.0, atten);
+    wtotal += BRDF(t_roughness, t_metalness, albedo, n, v, pl_dir, atten_color);
+  }
 
-  float geometry = saturate(dot(n, l));
-  vec3 lc = uDirLightColor.rgb * uDirLightColor.a;
-  vec3 wo = ambient + (f_cook * lc * geometry);
-  oColor = vec4(wo, 1.0);
+  vec3 lo = ambient + wtotal;
+  oColor = vec4(lo, 1.0);
 }
