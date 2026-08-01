@@ -22,4 +22,9 @@ inline Material MakeBlinn(const std::vector<std::string>& defines = {}) {
                   PTAH_SHADERS_DIR "/blinn.frag", defines);
 }
 
+inline Material MakePhong(const std::vector<std::string>& defines = {}) {
+  return Material(PTAH_SHADERS_DIR "/default.vert",
+                  PTAH_SHADERS_DIR "/phong.frag", defines);
+}
+
 }  // namespace ptah
