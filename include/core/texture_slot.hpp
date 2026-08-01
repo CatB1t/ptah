@@ -5,9 +5,10 @@ namespace ptah {
 enum class TextureSlot : unsigned int {
   Albedo = 0,
   Normal = 1,
-  Slot2 = 2,
-  Slot3 = 3,
-  Slot4 = 4,
+  // TODO: Maybe use the packed AORM format
+  Roughness = 2,
+  Metalness = 3,
+  AO = 4,
   Slot5 = 5,
   Slot6 = 6,
   Environment = 7,
