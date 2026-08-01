@@ -36,9 +36,9 @@ float gschlick(float alpha, vec3 n, vec3 v) {
     return numerator / denom;
 }
 
-vec3 computeSpecular(vec3 Ks, vec3 n, vec3 v, vec3 l, vec3 h) {
+vec3 computeSpecular(float t_roughness, vec3 Ks, vec3 n, vec3 v, vec3 l, vec3 h) {
     // Based on UE4 alpha
-    float alpha = pow(roughness, 2.0);
+    float alpha = pow(t_roughness, 2.0);
     float N = ndf(alpha, n, h);
     float G = gschlick(alpha, n, v) * gschlick(alpha, n, l);
     float denom = 4 * saturate(dot(n, v)) * saturate(dot(n, l));
@@ -46,8 +46,14 @@ vec3 computeSpecular(vec3 Ks, vec3 n, vec3 v, vec3 l, vec3 h) {
 }
 
 void main() {
+  // TODO: Support Point Lights
+  // TODO: Support IBL
+  vec3 t_ao = texture(ao_tex, fs_in.uv).rgb;
   vec3 albedo = color.rgb * texture(albedo_tex, fs_in.uv).rgb;
-  vec3 ambient = albedo.rgb * vec3(0.1);
+  vec3 ambient = albedo.rgb * vec3(0.1) * t_ao;
+
+  float t_metalness = texture(metalness_roughness_tex, fs_in.uv).b;
+  float t_roughness = texture(metalness_roughness_tex, fs_in.uv).g;
 
   vec3 n = normalize(fs_in.normal);
   // from frag to light
@@ -56,11 +62,11 @@ void main() {
   vec3 h = normalize(l + v);
 
   vec3 Fo = vec3(0.04);
-  vec3 baseReflectance = mix(Fo, albedo, metalness);
+  vec3 baseReflectance = mix(Fo, albedo, t_metalness);
   vec3 Ks = fresnel(baseReflectance, v, h);
   vec3 Kd = vec3(1.0) - Ks;
 
-  vec3 f_cook = (Kd * albedo / PI) + computeSpecular(Ks, n, v, l, h);
+  vec3 f_cook = (Kd * albedo / PI) + computeSpecular(t_roughness, Ks, n, v, l, h);
 
   float geometry = saturate(dot(n, l));
   vec3 lc = uDirLightColor.rgb * uDirLightColor.a;
