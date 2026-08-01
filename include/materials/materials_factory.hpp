@@ -33,7 +33,7 @@ inline Material MakePhong(const std::vector<std::string>& defines = {}) {
 
 inline Material MakePBR(const std::vector<std::string>& defines = {}) {
   return Material(PTAH_SHADERS_DIR "/default.vert",
-                      PTAH_SHADERS_DIR "/pbr.frag", defines);
+                  PTAH_SHADERS_DIR "/pbr.frag", defines);
 }
 
 }  // namespace ptah
