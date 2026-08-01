@@ -17,4 +17,9 @@ inline Material MakeUnlit(const std::vector<std::string>& defines = {}) {
                   PTAH_SHADERS_DIR "/unlit.frag", defines);
 }
 
+inline Material MakeBlinn(const std::vector<std::string>& defines = {}) {
+  return Material(PTAH_SHADERS_DIR "/default.vert",
+                  PTAH_SHADERS_DIR "/blinn.frag", defines);
+}
+
 }  // namespace ptah
