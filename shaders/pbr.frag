@@ -48,12 +48,12 @@ vec3 computeSpecular(float t_roughness, vec3 Ks, vec3 n, vec3 v, vec3 l, vec3 h)
 void main() {
   // TODO: Support Point Lights
   // TODO: Support IBL
-  vec3 t_ao = texture(ao_tex, fs_in.uv).rgb;
+  float t_ao = texture(ao_tex, fs_in.uv).r;
   vec3 albedo = color.rgb * texture(albedo_tex, fs_in.uv).rgb;
-  vec3 ambient = albedo.rgb * vec3(0.1) * t_ao;
+  vec3 ambient = t_ao * albedo.rgb * vec3(0.1);
 
-  float t_metalness = texture(metalness_roughness_tex, fs_in.uv).b;
-  float t_roughness = texture(metalness_roughness_tex, fs_in.uv).g;
+  float t_roughness = texture(roughness_tex, fs_in.uv).g;
+  float t_metalness = texture(metalness_tex, fs_in.uv).b;
 
   vec3 n = normalize(fs_in.normal);
   // from frag to light

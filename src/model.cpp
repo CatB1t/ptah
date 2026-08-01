@@ -127,9 +127,6 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
   Texture2D* ambientoc_tex = m_LoadTexture(scene, mat, {aiTextureType_LIGHTMAP, aiTextureType_AMBIENT_OCCLUSION});
   instance->SetTexture(ambientoc_tex, TextureSlot::AO);
 
-  Texture2D* metalness_roughness_tex = m_LoadTexture(scene, mat, {aiTextureType_GLTF_METALLIC_ROUGHNESS});
-  instance->SetTexture(metalness_roughness_tex, TextureSlot::MetalnessRoughness);
-
   aiColor4D color;
   if (mat->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
     PTAH_RENDER_DEBUG("Diffuse color: {},{},{}", color.r, color.g, color.b);
