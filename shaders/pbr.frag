@@ -63,6 +63,18 @@ vec3 BRDF(float t_rough, float t_metal, vec3 albedo, vec3 N, vec3 V, vec3 light_
   return wo;
 }
 
+vec3 apply_normal_mapping() {
+  vec3 N = normalize(fs_in.normal);
+  // Gram-Schmidt
+  vec3 T = normalize(fs_in.tangent - N * dot(N, fs_in.tangent));
+  vec3 B = 1.0 * normalize(cross(N, T));
+  // TODO: Fix handedness
+  mat3 TBN = mat3(T, B, N);  // from tangent space to world space
+  vec3 normal_map = texture(normal_tex, fs_in.uv).xyz;
+  normal_map = 2.0 * normal_map - 1.0;
+  return normalize(TBN * normal_map);
+}
+
 void main() {
   // TODO: Flag to use float controls or map
   // TODO: Support IBL
@@ -73,7 +85,7 @@ void main() {
   float t_roughness = texture(roughness_tex, fs_in.uv).g;
   float t_metalness = texture(metalness_tex, fs_in.uv).b;
 
-  vec3 n = normalize(fs_in.normal);
+  vec3 n = apply_normal_mapping();
   vec3 v = normalize(uViewPosition.xyz - fs_in.position);
   vec3 wtotal = vec3(0.0);
 
