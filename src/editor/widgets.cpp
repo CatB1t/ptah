@@ -155,6 +155,10 @@ void InspectMaterialInstance(const std::string& label,
   ImGui::SeparatorText("Textures");
   ShowTexture2D("Albedo", material, TextureSlot::Albedo);
   ShowTexture2D("Normal", material, TextureSlot::Normal);
+  ShowTexture2D("Roughness", material, TextureSlot::Roughness);
+  ShowTexture2D("Metalness", material, TextureSlot::Metalness);
+  ShowTexture2D("AO", material, TextureSlot::AO);
+  ShowTexture2D("MetalnessRoughness", material, TextureSlot::MetalnessRoughness);
   ImGui::End();
 }
 
