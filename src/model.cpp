@@ -124,7 +124,7 @@ MaterialInstance* Model::m_LoadMaterial(const aiScene* scene,
   Texture2D* metalness_tex = m_LoadTexture(scene, mat, {aiTextureType_METALNESS});
   instance->SetTexture(metalness_tex, TextureSlot::Metalness);
 
-  Texture2D* ambientoc_tex = m_LoadTexture(scene, mat, {aiTextureType_AMBIENT_OCCLUSION});
+  Texture2D* ambientoc_tex = m_LoadTexture(scene, mat, {aiTextureType_LIGHTMAP, aiTextureType_AMBIENT_OCCLUSION});
   instance->SetTexture(ambientoc_tex, TextureSlot::AO);
 
   Texture2D* metalness_roughness_tex = m_LoadTexture(scene, mat, {aiTextureType_GLTF_METALLIC_ROUGHNESS});
