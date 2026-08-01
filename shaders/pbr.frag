@@ -46,6 +46,7 @@ vec3 computeSpecular(float t_roughness, vec3 Ks, vec3 n, vec3 v, vec3 l, vec3 h)
 }
 
 void main() {
+  // TODO: Flag to use float controls or map
   // TODO: Support Point Lights
   // TODO: Support IBL
   float t_ao = texture(ao_tex, fs_in.uv).r;
